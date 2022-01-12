@@ -1,0 +1,21 @@
+[
+  {
+    "type": "java",
+    "name": "jar (in project Shambots5907_2022_CompBot)",
+    "extensions": [
+      {
+        "name": "Sim DriverStation",
+        "libName": "C:\\Users\\barta\\Documents\\GitHub\\Shambots5907_2022_CompBot\\Shambots5907_2022_CompBot\\build\\jni\\release\\halsim_ds_socket.dll",
+        "defaultEnabled": false
+      },
+      {
+        "name": "Sim GUI",
+        "libName": "C:\\Users\\barta\\Documents\\GitHub\\Shambots5907_2022_CompBot\\Shambots5907_2022_CompBot\\build\\jni\\release\\halsim_gui.dll",
+        "defaultEnabled": true
+      }
+    ],
+    "environment": {},
+    "libraryDir": "C:\\Users\\barta\\Documents\\GitHub\\Shambots5907_2022_CompBot\\Shambots5907_2022_CompBot\\build\\jni\\release",
+    "mainClassName": "frc.robot.Main"
+  }
+]
