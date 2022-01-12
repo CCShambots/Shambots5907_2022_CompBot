@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -16,7 +18,6 @@ import frc.robot.subsystems.Drivetrain;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
@@ -55,26 +56,21 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  //TODO: Auto I guess
-  // @Override
-  // public void autonomousInit() {
-  //   m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-  //   // schedule the autonomous command (example)
-  //   if (m_autonomousCommand != null) {
-  //     m_autonomousCommand.schedule();
-  //   }
-  // }
+  //TODO: Is this how this should be done?
+  @Override
+  public void autonomousInit() {
+    new InstantCommand(() -> m_robotContainer.doAutoInit()).schedule();
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    m_robotContainer.doOdoUpdate();
   }
 
+  /** Called at the start of teleop */
   @Override
   public void teleopInit() {
-    m_robotContainer.doTeleopInit();
+    new InstantCommand(() -> m_robotContainer.doTeleopInit()).schedule();
   }
 
   /** This function is called periodically during operator control. */

@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
+import frc.robot.util.RobotStatus;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -35,4 +37,7 @@ public final class Constants {
     public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left wheel control
     public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right wheel control
     public static final int DRIVER_BUTTON_6 = 6; //Turbo/normal speed control
+
+    //Robot mode detenction (for odometry toggling)
+    public static RobotStatus robotStatus = RobotStatus.AUTO;
 }

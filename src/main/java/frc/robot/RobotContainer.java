@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.util.RobotStatus;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -19,11 +20,6 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
 
-    //Set always running command for teleop on the drivetrain (basic drive control)
-    drivetrain.setDefaultCommand(new RunCommand(() -> {
-        drivetrain.tankDrive(driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-        driverController.getRawAxis(Constants.DRIVER_RIGHT_JOYSTICK_Y_AXIS));
-    }, drivetrain));
   }
 
   private void configureButtonBindings() {
@@ -44,10 +40,34 @@ public class RobotContainer {
   // }
 
   public void doTeleopInit() {
-    drivetrain.teleopInit();
+    drivetrain.setupTeleop();
+
+    //Set always running command for teleop on the drivetrain (basic drive control)
+    drivetrain.setDefaultCommand(new RunCommand(() -> {
+      drivetrain.tankDrive(driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_Y_AXIS), 
+      driverController.getRawAxis(Constants.DRIVER_RIGHT_JOYSTICK_Y_AXIS));
+    }, drivetrain));
+
+    setTeleop();
+  }
+
+  public void doAutoInit() {
+    setAutonomous();
   }
 
   public void doOdoUpdate() {
     drivetrain.updateOdometry();
+  }
+
+  public void setAutonomous() {
+    Constants.robotStatus = RobotStatus.AUTO;
+  }
+
+  public void setTeleop() {
+    Constants.robotStatus = RobotStatus.TELEOP;
+  }
+
+  public void setDisabled() {
+    Constants.robotStatus = RobotStatus.DISABLED;
   }
 }

@@ -13,8 +13,12 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.util.RobotStatus;
+
 import static frc.robot.Constants.*;
 
 public class Drivetrain extends SubsystemBase {
@@ -42,8 +46,10 @@ public class Drivetrain extends SubsystemBase {
   RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
   DifferentialDriveOdometry odometry;
 
+  /**
+   * Initializes the drivetrain object and adds each motor to the motors list for setup.
+   */
   public Drivetrain() {
-    leftMotorLeader.getSelectedSensorPosition();
     leftMotorFollower.follow(leftMotorLeader);
     rightMotorFollower.follow(rightMotorFollower);
     
@@ -53,37 +59,67 @@ public class Drivetrain extends SubsystemBase {
     motors.add(rightMotorFollower);
 
     for(WPI_TalonFX motor : motors) {
-      motor.configSupplyCurrentLimit(CURRENT_LIMIT);
+      motor.configFactoryDefault();
+      motor.configSupplyCurrentLimit(CURRENT_LIMIT); //Stops the motor from pulling more current than the fuse can handle
       motor.configOpenloopRamp(smoothing);
+      //TODO: Set coast in teleop, brake in auto (in separate configs)
+      motor.setNeutralMode(NeutralMode.Brake);
     }
+
+    odometry = new DifferentialDriveOdometry(getGyroHeading(), new Pose2d(0.0, 13.5, new Rotation2d()));
+
   }
 
   /**
    * Teleop command for running the tank drive (run periodically)
-   * @param speedLeft joystick values
-   * @param speedRight joystick values
+   * @param speedLeft joystick value for the left side
+   * @param speedRight joystick values for the right side
    */
   public void tankDrive(double speedLeft, double speedRight) {
     tankDrivetrain.tankDrive(speedLeft * speedMult, speedRight * speedMult);
   }
 
-  public void teleopInit() {
+  //TODO: Make functions simpler and put orders of things in Container or Robot.java
+  public void setupTeleop() {
     for(WPI_TalonFX motor : motors) {
       motor.configSupplyCurrentLimit(CURRENT_LIMIT);
       motor.configOpenloopRamp(smoothing);
-
-      //Assuming braking should be true
-      motor.setNeutralMode(NeutralMode.Brake);
     }
 
     speedMult = normalSpeed;
   }
 
-  public void autoInit() {
-    //TODO: Support changing position and auto path based on
-    odometry = new DifferentialDriveOdometry(getGyroHeading(), new Pose2d(0.0, 13.5, new Rotation2d()));
+  /**
+   * Returns the pose of the robot in meters
+   * @return the pose of the bot
+   */
+  public Pose2d getOdometryPose() {
+    return odometry.getPoseMeters();
   }
 
+  /**
+   * resets the encoders to the given position
+   * @param pose pose the robot is reset to
+   */
+  public void resetOdometry(Pose2d pose) {
+    resetEncoders();
+
+    odometry.resetPosition(pose, getGyroHeading());
+  }
+
+  /**Returns the speeds of the wheel in meters per second */
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(encoderVelocityToMeters(leftMotorLeader.getSelectedSensorVelocity()), encoderVelocityToMeters(rightMotorLeader.getSelectedSensorVelocity()));
+  }
+
+  private void resetEncoders() {
+    leftMotorLeader.setSelectedSensorPosition(0);
+    rightMotorLeader.setSelectedSensorPosition(0);
+  }
+
+  /**
+   * Function called periodically in autonomous that updates the position of the robot
+   */
   public void updateOdometry() {
     Rotation2d gyroAngle = getGyroHeading();
 
@@ -91,14 +127,18 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * 
+   * Function that returns the distance (in meters) the robot has traveled based on the encoder counts of a motor
    * @param counts current encoder counts on a motor
-   * @return the counts in meters
+   * @return the meters that the encoder has reported based on wheel size in Constants.java
    */
   private double encoderCountsToMeters(double counts) {
     return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254;
   }
 
+  private double encoderVelocityToMeters(double velocity) {
+    return (velocity / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254;
+  }
+  
   private Rotation2d getGyroHeading() {
     //TODO: Idk whether this should be negative or not (WPILib docs says it should be)
     return Rotation2d.fromDegrees(-pigeonIMU.getFusedHeading());
@@ -114,6 +154,8 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    if(Constants.robotStatus == RobotStatus.AUTO) {
+      updateOdometry();
+    }
   }
 }
