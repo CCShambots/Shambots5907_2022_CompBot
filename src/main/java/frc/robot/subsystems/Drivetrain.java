@@ -128,8 +128,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void toggleReversed() {
-    if(reversed) setReversed(false);
-    else setReversed(true);
+    setReversed(!reversed);
   }
 
   /**
@@ -162,7 +161,10 @@ public class Drivetrain extends SubsystemBase {
 
   /**Returns the speeds of the wheel in meters per second */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(encoderVelocityToMeters(leftMotorLeader.getSelectedSensorVelocity()), encoderVelocityToMeters(rightMotorLeader.getSelectedSensorVelocity()));
+    return new DifferentialDriveWheelSpeeds(
+      encoderVelocityToMeters(leftMotorLeader.getSelectedSensorVelocity()), 
+      encoderVelocityToMeters(rightMotorLeader.getSelectedSensorVelocity())
+    );
   }
 
   private void resetEncoders() {
@@ -176,7 +178,11 @@ public class Drivetrain extends SubsystemBase {
   public void updateOdometry() {
     Rotation2d gyroAngle = getGyroHeading();
 
-    odometry.update(gyroAngle, encoderCountsToMeters(leftMotorLeader.getSelectedSensorPosition()), encoderCountsToMeters(rightMotorLeader.getSelectedSensorPosition()));
+    odometry.update(
+      gyroAngle, 
+      encoderCountsToMeters(leftMotorLeader.getSelectedSensorPosition()), 
+      encoderCountsToMeters(rightMotorLeader.getSelectedSensorPosition())
+    );
   }
 
   /**

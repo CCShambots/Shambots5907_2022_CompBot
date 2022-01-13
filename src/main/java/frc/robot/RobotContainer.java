@@ -6,12 +6,11 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
+import frc.robot.commands.AutonomousCommand;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.util.AutonomousCommand;
 import frc.robot.util.RobotStatus;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -20,9 +19,6 @@ import static frc.robot.util.TeleopSpeeds.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-
-import javax.sound.midi.Sequence;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
@@ -51,8 +47,10 @@ public class RobotContainer {
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_6)
       .whenPressed(new InstantCommand(() -> drivetrain.setSpeed(Turbo)))
       .whenReleased(new InstantCommand(() -> drivetrain.setSpeed(Normal)));
+
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_5)
       .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
+      
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_4)
       .whenPressed(new InstantCommand(drivetrain::toggleReversed));
   }
