@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.ArrayList;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.math.controller.RamseteController;
@@ -17,9 +18,12 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.DriveModes;
 import frc.robot.util.RobotStatus;
+import frc.robot.util.TeleopSpeeds;
 
 import static frc.robot.Constants.*;
+import static frc.robot.util.DriveModes.*;
 
 public class Drivetrain extends SubsystemBase {
   //Motor declaractions
@@ -33,12 +37,14 @@ public class Drivetrain extends SubsystemBase {
   private final ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();
 
   //Teleop object that allows easy use of joysticks to motor powers
-  //TODO: Allow arcade drive
   private final DifferentialDrive tankDrivetrain = new DifferentialDrive(leftMotorLeader, rightMotorLeader);
+  private DriveModes driveMode = Tank;
+  private boolean reversed = false;
+  private int reversedMult = 1;
 
   private double normalSpeed = .6;
   private double turboSpeed = 1;
-  private double speedMult;
+  private double speedMult = normalSpeed;
   //TODO: Decide if dampening is necessary
   private double smoothing = 1;
 
@@ -62,32 +68,79 @@ public class Drivetrain extends SubsystemBase {
       motor.configFactoryDefault();
       motor.configSupplyCurrentLimit(CURRENT_LIMIT); //Stops the motor from pulling more current than the fuse can handle
       motor.configOpenloopRamp(smoothing);
-      //TODO: Set coast in teleop, brake in auto (in separate configs)
-      motor.setNeutralMode(NeutralMode.Brake);
     }
 
-    odometry = new DifferentialDriveOdometry(getGyroHeading(), new Pose2d(0.0, 13.5, new Rotation2d()));
+    odometry = new DifferentialDriveOdometry(getGyroHeading(), new Pose2d());
 
   }
 
-  /**
+  //General Methods
+
+  public void setNeutralMotorBehavior(NeutralMode mode) {
+    for(TalonFX motor : motors) {
+      motor.setNeutralMode(mode);
+    }
+  }
+  
+  //Teleop Methods
+
+    /**
    * Teleop command for running the tank drive (run periodically)
    * @param speedLeft joystick value for the left side
    * @param speedRight joystick values for the right side
    */
   public void tankDrive(double speedLeft, double speedRight) {
-    tankDrivetrain.tankDrive(speedLeft * speedMult, speedRight * speedMult);
+    tankDrivetrain.tankDrive(speedLeft * speedMult * reversedMult, speedRight * speedMult * reversedMult);
   }
 
-  //TODO: Make functions simpler and put orders of things in Container or Robot.java
-  public void setupTeleop() {
-    for(WPI_TalonFX motor : motors) {
-      motor.configSupplyCurrentLimit(CURRENT_LIMIT);
-      motor.configOpenloopRamp(smoothing);
-    }
-
-    speedMult = normalSpeed;
+  public void arcadeDrive(double forwardMotion, double turnSpeed) {
+    tankDrivetrain.arcadeDrive(forwardMotion * speedMult * reversedMult, turnSpeed * speedMult * reversedMult);
   }
+
+  public DriveModes getDriveMode() {
+    return driveMode;
+  }
+
+  public boolean isTankDrive() {
+    return getDriveMode() == DriveModes.Tank ? true : false;
+  }
+
+  /**Set the drive mode (tank/arcade) */
+  public void setDriveMode(DriveModes mode) {
+    driveMode = mode;
+  }
+
+  /**Toggle between tank and arcade drive */
+  public void toggleDriveMode() {
+    driveMode = driveMode == Tank ? Arcade : Tank;
+  }
+
+  /**Change whether drivetrain is reversed or not */
+  public void setReversed(boolean value) {
+    this.reversed = value;
+
+    if(value) reversedMult = -1;
+    else reversedMult = 1;
+  }
+
+  public boolean getReversed() {
+    return reversed;
+  }
+
+  public void toggleReversed() {
+    if(reversed) setReversed(false);
+    else setReversed(true);
+  }
+
+  /**
+   * Set the speed of the robot to normal or turbo mode
+   * @param speed speed to set to
+   */
+  public void setSpeed(TeleopSpeeds speed) {
+    speedMult = speed == TeleopSpeeds.Normal ? normalSpeed : turboSpeed;
+  }
+
+  //Autonomous Methods
 
   /**
    * Returns the pose of the robot in meters
@@ -142,14 +195,6 @@ public class Drivetrain extends SubsystemBase {
   private Rotation2d getGyroHeading() {
     //TODO: Idk whether this should be negative or not (WPILib docs says it should be)
     return Rotation2d.fromDegrees(-pigeonIMU.getFusedHeading());
-  }
-
-  public void setTurboSpeed() {
-    speedMult = turboSpeed;
-  }
-
-  public void setNormalSpeed() {
-    speedMult = normalSpeed;
   }
 
   @Override

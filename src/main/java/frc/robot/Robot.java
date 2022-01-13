@@ -5,11 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
-import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -50,7 +47,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    new InstantCommand(() -> m_robotContainer.setDisabled()).schedule();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -59,7 +58,7 @@ public class Robot extends TimedRobot {
   //TODO: Is this how this should be done?
   @Override
   public void autonomousInit() {
-    new InstantCommand(() -> m_robotContainer.doAutoInit()).schedule();
+    m_robotContainer.getAutoCommand(m_robotContainer.getAutoId()).schedule();
   }
 
   /** This function is called periodically during autonomous. */
@@ -70,7 +69,7 @@ public class Robot extends TimedRobot {
   /** Called at the start of teleop */
   @Override
   public void teleopInit() {
-    new InstantCommand(() -> m_robotContainer.doTeleopInit()).schedule();
+    new InstantCommand(() -> m_robotContainer.doTeleopSetup()).schedule();
   }
 
   /** This function is called periodically during operator control. */

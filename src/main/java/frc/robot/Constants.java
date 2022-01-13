@@ -29,14 +29,16 @@ public final class Constants {
     public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
     
     public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
-    //TODO: Get wheel size
-    public static final double WHEEL_SIZE_INCHES = 0;
+    public static final double WHEEL_SIZE_INCHES = 6;
 
     //Controller stuff
     public static final int DRIVER_CONTROLLER_PORT = 0;
-    public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left wheel control
-    public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right wheel control
+    public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
+    public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 2; //Left stick x
+    public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
     public static final int DRIVER_BUTTON_6 = 6; //Turbo/normal speed control
+    public static final int DRIVER_BUTTON_5 = 5; //Arcade/Tank drive
+    public static final int DRIVER_BUTTON_4 = 4; //Drivetrain reversed or not
 
     //Robot mode detenction (for odometry toggling)
     public static RobotStatus robotStatus = RobotStatus.AUTO;
