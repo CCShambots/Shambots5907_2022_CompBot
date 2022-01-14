@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
   //TODO: Is this how this should be done?
   @Override
   public void autonomousInit() {
-    m_robotContainer.getAutoCommand(m_robotContainer.getAutoId()).schedule();
+    m_robotContainer.getAutoCommand().schedule();
   }
 
   /** This function is called periodically during autonomous. */

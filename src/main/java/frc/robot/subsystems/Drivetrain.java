@@ -101,10 +101,6 @@ public class Drivetrain extends SubsystemBase {
     return driveMode;
   }
 
-  public boolean isTankDrive() {
-    return getDriveMode() == DriveModes.Tank ? true : false;
-  }
-
   /**Set the drive mode (tank/arcade) */
   public void setDriveMode(DriveModes mode) {
     driveMode = mode;

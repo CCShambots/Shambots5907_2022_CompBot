@@ -8,17 +8,24 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.util.AutoPaths;
+import frc.robot.util.DriveModes;
 import frc.robot.util.RobotStatus;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import static frc.robot.util.TeleopSpeeds.*;
+import static frc.robot.util.AutoPaths.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
@@ -27,19 +34,21 @@ public class RobotContainer {
   //TODO: Make this based on the chosen auto route (idk how but it needs to be done!)
   private Pose2d startPose = new Pose2d();
 
-  private List<AutonomousCommand> autoCommands = new ArrayList<>();
-  private String autoId = "example";
+  // private List<AutonomousCommand> autoCommands = new ArrayList<>();
+  private AutoPaths autoId = Example;
+  private SelectCommand autoCommands;
+  Map<Object, Command> commands = new HashMap<>();
 
   // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   public RobotContainer() {
     configureButtonBindings();
-    
-    addAutoCommand(new AutonomousCommand("example",
+
+    commands.put(Example, new SequentialCommandGroup(
       new InstantCommand(this::doAutoSetup)
-    //new RamseteCommand(trajectory, pose, controller, feedforward, kinematics, wheelSpeeds, leftController, rightController, outputVolts, requirements));
     ));
 
+    autoCommands = new SelectCommand(commands, this::getAutoId);
   }
 
   private void configureButtonBindings() {
@@ -69,34 +78,35 @@ public class RobotContainer {
 
     //Set always running command for teleop on the drivetrain (basic drive control)
     drivetrain.setDefaultCommand(
-      new ConditionalCommand(
-        new RunCommand(() -> {
-          drivetrain.tankDrive(
-            driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-            driverController.getRawAxis(Constants.DRIVER_RIGHT_JOYSTICK_Y_AXIS));
-    }), 
-        new RunCommand(() -> {
-          drivetrain.arcadeDrive(
-            driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-            driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_X_AXIS));
-    }), drivetrain::isTankDrive));
+      new SelectCommand(
+        new HashMap<Object, Command>() {{
+          put(DriveModes.Tank, new RunCommand(() -> {
+            drivetrain.tankDrive(
+              driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_Y_AXIS), 
+              driverController.getRawAxis(Constants.DRIVER_RIGHT_JOYSTICK_Y_AXIS));
+            }));
+          put(DriveModes.Arcade, new RunCommand(() -> {
+            drivetrain.arcadeDrive(
+              driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_Y_AXIS), 
+              driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_X_AXIS));
+          }));
+          
+        }},
+        drivetrain::getDriveMode)
+    );
 
     setTeleop();
   }
 
-  public SequentialCommandGroup getAutoCommand(String chosenId) {
-    return AutonomousCommand.getCommandById(autoCommands, chosenId);
+  public SelectCommand getAutoCommand() {
+    return autoCommands;
   }
 
-  public void addAutoCommand(AutonomousCommand command) {
-    autoCommands.add(command);
-  }
-
-  public String getAutoId() {
+  public AutoPaths getAutoId() {
     return autoId;
   }
 
-  public void setAutoId(String id) {
+  public void setAutoId(AutoPaths id) {
     autoId = id;
   }
 
