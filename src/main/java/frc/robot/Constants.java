@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
+import edu.wpi.first.math.controller.PIDController;
 import frc.robot.util.RobotStatus;
 
 /**
@@ -17,8 +18,8 @@ import frc.robot.util.RobotStatus;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    //Drivetrain stuff
 
+    //Drivetrain variables
     public static final int RIGHT_DRIVETRAIN_LEADER = 0;
     public static final int RIGHT_DRIVETRAIN_FOLLOWER = 1;
     public static final int LEFT_DRIVETRAIN_LEADER = 2;
@@ -31,7 +32,7 @@ public final class Constants {
     public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
     public static final double WHEEL_SIZE_INCHES = 6;
 
-    //Controller stuff
+    //Controller variables
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
     public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 2; //Left stick x
@@ -39,7 +40,14 @@ public final class Constants {
     public static final int DRIVER_BUTTON_6 = 6; //Turbo/normal speed control
     public static final int DRIVER_BUTTON_5 = 5; //Arcade/Tank drive
     public static final int DRIVER_BUTTON_4 = 4; //Drivetrain reversed or not
+    public static final int DRIVER_BUTTON_3 = 5; //Control for switching to limelight turning 
 
-    //Robot mode detenction (for odometry toggling)
+    //Robot mode (for odometry toggling)
     public static RobotStatus robotStatus = RobotStatus.AUTO;
+
+    //Limelight variables
+    public static final double LIMELIGHT_FIND_TARGET_SPEED = 0.25;
+    public static final PIDController Z_LIMELIGHT_PID = new PIDController(0, 0, 0);
+    public static final double LIMELIGHT_TOLERANCE = 5;
+
 }

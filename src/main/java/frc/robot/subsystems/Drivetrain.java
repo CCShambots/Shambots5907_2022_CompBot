@@ -39,6 +39,7 @@ public class Drivetrain extends SubsystemBase {
   //Teleop object that allows easy use of joysticks to motor powers
   private final DifferentialDrive tankDrivetrain = new DifferentialDrive(leftMotorLeader, rightMotorLeader);
   private DriveModes driveMode = Tank;
+  private DriveModes prevDriveMode = Tank;
   private boolean reversed = false;
   private int reversedMult = 1;
 
@@ -70,7 +71,7 @@ public class Drivetrain extends SubsystemBase {
       motor.configOpenloopRamp(smoothing);
     }
 
-    odometry = new DifferentialDriveOdometry(getGyroHeading(), new Pose2d());
+    odometry = new DifferentialDriveOdometry(getGyroHeadingOdometry(), new Pose2d());
 
   }
 
@@ -80,6 +81,14 @@ public class Drivetrain extends SubsystemBase {
     for(TalonFX motor : motors) {
       motor.setNeutralMode(mode);
     }
+  }
+
+  public PigeonIMU getGyro() {
+    return pigeonIMU;
+  }
+
+  public double getGyroHeading() {
+    return -pigeonIMU.getFusedHeading();
   }
   
   //Teleop Methods
@@ -103,12 +112,21 @@ public class Drivetrain extends SubsystemBase {
 
   /**Set the drive mode (tank/arcade) */
   public void setDriveMode(DriveModes mode) {
+    prevDriveMode = driveMode;
     driveMode = mode;
+  }
+
+  public DriveModes getPrevDriveMode() {
+    return prevDriveMode;
   }
 
   /**Toggle between tank and arcade drive */
   public void toggleDriveMode() {
     driveMode = driveMode == Tank ? Arcade : Tank;
+  }
+
+  public boolean isToggleDriveModeAllowed() {
+    return driveMode != Limelight;
   }
 
   /**Change whether drivetrain is reversed or not */
@@ -152,7 +170,7 @@ public class Drivetrain extends SubsystemBase {
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
 
-    odometry.resetPosition(pose, getGyroHeading());
+    odometry.resetPosition(pose, getGyroHeadingOdometry());
   }
 
   /**Returns the speeds of the wheel in meters per second */
@@ -172,7 +190,7 @@ public class Drivetrain extends SubsystemBase {
    * Function called periodically in autonomous that updates the position of the robot
    */
   public void updateOdometry() {
-    Rotation2d gyroAngle = getGyroHeading();
+    Rotation2d gyroAngle = getGyroHeadingOdometry();
 
     odometry.update(
       gyroAngle, 
@@ -194,7 +212,7 @@ public class Drivetrain extends SubsystemBase {
     return (velocity / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254;
   }
   
-  private Rotation2d getGyroHeading() {
+  private Rotation2d getGyroHeadingOdometry() {
     //TODO: Idk whether this should be negative or not (WPILib docs says it should be)
     return Rotation2d.fromDegrees(-pigeonIMU.getFusedHeading());
   }

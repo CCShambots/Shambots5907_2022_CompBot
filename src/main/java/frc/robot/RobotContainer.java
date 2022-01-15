@@ -6,8 +6,12 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
-import frc.robot.commands.AutonomousCommand;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.LimeLightTurnCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Limelight;
 import frc.robot.util.AutoPaths;
 import frc.robot.util.DriveModes;
 import frc.robot.util.RobotStatus;
@@ -22,24 +26,20 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import static frc.robot.util.TeleopSpeeds.*;
 import static frc.robot.util.AutoPaths.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
+  private final Limelight limelight = new Limelight();
   private final Joystick driverController = new Joystick(Constants.DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
 
   //TODO: Make this based on the chosen auto route (idk how but it needs to be done!)
   private Pose2d startPose = new Pose2d();
 
-  // private List<AutonomousCommand> autoCommands = new ArrayList<>();
   private AutoPaths autoId = Example;
   private SelectCommand autoCommands;
   Map<Object, Command> commands = new HashMap<>();
-
-  // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   public RobotContainer() {
     configureButtonBindings();
@@ -49,13 +49,23 @@ public class RobotContainer {
     ));
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
+
+    SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
+
+    autoChooser.setDefaultOption("example", Example);
+
+    SmartDashboard.putData(autoChooser);
   }
 
   private void configureButtonBindings() {
     //Add button for setting turbo speed when a certain button is held
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_6)
-      .whenPressed(new InstantCommand(() -> drivetrain.setSpeed(Turbo)))
-      .whenReleased(new InstantCommand(() -> drivetrain.setSpeed(Normal)));
+      .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
+      .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
+
+    new JoystickButton(driverController, Constants.DRIVER_BUTTON_3)
+      .whenPressed(new InstantCommand(() -> drivetrain.setDriveMode(DriveModes.Limelight)))
+      .whenReleased(new InstantCommand(() -> drivetrain.setDriveMode(drivetrain.getPrevDriveMode())));
 
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_5)
       .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
@@ -90,7 +100,7 @@ public class RobotContainer {
               driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_Y_AXIS), 
               driverController.getRawAxis(Constants.DRIVER_LEFT_JOYSTICK_X_AXIS));
           }));
-          
+          put(DriveModes.Limelight, new LimeLightTurnCommand(limelight, drivetrain, Constants.Z_LIMELIGHT_PID));
         }},
         drivetrain::getDriveMode)
     );
