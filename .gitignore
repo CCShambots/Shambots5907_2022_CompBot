@@ -50,8 +50,7 @@ replay_pid*
 # Support for Project snippet scope
 
 ### Gradle ###
-.gradle
-build/
+.gradle/
 
 # Ignore Gradle GUI config
 gradle-app.setting
