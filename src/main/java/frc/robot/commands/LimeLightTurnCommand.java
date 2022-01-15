@@ -33,7 +33,7 @@ public class LimeLightTurnCommand extends CommandBase{
     @Override
     public void initialize() {
         limelight.setOn();
-        driveTrain.getGyro().setFusedHeading(0);
+        driveTrain.setGyroHeading(0);
 
         limelightOffset = limelight.targetOffset().getX();
         prevLimeLightOffset = limelightOffset;

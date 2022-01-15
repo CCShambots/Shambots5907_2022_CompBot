@@ -46,8 +46,6 @@ public class Drivetrain extends SubsystemBase {
   private double normalSpeed = .6;
   private double turboSpeed = 1;
   private double speedMult = normalSpeed;
-  //TODO: Decide if dampening is necessary
-  private double smoothing = 1;
 
   //Autonomous objects (odometry, trajectory following, etc)
   RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
@@ -68,7 +66,6 @@ public class Drivetrain extends SubsystemBase {
     for(WPI_TalonFX motor : motors) {
       motor.configFactoryDefault();
       motor.configSupplyCurrentLimit(CURRENT_LIMIT); //Stops the motor from pulling more current than the fuse can handle
-      motor.configOpenloopRamp(smoothing);
     }
 
     odometry = new DifferentialDriveOdometry(getGyroHeadingOdometry(), new Pose2d());
@@ -83,12 +80,25 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  public PigeonIMU getGyro() {
-    return pigeonIMU;
+  public void setDampening(double smoothing) {
+    for(TalonFX motor : motors) {
+      motor.configOpenloopRamp(1);
+    }
   }
 
+  /**
+   * 
+   * @return
+   */
   public double getGyroHeading() {
     return -pigeonIMU.getFusedHeading();
+  }
+
+  /**
+   * Set the fused heading (gravity oriented heading) of the pigeon gyro
+   */
+  public void setGyroHeading(double heading) {
+    pigeonIMU.setFusedHeading(heading);
   }
   
   //Teleop Methods
@@ -173,7 +183,9 @@ public class Drivetrain extends SubsystemBase {
     odometry.resetPosition(pose, getGyroHeadingOdometry());
   }
 
-  /**Returns the speeds of the wheel in meters per second */
+  /**
+   * @return the speeds of the wheel in meters per second
+   */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
       encoderVelocityToMeters(leftMotorLeader.getSelectedSensorVelocity()), 
@@ -181,6 +193,7 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
+  /**Reset the drive encoders to zero */
   private void resetEncoders() {
     leftMotorLeader.setSelectedSensorPosition(0);
     rightMotorLeader.setSelectedSensorPosition(0);
@@ -199,11 +212,6 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
-  /**
-   * Function that returns the distance (in meters) the robot has traveled based on the encoder counts of a motor
-   * @param counts current encoder counts on a motor
-   * @return the meters that the encoder has reported based on wheel size in Constants.java
-   */
   private double encoderCountsToMeters(double counts) {
     return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254;
   }
@@ -219,6 +227,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    //We have no use (yet) for odometry in teleop, so it will only update in autonomous
     if(Constants.robotStatus == RobotStatus.AUTO) {
       updateOdometry();
     }

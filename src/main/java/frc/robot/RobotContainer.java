@@ -1,12 +1,7 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.LimeLightTurnCommand;
@@ -39,7 +34,11 @@ public class RobotContainer {
 
   private AutoPaths autoId = Example;
   private SelectCommand autoCommands;
-  Map<Object, Command> commands = new HashMap<>();
+  private Map<Object, Command> commands = new HashMap<>();
+
+  //Sendable chooser for picking an auton route
+  SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
+
 
   public RobotContainer() {
     configureButtonBindings();
@@ -49,8 +48,6 @@ public class RobotContainer {
     ));
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
-
-    SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
 
     autoChooser.setDefaultOption("example", Example);
 
@@ -74,19 +71,12 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(drivetrain::toggleReversed));
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  // public Command getAutonomousCommand() {
-  //   // An ExampleCommand will run in autonomous
-  //   return null;
-  // }
-
   public void doTeleopSetup() {
 
-    //Set always running command for teleop on the drivetrain (basic drive control)
+    //TODO: Decide if this is necessary
+    drivetrain.setDampening(1);
+
+    //The different drive modes for the robot, which control whether the robot is in tank drive, arcade drive, or limelight orienting mode
     drivetrain.setDefaultCommand(
       new SelectCommand(
         new HashMap<Object, Command>() {{
@@ -113,11 +103,7 @@ public class RobotContainer {
   }
 
   public AutoPaths getAutoId() {
-    return autoId;
-  }
-
-  public void setAutoId(AutoPaths id) {
-    autoId = id;
+    return autoChooser.getSelected();
   }
 
   public void doAutoSetup() {
