@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.LimeLightTurnCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.util.AutoPaths;
 import frc.robot.util.DriveModes;
@@ -32,7 +33,7 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
   private final Limelight limelight = new Limelight();
   private final Joystick driverController = new Joystick(Constants.DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
-
+  private final Intake intake = new Intake();
   //TODO: Make this based on the chosen auto route (idk how but it needs to be done!)
   private Pose2d startPose = new Pose2d();
 
@@ -71,6 +72,23 @@ public class RobotContainer {
       
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_4)
       .whenPressed(new InstantCommand(drivetrain::toggleReversed));
+
+    new JoystickButton(driverController, Constants.DRIVER_BUTTON_7)
+      .whenPressed(new InstantCommand(intake::runIntakeForward))
+      .whenReleased(new InstantCommand(intake::stopIntake));
+      
+    new JoystickButton(driverController, Constants.DRIVER_BUTTON_8)
+      .whenPressed(new InstantCommand(intake::runIntakeBackward))
+      .whenReleased(new InstantCommand(intake::stopIntake));
+
+
+    new JoystickButton(driverController, Constants.DRIVER_BUTTON_9)
+      .whenPressed(new InstantCommand(intake::runRotateIntakeForward))
+      .whenReleased(new InstantCommand(intake::stopRotateIntake));
+      
+    new JoystickButton(driverController, Constants.DRIVER_BUTTON_10)
+      .whenPressed(new InstantCommand(intake::runRotateIntakeBackward))
+      .whenReleased(new InstantCommand(intake::stopRotateIntake));
   }
 
   /**

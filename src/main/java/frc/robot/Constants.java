@@ -32,6 +32,16 @@ public final class Constants {
     public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
     public static final double WHEEL_SIZE_INCHES = 6;
 
+    //Intake Variables
+    public static final int CARGO_INTAKE_MOTOR = 4;
+    public static final int ROTATE_INTAKE_MOTOR = 5;
+    public static final int stopIntake = 0;
+    public static final double runIntakeForward = 0.5;
+    public static final double runIntakeBackward = -0.5;
+    public static final int stopRotateIntake = 0;
+    public static final double runRotateIntakeForward = 0.5;
+    public static final double runRotateIntakeBackward = -0.5;
+
     //Controller variables
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
@@ -41,6 +51,10 @@ public final class Constants {
     public static final int DRIVER_BUTTON_5 = 5; //Arcade/Tank drive
     public static final int DRIVER_BUTTON_4 = 4; //Drivetrain reversed or not
     public static final int DRIVER_BUTTON_3 = 5; //Control for switching to limelight turning 
+    public static final int DRIVER_BUTTON_7 = 7; //Runs the Intake Forwards
+    public static final int DRIVER_BUTTON_8 = 8; //Runs the Intake Backwards
+    public static final int DRIVER_BUTTON_9 = 9; //Rotates the intake forwards
+    public static final int DRIVER_BUTTON_10 = 10; //Rotates the intake backwards
 
     //Robot mode (for odometry toggling)
     public static RobotStatus robotStatus = RobotStatus.AUTO;
@@ -49,5 +63,7 @@ public final class Constants {
     public static final double LIMELIGHT_FIND_TARGET_SPEED = 0.25;
     public static final PIDController Z_LIMELIGHT_PID = new PIDController(0, 0, 0);
     public static final double LIMELIGHT_TOLERANCE = 5;
+
+
 
 }
