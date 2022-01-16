@@ -85,7 +85,7 @@ public class RobotContainer {
       .whenReleased(new InstantCommand(intake::stopIntake));
     
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_8)
-      .whenPressed(new InstantCommand(intake::stopIntake))
+      .whenPressed(new InstantCommand(intake::stopIntake));
 
 
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_10)
