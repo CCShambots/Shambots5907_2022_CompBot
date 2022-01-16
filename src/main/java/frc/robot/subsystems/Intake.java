@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.util.IntakeDirections;
 import frc.robot.util.IntakeStates;
 
@@ -36,6 +35,9 @@ public class Intake extends SubsystemBase {
     cargoIntakeMotor.configSupplyCurrentLimit(CURRENT_LIMIT);
     rotateIntakeMotor.configSupplyCurrentLimit(CURRENT_LIMIT);
   }
+
+
+  //Code for rotating the intake up and down
 
   public void updatePIDLoop() {
     rotateIntakeMotor.set(controller.calculate(getRotationalEncoder()));
@@ -69,6 +71,13 @@ public class Intake extends SubsystemBase {
     rotateIntakeMotor.set(power);
   }
 
+  public IntakeStates getIntakeState() {
+    return intakeState;
+  }
+
+
+  //Code for actually spinning the intake
+
   //TODO: Prioritize running the intake either forward or backward
   public void runIntakeForward(){
     cargoIntakeMotor.set(INTAKE_SPEED);
@@ -84,7 +93,16 @@ public class Intake extends SubsystemBase {
     cargoIntakeMotor.set(0);
     direction = Stopped;
   }
+
+  public IntakeDirections getIntakeMode() {
+    return direction;
+  }
+
+
   
+  /**
+   * Periodic loop
+   */
   @Override
   public void periodic() {
     updatePIDLoop();
