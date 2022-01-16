@@ -35,12 +35,10 @@ public final class Constants {
     //Intake Variables
     public static final int CARGO_INTAKE_MOTOR = 4;
     public static final int ROTATE_INTAKE_MOTOR = 5;
-    public static final int stopIntake = 0;
-    public static final double runIntakeForward = 0.5;
-    public static final double runIntakeBackward = -0.5;
-    public static final int stopRotateIntake = 0;
-    public static final double runRotateIntakeForward = 0.5;
-    public static final double runRotateIntakeBackward = -0.5;
+    public static final double INTAKE_SPEED = 0.5;
+    public static final PIDController INTAKE_CONTROLLER = new PIDController(0, 0, 0);
+    public static final double INTAKE_RAISED_COUNTS = 0;
+    public static final double INTAKE_LOWERED_COUNTS = 512;
 
     //Controller variables
     public static final int DRIVER_CONTROLLER_PORT = 0;
@@ -53,8 +51,9 @@ public final class Constants {
     public static final int DRIVER_BUTTON_3 = 5; //Control for switching to limelight turning 
     public static final int DRIVER_BUTTON_7 = 7; //Runs the Intake Forwards
     public static final int DRIVER_BUTTON_8 = 8; //Runs the Intake Backwards
-    public static final int DRIVER_BUTTON_9 = 9; //Rotates the intake forwards
-    public static final int DRIVER_BUTTON_10 = 10; //Rotates the intake backwards
+    public static final int DRIVER_BUTTON_9 = 9; //Stops the Intake
+    public static final int DRIVER_BUTTON_10 = 10; //Raises the Intake
+    public static final int DRIVER_BUTTON_11 = 11; //Lowers the Intake
 
     //Robot mode (for odometry toggling)
     public static RobotStatus robotStatus = RobotStatus.AUTO;

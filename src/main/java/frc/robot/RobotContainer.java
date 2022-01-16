@@ -14,6 +14,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.util.AutoPaths;
 import frc.robot.util.DriveModes;
+import frc.robot.util.IntakeStates;
 import frc.robot.util.RobotStatus;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -73,6 +74,8 @@ public class RobotContainer {
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_4)
       .whenPressed(new InstantCommand(drivetrain::toggleReversed));
 
+
+    //TODO: Should the intake continue running until stopped with a different button, or just run while held down
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_7)
       .whenPressed(new InstantCommand(intake::runIntakeForward))
       .whenReleased(new InstantCommand(intake::stopIntake));
@@ -80,15 +83,16 @@ public class RobotContainer {
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_8)
       .whenPressed(new InstantCommand(intake::runIntakeBackward))
       .whenReleased(new InstantCommand(intake::stopIntake));
+    
+    new JoystickButton(driverController, Constants.DRIVER_BUTTON_8)
+      .whenPressed(new InstantCommand(intake::stopIntake))
 
 
-    new JoystickButton(driverController, Constants.DRIVER_BUTTON_9)
-      .whenPressed(new InstantCommand(intake::runRotateIntakeForward))
-      .whenReleased(new InstantCommand(intake::stopRotateIntake));
-      
     new JoystickButton(driverController, Constants.DRIVER_BUTTON_10)
-      .whenPressed(new InstantCommand(intake::runRotateIntakeBackward))
-      .whenReleased(new InstantCommand(intake::stopRotateIntake));
+      .whenPressed(new InstantCommand(() -> intake.setTargetPoint(IntakeStates.Raised)));
+      
+    new JoystickButton(driverController, Constants.DRIVER_BUTTON_11)
+      .whenPressed(new InstantCommand(() -> intake.setTargetPoint(IntakeStates.Lowered)));
   }
 
   /**
