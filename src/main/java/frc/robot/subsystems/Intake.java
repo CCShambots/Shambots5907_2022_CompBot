@@ -16,9 +16,11 @@ import static frc.robot.util.IntakeDirections.*;
 import static frc.robot.util.IntakeStates.*;
 import static frc.robot.Constants.*;
 
+
 public class Intake extends SubsystemBase {
 
-  
+  //TODO: Add override for stopping control of the intake until it is fully in one state (up/down)
+
   private static final WPI_TalonFX cargoIntakeMotor = new WPI_TalonFX(CARGO_INTAKE_MOTOR);
   private static final WPI_TalonFX rotateIntakeMotor = new WPI_TalonFX(ROTATE_INTAKE_MOTOR);
 
@@ -51,6 +53,14 @@ public class Intake extends SubsystemBase {
     intakeState = state;
     if(state == Raised) controller.setSetpoint(INTAKE_RAISED_COUNTS);
     else controller.setSetpoint(INTAKE_LOWERED_COUNTS);
+  }
+
+  public void raiseIntake() {
+    setTargetPoint(Raised);
+  }
+
+  public void lowerIntake() {
+    setTargetPoint(Lowered);
   }
 
   /**
