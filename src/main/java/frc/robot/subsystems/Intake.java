@@ -14,6 +14,7 @@ import frc.robot.util.IntakeStates;
 
 import static frc.robot.util.IntakeDirections.*;
 import static frc.robot.util.IntakeStates.*;
+import static frc.robot.Constants.Intake.*;
 import static frc.robot.Constants.*;
 
 
@@ -30,6 +31,8 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   public Intake(){
+    cargoIntakeMotor.configFactoryDefault();
+    rotateIntakeMotor.configFactoryDefault();
 
     cargoIntakeMotor.setNeutralMode(NeutralMode.Brake);
     rotateIntakeMotor.setNeutralMode(NeutralMode.Brake);

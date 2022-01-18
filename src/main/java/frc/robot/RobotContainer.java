@@ -31,10 +31,12 @@ import java.util.Map;
 
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.Constants.Limelight.*;
+import static frc.robot.Constants.Intake.*;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
   private final Limelight limelight = new Limelight();
+  private final Intake intake = new Intake();
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
@@ -44,6 +46,8 @@ public class RobotContainer {
 
   private SelectCommand autoCommands;
   Map<Object, Command> commands = new HashMap<>();
+  SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
+
 
   public RobotContainer() {
     configureButtonBindings();
@@ -53,8 +57,6 @@ public class RobotContainer {
     ));
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
-
-    SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
 
     autoChooser.setDefaultOption("example", Example);
 
@@ -80,21 +82,21 @@ public class RobotContainer {
 
     //TODO: Should the intake continue running until stopped with a different button, or just run while held down
     //TODO: Prioritize running the inatke forwards or backwards
-    new JoystickButton(driverController, Constants.DRIVER_BUTTON_7)
+    new JoystickButton(driverController, OPERATOR_BUTTON_7)
       .whenPressed(new InstantCommand(intake::runIntakeForward));
       // .whenReleased(new InstantCommand(intake::stopIntake));
       
-    new JoystickButton(driverController, Constants.DRIVER_BUTTON_8)
+    new JoystickButton(driverController, OPERATOR_BUTTON_8)
       .whenPressed(new InstantCommand(intake::runIntakeBackward));
       // .whenReleased(new InstantCommand(intake::stopIntake));
     
-    new JoystickButton(driverController, Constants.DRIVER_BUTTON_8)
+    new JoystickButton(driverController, OPERATOR_BUTTON_8)
       .whenPressed(new InstantCommand(intake::stopIntake));
 
-    new JoystickButton(driverController, Constants.DRIVER_BUTTON_10)
+    new JoystickButton(driverController, OPERATOR_BUTTON_10)
       .whenPressed(new InstantCommand(intake::raiseIntake));
       
-    new JoystickButton(driverController, Constants.DRIVER_BUTTON_11)
+    new JoystickButton(driverController, OPERATOR_BUTTON_11)
       .whenPressed(new InstantCommand(intake::lowerIntake));
   }
 
@@ -137,11 +139,7 @@ public class RobotContainer {
   }
 
   public AutoPaths getAutoId() {
-    return autoId;
-  }
-
-  public void setAutoId(AutoPaths id) {
-    autoId = id;
+    return autoChooser.getSelected();
   }
 
   public void doAutoSetup() {
