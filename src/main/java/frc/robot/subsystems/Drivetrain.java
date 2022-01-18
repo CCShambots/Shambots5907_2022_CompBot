@@ -36,6 +36,8 @@ import frc.robot.util.RobotStatus;
 import frc.robot.util.TeleopSpeeds;
 
 public class Drivetrain extends SubsystemBase {
+  //TODO: PID Teleop
+
   //Motor declaractions
   private static final WPI_TalonFX leftMotorLeader = new WPI_TalonFX(LEFT_DRIVETRAIN_LEADER);
   private static final WPI_TalonFX leftMotorFollower = new WPI_TalonFX(LEFT_DRIVETRAIN_FOLLOWER);
