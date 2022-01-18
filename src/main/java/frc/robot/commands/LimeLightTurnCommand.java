@@ -2,9 +2,10 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
+
+import static frc.robot.Constants.Limelight.*;
 
 
 public class LimeLightTurnCommand extends CommandBase{
@@ -58,13 +59,13 @@ public class LimeLightTurnCommand extends CommandBase{
         if(limelight.hasTarget()){
             move = rotationPID.calculate(driveTrain.getGyroHeading());
         } else {
-            move = Constants.LIMELIGHT_FIND_TARGET_SPEED;
+            move = LIMELIGHT_FIND_TARGET_SPEED;
         }
 
         driveTrain.arcadeDrive(0, move);
 
         //Indicate that the command is finished if the robot is within 5 degrees and the gyro has received an updated set point from the limelight
-        if(Math.abs(driveTrain.getGyroHeading() - gyroSetpoint) < Constants.LIMELIGHT_TOLERANCE && gyroSet) finished = true; 
+        if(Math.abs(driveTrain.getGyroHeading() - gyroSetpoint) < LIMELIGHT_TOLERANCE && gyroSet) finished = true; 
     }
 
 

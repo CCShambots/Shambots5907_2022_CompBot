@@ -4,12 +4,26 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.CURRENT_LIMIT;
+import static frc.robot.Constants.Drivetrain.COUNTS_PER_REV_DRIVE_MOTORS;
+import static frc.robot.Constants.Drivetrain.LEFT_DRIVETRAIN_FOLLOWER;
+import static frc.robot.Constants.Drivetrain.LEFT_DRIVETRAIN_LEADER;
+import static frc.robot.Constants.Drivetrain.PIGEON_GYRO;
+import static frc.robot.Constants.Drivetrain.RIGHT_DRIVETRAIN_FOLLOWER;
+import static frc.robot.Constants.Drivetrain.RIGHT_DRIVETRAIN_LEADER;
+import static frc.robot.Constants.Drivetrain.WHEEL_SIZE_INCHES;
+import static frc.robot.Constants.Drivetrain.robotStatus;
+import static frc.robot.util.DriveModes.Arcade;
+import static frc.robot.util.DriveModes.Limelight;
+import static frc.robot.util.DriveModes.Tank;
+
 import java.util.ArrayList;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,13 +31,9 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.util.DriveModes;
 import frc.robot.util.RobotStatus;
 import frc.robot.util.TeleopSpeeds;
-
-import static frc.robot.Constants.*;
-import static frc.robot.util.DriveModes.*;
 
 public class Drivetrain extends SubsystemBase {
   //Motor declaractions
@@ -228,7 +238,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     //We have no use (yet) for odometry in teleop, so it will only update in autonomous
-    if(Constants.robotStatus == RobotStatus.AUTO) {
+    if(robotStatus == RobotStatus.AUTO) {
       updateOdometry();
     }
   }

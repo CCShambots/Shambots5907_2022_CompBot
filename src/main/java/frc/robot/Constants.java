@@ -19,37 +19,41 @@ import frc.robot.util.RobotStatus;
  */
 public final class Constants {
 
-    //Hardware devices
-    public static final int RIGHT_DRIVETRAIN_LEADER = 0;
-    public static final int RIGHT_DRIVETRAIN_FOLLOWER = 1;
-    public static final int LEFT_DRIVETRAIN_LEADER = 2;
-    public static final int LEFT_DRIVETRAIN_FOLLOWER = 3;
-
-    public static final int PIGEON_GYRO = 0;
-
     //Current limit for stopping motors from exceeding max power draw
     public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
-    
-    //Values for converting the motor counts to distance traveled
-    public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
-    public static final double WHEEL_SIZE_INCHES = 6;
 
-    //Robot mode (for odometry toggling)
-    public static RobotStatus robotStatus = RobotStatus.AUTO;
+    public static class Drivetrain {
+        public static final int RIGHT_DRIVETRAIN_LEADER = 0;
+        public static final int RIGHT_DRIVETRAIN_FOLLOWER = 1;
+        public static final int LEFT_DRIVETRAIN_LEADER = 2;
+        public static final int LEFT_DRIVETRAIN_FOLLOWER = 3;
 
-    //Limelight variables
-    public static final double LIMELIGHT_FIND_TARGET_SPEED = 0.25;
-    public static final PIDController Z_LIMELIGHT_PID = new PIDController(0, 0, 0);
-    public static final double LIMELIGHT_TOLERANCE = 5;
+        public static final int PIGEON_GYRO = 0; 
 
-    //Controller variables
-    public static final int DRIVER_CONTROLLER_PORT = 0;
-    public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
-    public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 2; //Left stick x
-    public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
-    public static final int DRIVER_BUTTON_6 = 6; //Turbo/normal speed control
-    public static final int DRIVER_BUTTON_5 = 5; //Arcade/Tank drive
-    public static final int DRIVER_BUTTON_4 = 4; //Drivetrain reversed or not
-    public static final int DRIVER_BUTTON_3 = 3; //Control for switching to limelight turning 
+        //Values for converting the motor counts to distance traveled
+        public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
+        public static final double WHEEL_SIZE_INCHES = 6;
 
+        //Robot mode (for odometry toggling)
+        public static RobotStatus robotStatus = RobotStatus.AUTO;
+    }
+
+    public static class Limelight {
+        //Limelight variables
+        public static final double LIMELIGHT_FIND_TARGET_SPEED = 0.25;
+        public static final PIDController Z_LIMELIGHT_PID = new PIDController(0, 0, 0);
+        public static final double LIMELIGHT_TOLERANCE = 5;
+    }
+
+    public static class Controller {
+        //Controller variables
+        public static final int DRIVER_CONTROLLER_PORT = 0;
+        public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
+        public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 2; //Left stick x
+        public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
+        public static final int DRIVER_BUTTON_6 = 6; //Turbo/normal speed control
+        public static final int DRIVER_BUTTON_5 = 5; //Arcade/Tank drive
+        public static final int DRIVER_BUTTON_4 = 4; //Drivetrain reversed or not
+        public static final int DRIVER_BUTTON_3 = 3; //Control for switching to limelight turning 
+    }
 }
