@@ -30,12 +30,13 @@ import static frc.robot.Constants.Limelight.*;
 public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
   private final Limelight limelight = new Limelight();
+
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
+  private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
 
   //TODO: Make this based on the chosen auto route (idk how but it needs to be done!)
   private Pose2d startPose = new Pose2d();
 
-  private AutoPaths autoId = Example;
   private SelectCommand autoCommands;
   private Map<Object, Command> commands = new HashMap<>();
 
@@ -59,18 +60,18 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     //Add button for setting turbo speed when a certain button is held
-    new JoystickButton(driverController, DRIVER_BUTTON_6)
+    new JoystickButton(operatorController, OPERATOR_BUTTON_6)
       .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
       .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
 
-    new JoystickButton(driverController, DRIVER_BUTTON_3)
+    new JoystickButton(operatorController, OPERATOR_BUTTON_3)
       .whenPressed(new InstantCommand(() -> drivetrain.setDriveMode(DriveModes.Limelight)))
       .whenReleased(new InstantCommand(() -> drivetrain.setDriveMode(drivetrain.getPrevDriveMode())));
 
-    new JoystickButton(driverController, DRIVER_BUTTON_5)
+    new JoystickButton(operatorController, OPERATOR_BUTTON_5)
       .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
       
-    new JoystickButton(driverController, DRIVER_BUTTON_4)
+    new JoystickButton(operatorController, OPERATOR_BUTTON_4)
       .whenPressed(new InstantCommand(drivetrain::toggleReversed));
   }
 

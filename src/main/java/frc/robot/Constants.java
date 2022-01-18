@@ -46,14 +46,17 @@ public final class Constants {
     }
 
     public static class Controller {
-        //Controller variables
+        //Driver Controller
         public static final int DRIVER_CONTROLLER_PORT = 0;
         public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
         public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 2; //Left stick x
         public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
-        public static final int DRIVER_BUTTON_6 = 6; //Turbo/normal speed control
-        public static final int DRIVER_BUTTON_5 = 5; //Arcade/Tank drive
-        public static final int DRIVER_BUTTON_4 = 4; //Drivetrain reversed or not
-        public static final int DRIVER_BUTTON_3 = 3; //Control for switching to limelight turning 
+
+        //Operator Controller
+        public static final int OPERATOR_CONTROLLER_PORT = 1;
+        public static final int OPERATOR_BUTTON_6 = 6; //Turbo/normal speed control
+        public static final int OPERATOR_BUTTON_5 = 5; //Arcade/Tank drive
+        public static final int OPERATOR_BUTTON_4 = 4; //Drivetrain reversed or not
+        public static final int OPERATOR_BUTTON_3 = 3; //Control for switching to limelight turning 
     }
 }
