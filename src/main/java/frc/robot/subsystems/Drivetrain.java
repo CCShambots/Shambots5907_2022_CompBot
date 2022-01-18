@@ -12,7 +12,7 @@ import static frc.robot.Constants.Drivetrain.PIGEON_GYRO;
 import static frc.robot.Constants.Drivetrain.RIGHT_DRIVETRAIN_FOLLOWER;
 import static frc.robot.Constants.Drivetrain.RIGHT_DRIVETRAIN_LEADER;
 import static frc.robot.Constants.Drivetrain.WHEEL_SIZE_INCHES;
-import static frc.robot.Constants.Drivetrain.robotStatus;
+import static frc.robot.Constants.Drivetrain.*;
 import static frc.robot.util.DriveModes.Arcade;
 import static frc.robot.util.DriveModes.Limelight;
 import static frc.robot.util.DriveModes.Tank;
@@ -24,6 +24,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -55,6 +56,12 @@ public class Drivetrain extends SubsystemBase {
   private boolean reversed = false;
   private int reversedMult = 1;
 
+  //Controllers for driving with PID Cotnrol
+  public static PIDController linearControllerRight = new PIDController(linearP, linearI, linearD);
+  public static PIDController linearControllerLeft = new PIDController(linearP, linearI, linearD);
+
+  public static PIDController linearController = new PIDController(linearP, linearI, linearD);
+
   private double normalSpeed = .6;
   private double turboSpeed = 1;
   private double speedMult = normalSpeed;
@@ -62,6 +69,7 @@ public class Drivetrain extends SubsystemBase {
   //Autonomous objects (odometry, trajectory following, etc)
   RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
   DifferentialDriveOdometry odometry;
+
 
   /**
    * Initializes the drivetrain object and adds each motor to the motors list for setup.
@@ -99,8 +107,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * 
-   * @return
+   * @return the gyro's heading relative to gravity
    */
   public double getGyroHeading() {
     return -pigeonIMU.getFusedHeading();
@@ -115,17 +122,50 @@ public class Drivetrain extends SubsystemBase {
   
   //Teleop Methods
 
-    /**
+
+  /**
    * Teleop command for running the tank drive (run periodically)
-   * @param speedLeft joystick value for the left side
-   * @param speedRight joystick values for the right side
+   * @param speedLeft
+   * @param speedRight
    */
-  public void tankDrive(double speedLeft, double speedRight) {
-    tankDrivetrain.tankDrive(speedLeft * speedMult * reversedMult, speedRight * speedMult * reversedMult);
+  public void tankDriveRaw(double speedLeft, double speedRight) {
+    tankDrivetrain.tankDrive(adjustJoystick(speedLeft), adjustJoystick(speedRight));
   }
 
-  public void arcadeDrive(double forwardMotion, double turnSpeed) {
-    tankDrivetrain.arcadeDrive(forwardMotion * speedMult * reversedMult, turnSpeed * speedMult * reversedMult);
+  /**
+   * Teleop command for running the arcade drive (raw)
+   * @param speedFoward
+   * @param turnSpeed
+   */
+  public void arcadeDriveRaw(double speedFoward, double turnSpeed) {
+    tankDrivetrain.arcadeDrive(adjustJoystick(speedFoward), adjustJoystick(turnSpeed));
+  }
+
+  /**
+   * Method for doing tank drive with adjustments from the PID
+   * @param speedLeft
+   * @param speedRight
+   */
+  public void tankDrivePID(double speedLeft, double speedRight) {
+    linearControllerLeft.setSetpoint(adjustJoystick(speedRight) * MAX_LINEAR_VELOCITY);
+    linearControllerRight.setSetpoint(adjustJoystick(speedRight) * MAX_LINEAR_VELOCITY);
+
+    leftMotorLeader.setVoltage(linearControllerLeft.calculate(encoderVelocityToMeters(leftMotorLeader.getSelectedSensorVelocity())));
+    rightMotorLeader.setVoltage(linearControllerRight.calculate(encoderVelocityToMeters(rightMotorLeader.getSelectedSensorVelocity())));
+  }
+  
+  //TODO: I'm much too lazy to do this now, so we'll have to do it later
+  public static void arcadeDrivePID(double linearSpeed, double turnSpeed) {
+
+  }
+
+  /**
+   * 
+   * @param input Raw joystick input
+   * @return the input after being sped up, slowed down, or reversed, as per the current drivetrain settings
+   */
+  public double adjustJoystick(double input) {
+    return input * speedMult * reversedMult;
   }
 
   public DriveModes getDriveMode() {

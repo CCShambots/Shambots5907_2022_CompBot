@@ -62,7 +62,7 @@ public class LimeLightTurnCommand extends CommandBase{
             move = LIMELIGHT_FIND_TARGET_SPEED;
         }
 
-        driveTrain.arcadeDrive(0, move);
+        driveTrain.arcadeDriveRaw(0, move);
 
         //Indicate that the command is finished if the robot is within 5 degrees and the gyro has received an updated set point from the limelight
         if(Math.abs(driveTrain.getGyroHeading() - gyroSetpoint) < LIMELIGHT_TOLERANCE && gyroSet) finished = true; 

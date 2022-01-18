@@ -85,12 +85,12 @@ public class RobotContainer {
       new SelectCommand(
         new HashMap<Object, Command>() {{
           put(DriveModes.Tank, new RunCommand(() -> {
-            drivetrain.tankDrive(
+            drivetrain.tankDriveRaw(
               driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
               driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS));
             }));
           put(DriveModes.Arcade, new RunCommand(() -> {
-            drivetrain.arcadeDrive(
+            drivetrain.arcadeDriveRaw(
               driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
               driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS));
           }));
