@@ -19,6 +19,7 @@ import static frc.robot.util.DriveModes.Tank;
 
 import java.util.ArrayList;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -30,8 +31,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.util.DriveModes;
 import frc.robot.util.RobotStatus;
 import frc.robot.util.TeleopSpeeds;
@@ -46,6 +52,10 @@ public class Drivetrain extends SubsystemBase {
   private static final WPI_TalonFX rightMotorFollower = new WPI_TalonFX(RIGHT_DRIVETRAIN_FOLLOWER);
 
   private static final PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
+
+  private static final Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
+  private static final DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
+
 
   private final ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();
 
@@ -76,7 +86,10 @@ public class Drivetrain extends SubsystemBase {
    */
   public Drivetrain() {
     leftMotorFollower.follow(leftMotorLeader);
-    rightMotorFollower.follow(rightMotorFollower);
+    rightMotorFollower.follow(rightMotorLeader);
+
+    rightMotorLeader.setInverted(true);
+    rightMotorFollower.setInverted(InvertType.FollowMaster);
     
     motors.add(leftMotorLeader);
     motors.add(leftMotorFollower);
@@ -89,6 +102,9 @@ public class Drivetrain extends SubsystemBase {
     }
 
     odometry = new DifferentialDriveOdometry(getGyroHeadingOdometry(), new Pose2d());
+
+    compressor.enableDigital();
+    shifter.toggle();
 
   }
 
@@ -168,6 +184,16 @@ public class Drivetrain extends SubsystemBase {
     return input * speedMult * reversedMult;
   }
 
+  public void runDefaultDrive(double leftY, double leftX, double rightY) {
+    if(getDriveMode() == Tank) {
+      tankDrive(leftY, rightY);
+    } else if(getDriveMode() == Arcade) {
+      arcadeDrive(leftY, leftX);
+    }
+
+  }
+  
+
   public DriveModes getDriveMode() {
     return driveMode;
   }
@@ -217,6 +243,18 @@ public class Drivetrain extends SubsystemBase {
 
   //Autonomous Methods
 
+ /**
+   * Controls the left and right sides of the drive directly with voltages.
+   *
+   * @param leftVolts the commanded left output
+   * @param rightVolts the commanded right output
+   */
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    leftMotorLeader.setVoltage(leftVolts);
+    leftMotorFollower.setVoltage(rightVolts);
+    tankDrivetrain.feed();
+  }
+
   /**
    * Returns the pose of the robot in meters
    * @return the pose of the bot
@@ -251,6 +289,22 @@ public class Drivetrain extends SubsystemBase {
     rightMotorLeader.setSelectedSensorPosition(0);
   }
 
+  public double leftEncoderValue() {
+    return leftMotorLeader.getSelectedSensorPosition();
+  }
+
+  public double rightEncoderValue() {
+    return rightMotorLeader.getSelectedSensorPosition();
+  }
+
+  public double leftVoltage() {
+    return leftMotorLeader.getMotorOutputVoltage();
+  }
+
+  public double rightVoltage() {
+    return rightMotorLeader.getMotorOutputVoltage();
+  }
+
   /**
    * Function called periodically in autonomous that updates the position of the robot
    */
@@ -283,5 +337,8 @@ public class Drivetrain extends SubsystemBase {
     if(robotStatus == RobotStatus.AUTO) {
       updateOdometry();
     }
+
+    //TODO: Remove for comp
+    tankDrivetrain.feed();
   }
 }

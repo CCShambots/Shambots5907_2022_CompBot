@@ -25,10 +25,12 @@ public final class Constants {
     public static class Drivetrain {
         public static final int RIGHT_DRIVETRAIN_LEADER = 01;
         public static final int RIGHT_DRIVETRAIN_FOLLOWER = 02;
-        public static final int LEFT_DRIVETRAIN_LEADER = 03;
-        public static final int LEFT_DRIVETRAIN_FOLLOWER = 04;
+        public static final int LEFT_DRIVETRAIN_LEADER = 04;
+        public static final int LEFT_DRIVETRAIN_FOLLOWER = 03;
 
-        public static final int PIGEON_GYRO = 05; 
+        public static final int PIGEON_GYRO = 05;
+        
+        public static final int COMPRESSOR = 06;
 
         //Values for converting the motor counts to distance traveled
         public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
@@ -60,14 +62,14 @@ public final class Constants {
         //Driver Controller
         public static final int DRIVER_CONTROLLER_PORT = 0;
         public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
-        public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 2; //Left stick x
+        public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 0; //Left stick x
         public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
 
         //Operator Controller
-        public static final int OPERATOR_CONTROLLER_PORT = 1;
-        public static final int OPERATOR_BUTTON_6 = 6; //Turbo/normal speed control
-        public static final int OPERATOR_BUTTON_5 = 5; //Arcade/Tank drive
-        public static final int OPERATOR_BUTTON_4 = 4; //Drivetrain reversed or not
+        public static final int OPERATOR_CONTROLLER_PORT = 0;
+        public static final int OPERATOR_A = 1; //Turbo/normal speed control
+        public static final int OPERATOR_B = 2; //Arcade/Tank drive
+        public static final int OPERATOR_X = 3; //Drivetrain reversed or not
         public static final int OPERATOR_BUTTON_3 = 3; //Control for switching to limelight turning 
     }
 }

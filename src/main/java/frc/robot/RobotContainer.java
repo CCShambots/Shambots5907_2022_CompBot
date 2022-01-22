@@ -1,6 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -10,9 +12,12 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.util.AutoPaths;
 import frc.robot.util.DriveModes;
 import frc.robot.util.RobotStatus;
+import frc.robot.util.TrajectoryCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -21,7 +26,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import static frc.robot.util.TeleopSpeeds.*;
 import static frc.robot.util.AutoPaths.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static frc.robot.Constants.Controller.*;
@@ -47,56 +54,54 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
 
-    commands.put(Example, new SequentialCommandGroup(
-      new InstantCommand(this::doAutoSetup)
-    ));
+    // commands.put(Example, new SequentialCommandGroup(
+    //   new InstantCommand(this::doAutoSetup),
+    //   TrajectoryCommands.getRamseteCommand(new Pose2d(0, 0, new Rotation2d(0)), new ArrayList<Translation2d>(), new Pose2d(3, 0, new Rotation2d(0)), drivetrain),
+    //   new InstantCommand(() -> drivetrain.tankDriveVolts(0,0))
+    // ));
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
     autoChooser.setDefaultOption("example", Example);
 
     SmartDashboard.putData(autoChooser);
+
+    doTeleopSetup();
   }
 
   private void configureButtonBindings() {
     //Add button for setting turbo speed when a certain button is held
-    new JoystickButton(operatorController, OPERATOR_BUTTON_6)
+    new JoystickButton(operatorController, OPERATOR_A)
       .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
       .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
 
-    new JoystickButton(operatorController, OPERATOR_BUTTON_3)
-      .whenPressed(new InstantCommand(() -> drivetrain.setDriveMode(DriveModes.Limelight)))
-      .whenReleased(new InstantCommand(() -> drivetrain.setDriveMode(drivetrain.getPrevDriveMode())));
+    // new JoystickButton(operatorController, OPERATOR_BUTTON_3)
+    //   .whenPressed(new InstantCommand(() -> drivetrain.setDriveMode(DriveModes.Limelight)))
+    //   .whenReleased(new InstantCommand(() -> drivetrain.setDriveMode(drivetrain.getPrevDriveMode())));
 
-    new JoystickButton(operatorController, OPERATOR_BUTTON_5)
+    new JoystickButton(operatorController, OPERATOR_B)
       .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
       
-    new JoystickButton(operatorController, OPERATOR_BUTTON_4)
+    new JoystickButton(operatorController, OPERATOR_X)
       .whenPressed(new InstantCommand(drivetrain::toggleReversed));
+  }
+
+  public void telemetry() {
+    SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
+    SmartDashboard.putNumber("Left encoder", drivetrain.leftEncoderValue());
+    SmartDashboard.putNumber("Right encoder", drivetrain.rightEncoderValue());
+    SmartDashboard.putNumber("Left voltage", drivetrain.leftVoltage());
+    SmartDashboard.putNumber("Right voltage", drivetrain.rightVoltage());
+
   }
 
   public void doTeleopSetup() {
 
     //TODO: Decide if this is necessary
-    drivetrain.setDampening(1);
+    // drivetrain.setDampening(1);
 
-    //The different drive modes for the robot, which control whether the robot is in tank drive, arcade drive, or limelight orienting mode
     drivetrain.setDefaultCommand(
-      new SelectCommand(
-        new HashMap<Object, Command>() {{
-          put(DriveModes.Tank, new RunCommand(() -> {
-            drivetrain.tankDriveRaw(
-              driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-              driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS));
-            }));
-          put(DriveModes.Arcade, new RunCommand(() -> {
-            drivetrain.arcadeDriveRaw(
-              driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-              driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS));
-          }));
-          put(DriveModes.Limelight, new LimeLightTurnCommand(limelight, drivetrain, Z_LIMELIGHT_PID));
-        }},
-        drivetrain::getDriveMode)
+      new RunCommand(() -> drivetrain.runDefaultDrive(driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), -driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS), driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), drivetrain)
     );
 
     setTeleop();
