@@ -39,12 +39,19 @@ public final class Constants {
         //Robot mode (for odometry toggling)
         public static RobotStatus robotStatus = RobotStatus.AUTO;
 
-        public static double LINEAR_P = 0;
-        public static double LINEAR_I = 0;
-        public static double LINEAR_D = 0;
+        public static double RIGHT_P = 0;
+        public static double RIGHT_I = 0;
+        public static double RIGHT_D = 0;
 
-        public static double KS = 1.0052;
-        public static double KV = 1.5518;
+        public static double LEFT_P = 0;
+        public static double LEFT_I = 0;
+        public static double LEFT_D = 0;
+
+        public static double LEFT_KS = 1.0052;
+        public static double LEFT_KV = 2.0;
+
+        public static double RIGHT_KS = 1.0052;
+        public static double RIGHT_KV = 2.4;
 
         public static PIDController turnController = new PIDController(0, 0, 0);
 

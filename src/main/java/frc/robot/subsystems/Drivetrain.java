@@ -45,8 +45,8 @@ import frc.robot.util.TeleopSpeeds;
 
 public class Drivetrain extends SubsystemBase {
   //Hardware declarations
-  private static final TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true);
-  private static final TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true);
+  private static final TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
+  private static final TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
 
   private static final PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
@@ -63,9 +63,9 @@ public class Drivetrain extends SubsystemBase {
 
   //Controllers for driving with PID Cotnrol
   
-  public static PIDController linearControllerLeft = new PIDController(LINEAR_P, LINEAR_I, LINEAR_D);
+  public static PIDController linearControllerLeft = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
 
-  public static PIDController linearController = new PIDController(LINEAR_P, LINEAR_I, LINEAR_D);
+  public static PIDController linearController = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
 
   private double normalSpeed = .6;
   private double turboSpeed = 1;
@@ -123,11 +123,14 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void tankDrivePID(double inputLeft, double inputRight) {
+    if(Math.abs(inputLeft) < 0.25) inputLeft = 0;
+    if(Math.abs(inputRight) < 0.25) inputRight = 0;
+
     double speedLeft = adjustJoystick(inputLeft) * MAX_LINEAR_VELOCITY;
     double speedRight = adjustJoystick(inputRight) * MAX_LINEAR_VELOCITY;
 
     leftModule.setTargetVelocity(speedLeft);
-    leftModule.setTargetVelocity(speedRight);
+    rightModule.setTargetVelocity(speedRight);
   }
 
   /**
@@ -256,5 +259,14 @@ public class Drivetrain extends SubsystemBase {
 
     leftModule.runControlLoop();
     rightModule.runControlLoop();
+  }
+
+  //TODO: Remove these after testing
+  public TankDriveModule getLeftModule() {
+    return leftModule;
+  }
+
+  public TankDriveModule getRightModule() {
+    return rightModule;
   }
 }

@@ -18,13 +18,16 @@ public class TankDriveModule {
     private WPI_TalonFX leader;
     private WPI_TalonFX follower;
 
-    private static PIDController pidController = new PIDController(LINEAR_P, LINEAR_I, LINEAR_D);
-    private static SimpleMotorFeedforward feedForwardController = new SimpleMotorFeedforward(KS, KV);
+    private PIDController pidController;
+    private SimpleMotorFeedforward feedForwardController;
 
     private double pidOutput = 0;
     private double feedForwardOutput = 0;
 
-    public TankDriveModule(int leaderID, int followerID, boolean inverted) {
+    public TankDriveModule(int leaderID, int followerID, boolean inverted, double p, double i, double d, double ks, double kv) {
+        pidController = new PIDController(p, i, d);
+        feedForwardController = new SimpleMotorFeedforward(ks, kv);
+        
         leader = new WPI_TalonFX(leaderID);
         follower = new WPI_TalonFX(followerID);
 
@@ -46,7 +49,6 @@ public class TankDriveModule {
 
         pidController.reset();
 
-        SmartDashboard.putData(pidController);
     }
 
     public void setTargetVelocity(double velocity) {
@@ -89,5 +91,14 @@ public class TankDriveModule {
         leader.setVoltage(feedForwardOutput + pidOutput);
     }
 
+
+    //TODO: Remove this after tuning
+    public double getSetpoint() {
+        return pidController.getSetpoint();
+    }
+
+    public PIDController getPIDController() {
+        return pidController;
+    }
     
 }

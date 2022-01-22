@@ -92,7 +92,16 @@ public class RobotContainer {
     SmartDashboard.putNumber("Right encoder", drivetrain.getRightMeters());
     SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
     SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
-
+    SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
+    SmartDashboard.putNumber("Right velocity", drivetrain.getRightVelocity());
+    SmartDashboard.putNumber("Left feed forward", drivetrain.getLeftModule().getFeedForwardOutput());
+    SmartDashboard.putNumber("Right feed forward", drivetrain.getRightModule().getFeedForwardOutput());
+    SmartDashboard.putNumber("Left PID", drivetrain.getLeftModule().getPIDOutput());
+    SmartDashboard.putNumber("Right PID", drivetrain.getRightModule().getPIDOutput());
+    SmartDashboard.putData("RightPID", drivetrain.getRightModule().getPIDController());
+    SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
+    SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
+    SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
   }
 
   public void doTeleopSetup() {
