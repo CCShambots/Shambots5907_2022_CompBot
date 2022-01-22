@@ -47,8 +47,8 @@ public final class Constants {
 
     public static class Intake {
          //Intake Variables
-        public static final int CARGO_INTAKE_MOTOR = 4;
-        public static final int ROTATE_INTAKE_MOTOR = 5;
+        public static final int CARGO_INTAKE_MOTOR = 11;
+        public static final int ROTATE_INTAKE_MOTOR = 12;
         public static final double INTAKE_SPEED = 0.5;
         public static final PIDController INTAKE_CONTROLLER = new PIDController(0, 0, 0);
         public static final double INTAKE_RAISED_COUNTS = 0;
