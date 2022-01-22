@@ -23,12 +23,12 @@ public final class Constants {
     public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
     public static class Drivetrain {
-        public static final int RIGHT_DRIVETRAIN_LEADER = 0;
-        public static final int RIGHT_DRIVETRAIN_FOLLOWER = 1;
-        public static final int LEFT_DRIVETRAIN_LEADER = 2;
-        public static final int LEFT_DRIVETRAIN_FOLLOWER = 3;
+        public static final int RIGHT_DRIVETRAIN_LEADER = 01;
+        public static final int RIGHT_DRIVETRAIN_FOLLOWER = 02;
+        public static final int LEFT_DRIVETRAIN_LEADER = 03;
+        public static final int LEFT_DRIVETRAIN_FOLLOWER = 04;
 
-        public static final int PIGEON_GYRO = 0; 
+        public static final int PIGEON_GYRO = 05; 
 
         //Values for converting the motor counts to distance traveled
         public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
