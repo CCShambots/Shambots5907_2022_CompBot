@@ -39,14 +39,17 @@ public final class Constants {
         //Robot mode (for odometry toggling)
         public static RobotStatus robotStatus = RobotStatus.AUTO;
 
-        public static double linearP = 0;
-        public static double linearI = 0;
-        public static double linearD = 0;
+        public static double LINEAR_P = 0;
+        public static double LINEAR_I = 0;
+        public static double LINEAR_D = 0;
+
+        public static double KS = 1.0052;
+        public static double KV = 1.5518;
 
         public static PIDController turnController = new PIDController(0, 0, 0);
 
         //Max velocity (in meters per second because that's what pathweaver does)
-        public static double MAX_LINEAR_VELOCITY = 60;
+        public static double MAX_LINEAR_VELOCITY = 3;
         //Max angular velocity (in degrees per second (because radians are cringe))
         public static double MAX_ANGULAR_VELOCITY = Math.toDegrees(Math.PI);
     }

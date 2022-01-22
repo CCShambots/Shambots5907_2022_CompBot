@@ -88,10 +88,10 @@ public class RobotContainer {
 
   public void telemetry() {
     SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
-    SmartDashboard.putNumber("Left encoder", drivetrain.leftEncoderValue());
-    SmartDashboard.putNumber("Right encoder", drivetrain.rightEncoderValue());
-    SmartDashboard.putNumber("Left voltage", drivetrain.leftVoltage());
-    SmartDashboard.putNumber("Right voltage", drivetrain.rightVoltage());
+    SmartDashboard.putNumber("Left encoder", drivetrain.getLeftMeters());
+    SmartDashboard.putNumber("Right encoder", drivetrain.getRightMeters());
+    SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
+    SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
 
   }
 
@@ -101,7 +101,11 @@ public class RobotContainer {
     // drivetrain.setDampening(1);
 
     drivetrain.setDefaultCommand(
-      new RunCommand(() -> drivetrain.runDefaultDrive(driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), -driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS), driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), drivetrain)
+      new RunCommand(
+        () -> drivetrain.tankDrivePID(
+          driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
+          driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), 
+       drivetrain)
     );
 
     setTeleop();

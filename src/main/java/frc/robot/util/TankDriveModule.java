@@ -1,0 +1,93 @@
+package frc.robot.util;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import static frc.robot.Constants.Drivetrain.*;
+import static frc.robot.Constants.*;
+
+import javax.swing.InputVerifier;
+
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+public class TankDriveModule {
+    private WPI_TalonFX leader;
+    private WPI_TalonFX follower;
+
+    private static PIDController pidController = new PIDController(LINEAR_P, LINEAR_I, LINEAR_D);
+    private static SimpleMotorFeedforward feedForwardController = new SimpleMotorFeedforward(KS, KV);
+
+    private double pidOutput = 0;
+    private double feedForwardOutput = 0;
+
+    public TankDriveModule(int leaderID, int followerID, boolean inverted) {
+        leader = new WPI_TalonFX(leaderID);
+        follower = new WPI_TalonFX(followerID);
+
+        leader.configFactoryDefault();
+        follower.configFactoryDefault();
+
+        leader.configSupplyCurrentLimit(CURRENT_LIMIT);
+        follower.configSupplyCurrentLimit(CURRENT_LIMIT);
+
+        leader.setNeutralMode(NeutralMode.Brake);
+        follower.setNeutralMode(NeutralMode.Brake);
+
+        follower.follow(leader);
+
+        if(inverted) {
+            leader.setInverted(true);
+            follower.setInverted(InvertType.FollowMaster); 
+        }
+
+        pidController.reset();
+
+        SmartDashboard.putData(pidController);
+    }
+
+    public void setTargetVelocity(double velocity) {
+        pidController.setSetpoint(velocity);
+    }
+
+    public double getVelocity() {return countsToMeters(leader.getSelectedSensorVelocity());}
+
+    public double getEncoderMeters() {return countsToMeters(leader.getSelectedSensorPosition());}
+
+    public double getVoltage() {return leader.getMotorOutputVoltage();}
+
+    public void stop() {leader.setVoltage(0);}
+
+    public void setNeutralMode(NeutralMode mode) {
+        leader.setNeutralMode(mode);
+        follower.setNeutralMode(mode);
+    }
+
+    private double countsToMeters(double counts) {
+        return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254;
+    }
+
+    public void resetEncoder() {
+        leader.setSelectedSensorPosition(0);
+    }
+
+    public double getPIDOutput() {
+        return pidOutput;
+    }
+
+    public double getFeedForwardOutput() {
+        return feedForwardOutput;
+    }
+
+    public void runControlLoop() {
+        pidOutput = pidController.calculate(getVelocity());
+        feedForwardOutput = feedForwardController.calculate(pidController.getSetpoint());
+
+        leader.setVoltage(feedForwardOutput + pidOutput);
+    }
+
+    
+}

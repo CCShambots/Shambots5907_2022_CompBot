@@ -44,23 +44,24 @@ public class TrajectoryCommands {
         
         Trajectory trajecotry = TrajectoryGenerator.generateTrajectory(startPose, passThroughPoints, endPose, config);
 
-        RamseteCommand ramseteCommand =
-        new RamseteCommand(
-            trajecotry,
-            drivetrain::getOdometryPose,
-            new RamseteController(kRamseteB, kRamseteZeta),
-            new SimpleMotorFeedforward(
-                ksVolts,
-                kvVoltSecondsPerMeter,
-                kaVoltSecondsSquaredPerMeter),
-            kDriveKinematics,
-            drivetrain::getWheelSpeeds,
-            new PIDController(kPDriveVel, 0, 0),
-            new PIDController(kPDriveVel, 0, 0),
-            // RamseteCommand passes volts to the callback
-            drivetrain::tankDriveVolts,
-            drivetrain);
+        // RamseteCommand ramseteCommand =
+        // new RamseteCommand(
+        //     trajecotry,
+        //     drivetrain::getOdometryPose,
+        //     new RamseteController(kRamseteB, kRamseteZeta),
+        //     new SimpleMotorFeedforward(
+        //         ksVolts,
+        //         kvVoltSecondsPerMeter,
+        //         kaVoltSecondsSquaredPerMeter),
+        //     kDriveKinematics,
+        //     drivetrain::getWheelSpeeds,
+        //     new PIDController(kPDriveVel, 0, 0),
+        //     new PIDController(kPDriveVel, 0, 0),
+        //     // RamseteCommand passes volts to the callback
+        //     drivetrain::tankDriveVolts,
+        //     drivetrain);
 
-        return ramseteCommand;
+        // return ramseteCommand;
+        return null;
     }
 }

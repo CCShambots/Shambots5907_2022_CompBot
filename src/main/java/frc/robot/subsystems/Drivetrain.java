@@ -40,37 +40,32 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.DriveModes;
 import frc.robot.util.RobotStatus;
+import frc.robot.util.TankDriveModule;
 import frc.robot.util.TeleopSpeeds;
 
 public class Drivetrain extends SubsystemBase {
-  //TODO: PID Teleop
-
-  //Motor declaractions
-  private static final WPI_TalonFX leftMotorLeader = new WPI_TalonFX(LEFT_DRIVETRAIN_LEADER);
-  private static final WPI_TalonFX leftMotorFollower = new WPI_TalonFX(LEFT_DRIVETRAIN_FOLLOWER);
-  private static final WPI_TalonFX rightMotorLeader = new WPI_TalonFX(RIGHT_DRIVETRAIN_LEADER);
-  private static final WPI_TalonFX rightMotorFollower = new WPI_TalonFX(RIGHT_DRIVETRAIN_FOLLOWER);
+  //Hardware declarations
+  private static final TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true);
+  private static final TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true);
 
   private static final PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
   private static final Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
   private static final DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
 
-
   private final ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();
 
   //Teleop object that allows easy use of joysticks to motor powers
-  private final DifferentialDrive tankDrivetrain = new DifferentialDrive(leftMotorLeader, rightMotorLeader);
   private DriveModes driveMode = Tank;
   private DriveModes prevDriveMode = Tank;
   private boolean reversed = false;
   private int reversedMult = 1;
 
   //Controllers for driving with PID Cotnrol
-  public static PIDController linearControllerRight = new PIDController(linearP, linearI, linearD);
-  public static PIDController linearControllerLeft = new PIDController(linearP, linearI, linearD);
+  
+  public static PIDController linearControllerLeft = new PIDController(LINEAR_P, LINEAR_I, LINEAR_D);
 
-  public static PIDController linearController = new PIDController(linearP, linearI, linearD);
+  public static PIDController linearController = new PIDController(LINEAR_P, LINEAR_I, LINEAR_D);
 
   private double normalSpeed = .6;
   private double turboSpeed = 1;
@@ -85,22 +80,6 @@ public class Drivetrain extends SubsystemBase {
    * Initializes the drivetrain object and adds each motor to the motors list for setup.
    */
   public Drivetrain() {
-    leftMotorFollower.follow(leftMotorLeader);
-    rightMotorFollower.follow(rightMotorLeader);
-
-    rightMotorLeader.setInverted(true);
-    rightMotorFollower.setInverted(InvertType.FollowMaster);
-    
-    motors.add(leftMotorLeader);
-    motors.add(leftMotorFollower);
-    motors.add(rightMotorLeader);
-    motors.add(rightMotorFollower);
-
-    for(WPI_TalonFX motor : motors) {
-      motor.configFactoryDefault();
-      motor.configSupplyCurrentLimit(CURRENT_LIMIT); //Stops the motor from pulling more current than the fuse can handle
-    }
-
     odometry = new DifferentialDriveOdometry(getGyroHeadingOdometry(), new Pose2d());
 
     compressor.enableDigital();
@@ -138,41 +117,17 @@ public class Drivetrain extends SubsystemBase {
   
   //Teleop Methods
 
-
-  /**
-   * Teleop command for running the tank drive (run periodically)
-   * @param speedLeft
-   * @param speedRight
-   */
-  public void tankDriveRaw(double speedLeft, double speedRight) {
-    tankDrivetrain.tankDrive(adjustJoystick(speedLeft), adjustJoystick(speedRight));
-  }
-
-  /**
-   * Teleop command for running the arcade drive (raw)
-   * @param speedFoward
-   * @param turnSpeed
-   */
-  public void arcadeDriveRaw(double speedFoward, double turnSpeed) {
-    tankDrivetrain.arcadeDrive(adjustJoystick(speedFoward), adjustJoystick(turnSpeed));
-  }
-
-  /**
-   * Method for doing tank drive with adjustments from the PID
-   * @param speedLeft
-   * @param speedRight
-   */
-  public void tankDrivePID(double speedLeft, double speedRight) {
-    linearControllerLeft.setSetpoint(adjustJoystick(speedRight) * MAX_LINEAR_VELOCITY);
-    linearControllerRight.setSetpoint(adjustJoystick(speedRight) * MAX_LINEAR_VELOCITY);
-
-    leftMotorLeader.setVoltage(linearControllerLeft.calculate(encoderVelocityToMeters(leftMotorLeader.getSelectedSensorVelocity())));
-    rightMotorLeader.setVoltage(linearControllerRight.calculate(encoderVelocityToMeters(rightMotorLeader.getSelectedSensorVelocity())));
-  }
-  
   //TODO: I'm much too lazy to do this now, so we'll have to do it later
   public static void arcadeDrivePID(double linearSpeed, double turnSpeed) {
 
+  }
+
+  public void tankDrivePID(double inputLeft, double inputRight) {
+    double speedLeft = adjustJoystick(inputLeft) * MAX_LINEAR_VELOCITY;
+    double speedRight = adjustJoystick(inputRight) * MAX_LINEAR_VELOCITY;
+
+    leftModule.setTargetVelocity(speedLeft);
+    leftModule.setTargetVelocity(speedRight);
   }
 
   /**
@@ -180,18 +135,16 @@ public class Drivetrain extends SubsystemBase {
    * @param input Raw joystick input
    * @return the input after being sped up, slowed down, or reversed, as per the current drivetrain settings
    */
-  public double adjustJoystick(double input) {
-    return input * speedMult * reversedMult;
-  }
+  public double adjustJoystick(double input) {return input * speedMult * reversedMult;}
 
-  public void runDefaultDrive(double leftY, double leftX, double rightY) {
-    if(getDriveMode() == Tank) {
-      tankDrive(leftY, rightY);
-    } else if(getDriveMode() == Arcade) {
-      arcadeDrive(leftY, leftX);
-    }
+  public double getLeftVelocity() {return leftModule.getVelocity();}
+  public double getRightVelocity() {return rightModule.getVelocity();}
 
-  }
+  public double getLeftMeters() {return leftModule.getEncoderMeters();}
+  public double getRightMeters() {return rightModule.getEncoderMeters();}
+
+  public double getLeftVoltage() {return leftModule.getVoltage();}
+  public double getRightVoltage() {return rightModule.getVoltage();}
   
 
   public DriveModes getDriveMode() {
@@ -243,18 +196,6 @@ public class Drivetrain extends SubsystemBase {
 
   //Autonomous Methods
 
- /**
-   * Controls the left and right sides of the drive directly with voltages.
-   *
-   * @param leftVolts the commanded left output
-   * @param rightVolts the commanded right output
-   */
-  public void tankDriveVolts(double leftVolts, double rightVolts) {
-    leftMotorLeader.setVoltage(leftVolts);
-    leftMotorFollower.setVoltage(rightVolts);
-    tankDrivetrain.feed();
-  }
-
   /**
    * Returns the pose of the robot in meters
    * @return the pose of the bot
@@ -278,31 +219,14 @@ public class Drivetrain extends SubsystemBase {
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
-      encoderVelocityToMeters(leftMotorLeader.getSelectedSensorVelocity()), 
-      encoderVelocityToMeters(rightMotorLeader.getSelectedSensorVelocity())
+      leftModule.getVelocity(), 
+      rightModule.getVelocity()
     );
   }
 
-  /**Reset the drive encoders to zero */
-  private void resetEncoders() {
-    leftMotorLeader.setSelectedSensorPosition(0);
-    rightMotorLeader.setSelectedSensorPosition(0);
-  }
-
-  public double leftEncoderValue() {
-    return leftMotorLeader.getSelectedSensorPosition();
-  }
-
-  public double rightEncoderValue() {
-    return rightMotorLeader.getSelectedSensorPosition();
-  }
-
-  public double leftVoltage() {
-    return leftMotorLeader.getMotorOutputVoltage();
-  }
-
-  public double rightVoltage() {
-    return rightMotorLeader.getMotorOutputVoltage();
+  public void resetEncoders() {
+    leftModule.resetEncoder();
+    rightModule.resetEncoder();
   }
 
   /**
@@ -313,17 +237,9 @@ public class Drivetrain extends SubsystemBase {
 
     odometry.update(
       gyroAngle, 
-      encoderCountsToMeters(leftMotorLeader.getSelectedSensorPosition()), 
-      encoderCountsToMeters(rightMotorLeader.getSelectedSensorPosition())
+      leftModule.getEncoderMeters(), 
+      rightModule.getEncoderMeters()
     );
-  }
-
-  private double encoderCountsToMeters(double counts) {
-    return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254;
-  }
-
-  private double encoderVelocityToMeters(double velocity) {
-    return (velocity / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254;
   }
   
   private Rotation2d getGyroHeadingOdometry() {
@@ -338,7 +254,7 @@ public class Drivetrain extends SubsystemBase {
       updateOdometry();
     }
 
-    //TODO: Remove for comp
-    tankDrivetrain.feed();
+    leftModule.runControlLoop();
+    rightModule.runControlLoop();
   }
 }
