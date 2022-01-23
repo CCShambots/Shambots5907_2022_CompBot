@@ -31,6 +31,7 @@ public class DrivetrainVelocityTuner extends CommandBase{
             if(currentPercentage >= 1) {
                 state = States.HoldForward;
                 holdStart = System.currentTimeMillis();
+                return;
             } 
 
             currentPercentage += incrementPercentage;
@@ -46,6 +47,7 @@ public class DrivetrainVelocityTuner extends CommandBase{
             if(currentPercentage <= -1) {
                 state = States.HoldBackward;
                 holdStart = System.currentTimeMillis();
+                return;
             }
 
             currentPercentage -= incrementPercentage;
