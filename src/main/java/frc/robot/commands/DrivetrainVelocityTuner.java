@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 import static frc.robot.Constants.Drivetrain.*;
 
-public class PIDVelocityTuner extends CommandBase{
+public class DrivetrainVelocityTuner extends CommandBase{
     private Drivetrain drivetrain;
 
     private double currentPercentage = 0;
@@ -15,7 +15,7 @@ public class PIDVelocityTuner extends CommandBase{
 
     private States state = States.Accelerate;
 
-    public PIDVelocityTuner(Drivetrain drivetrain) {
+    public DrivetrainVelocityTuner(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
 
         addRequirements(drivetrain);
@@ -61,7 +61,7 @@ public class PIDVelocityTuner extends CommandBase{
     }
 
     private void setVelocity(double percentage) {
-        drivetrain.tankDrivePID(percentage*MAX_LINEAR_VELOCITY, percentage*MAX_LINEAR_VELOCITY);
+        drivetrain.tankDriveJoystick(percentage*MAX_LINEAR_VELOCITY, percentage*MAX_LINEAR_VELOCITY);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class PIDVelocityTuner extends CommandBase{
 
     @Override
     public void end(boolean interrupted) {
-        drivetrain.tankDrivePID(0, 0);
+        drivetrain.tankDriveJoystick(0, 0);
     }
 
     private static enum States {

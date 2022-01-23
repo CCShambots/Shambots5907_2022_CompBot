@@ -2,13 +2,9 @@ package frc.robot.util;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.Constants.Drivetrain.*;
 import static frc.robot.Constants.*;
-
-import javax.swing.InputVerifier;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -24,9 +20,9 @@ public class TankDriveModule {
     private double pidOutput = 0;
     private double feedForwardOutput = 0;
 
-    public TankDriveModule(int leaderID, int followerID, boolean inverted, double p, double i, double d, double ks, double kv) {
-        pidController = new PIDController(p, i, d);
-        feedForwardController = new SimpleMotorFeedforward(ks, kv);
+    public TankDriveModule(int leaderID, int followerID, boolean inverted, DrivetrainModuleConstants c) {
+        pidController = new PIDController(c.getP(), c.getI(), c.getD());
+        feedForwardController = new SimpleMotorFeedforward(c.getKS(), c.getKV());
         
         leader = new WPI_TalonFX(leaderID);
         follower = new WPI_TalonFX(followerID);

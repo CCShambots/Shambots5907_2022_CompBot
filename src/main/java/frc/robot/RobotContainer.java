@@ -1,38 +1,25 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Limelight;
-import frc.robot.util.TrajectoryCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import static frc.robot.util.TeleopSpeeds.*;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static frc.robot.Constants.Controller.*;
-import static frc.robot.Constants.Limelight.*;
 import static frc.robot.subsystems.Drivetrain.*;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
-  private final Limelight limelight = new Limelight();
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
@@ -68,12 +55,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     //Add button for setting turbo speed when a certain button is held
     new JoystickButton(operatorController, OPERATOR_A)
-      .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
-      .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
-
-    // new JoystickButton(operatorController, OPERATOR_BUTTON_3)
-    //   .whenPressed(new InstantCommand(() -> drivetrain.setDriveMode(DriveModes.Limelight)))
-    //   .whenReleased(new InstantCommand(() -> drivetrain.setDriveMode(drivetrain.getPrevDriveMode())));
+      .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
+      .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
 
     new JoystickButton(operatorController, OPERATOR_B)
       .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
@@ -84,8 +67,8 @@ public class RobotContainer {
 
   public void telemetry() {
     SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
-    SmartDashboard.putNumber("Left encoder", drivetrain.getLeftMeters());
-    SmartDashboard.putNumber("Right encoder", drivetrain.getRightMeters());
+    SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
+    SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());
     SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
     SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
     SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
@@ -106,7 +89,7 @@ public class RobotContainer {
     // drivetrain.setDampening(1);
 
     Map<Object, Command> drivetrainCommands = Map.ofEntries(
-      Map.entry(DriveModes.Tank, new RunCommand(() -> drivetrain.tankDrivePID(
+      Map.entry(DriveModes.Tank, new RunCommand(() -> drivetrain.tankDriveJoystick(
         driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
         driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), drivetrain)),
       Map.entry(DriveModes.Arcade, new RunCommand(() -> drivetrain.arcadeDrivePID(

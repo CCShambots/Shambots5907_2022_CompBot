@@ -11,16 +11,10 @@ import static frc.robot.Constants.Drivetrain.LEFT_DRIVETRAIN_LEADER;
 import static frc.robot.Constants.Drivetrain.PIGEON_GYRO;
 import static frc.robot.Constants.Drivetrain.RIGHT_DRIVETRAIN_FOLLOWER;
 import static frc.robot.Constants.Drivetrain.RIGHT_DRIVETRAIN_LEADER;
-import static frc.robot.Constants.Drivetrain.WHEEL_SIZE_INCHES;
 import static frc.robot.Constants.Drivetrain.*;
-import static frc.robot.subsystems.Drivetrain.*;
 
-import java.util.ArrayList;
 
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.math.MathUtil;
@@ -33,19 +27,19 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer.RobotStatus;
+import frc.robot.util.DrivetrainModuleConstants;
 import frc.robot.util.TankDriveModule;
-import frc.robot.util.TeleopSpeeds;
 
 public class Drivetrain extends SubsystemBase {
   //Hardware declarations
-  private static final TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
-  private static final TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
+  private static DrivetrainModuleConstants leftConstants= new DrivetrainModuleConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
+  private static final TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, leftConstants);
+  private static DrivetrainModuleConstants rightConstants= new DrivetrainModuleConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
+  private static final TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, rightConstants);
 
   private static final PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
@@ -105,20 +99,32 @@ public class Drivetrain extends SubsystemBase {
   }
   
   //Teleop Methods
-  public void tankDrivePID(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, true);}
+  //Version of tank drive for joystick inputs
+  public void tankDriveJoystick(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, true, true);}
 
-  public void tankDrivePID(double inputLeft, double inputRight, boolean applyDeadZone) {
+  //Version of tank drive for autonomous/trajectory inputs
+  public void tankDriveAuto(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, false, false);}
+
+  public void tankDrivePID(double inputLeft, double inputRight, boolean applyDeadZone, boolean fromJoysticks) {
     if(applyDeadZone) {
       //Create dead zones
       if(Math.abs(inputLeft) < 0.25) inputLeft = 0;
       if(Math.abs(inputRight) < 0.25) inputRight = 0;
+    } 
+
+    double speedLeft = MAX_LINEAR_VELOCITY;
+    double speedRight = MAX_LINEAR_VELOCITY;
+
+    if(fromJoysticks) {
+      inputLeft *= -1;
+      inputRight *= -1;
+  
+      speedLeft = adjustJoystick(inputLeft) * MAX_LINEAR_VELOCITY;
+      speedRight = adjustJoystick(inputRight) * MAX_LINEAR_VELOCITY;
+    } else {
+      speedLeft *= inputLeft;
+      speedRight *= inputRight;
     }
-
-    inputLeft *= -1;
-    inputRight *= -1;
-
-    double speedLeft = adjustJoystick(inputLeft) * MAX_LINEAR_VELOCITY;
-    double speedRight = adjustJoystick(inputRight) * MAX_LINEAR_VELOCITY;
 
     leftModule.setTargetVelocity(speedLeft);
     rightModule.setTargetVelocity(speedRight);
@@ -135,7 +141,7 @@ public class Drivetrain extends SubsystemBase {
 
     WheelSpeeds tankInputs = arcadeDriveIK(adjustJoystick(linearInput), adjustJoystick(turnInput));
 
-    tankDrivePID(tankInputs.left, tankInputs.right, false);
+    tankDrivePID(tankInputs.left, tankInputs.right, false, false);
   }
 
   /**
@@ -318,15 +324,15 @@ public class Drivetrain extends SubsystemBase {
   }
 
   //TODO: Remove these after testing
-  public TankDriveModule getLeftModule() {
-    return leftModule;
-  }
+  public TankDriveModule getLeftModule() {return leftModule;}
 
-  public TankDriveModule getRightModule() {
-    return rightModule;
-  }
+  public TankDriveModule getRightModule() {return rightModule;}
 
   public static enum DriveModes {
     Tank, Arcade, Limelight
-}
+  }
+
+  public static enum TeleopSpeeds {
+    Normal, Turbo
+  } 
 }

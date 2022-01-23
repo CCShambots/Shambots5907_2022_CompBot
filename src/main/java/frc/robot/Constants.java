@@ -7,7 +7,6 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.RobotState;
 import frc.robot.RobotContainer.RobotStatus;
 
 /**
