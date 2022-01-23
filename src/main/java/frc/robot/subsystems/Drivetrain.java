@@ -13,9 +13,7 @@ import static frc.robot.Constants.Drivetrain.RIGHT_DRIVETRAIN_FOLLOWER;
 import static frc.robot.Constants.Drivetrain.RIGHT_DRIVETRAIN_LEADER;
 import static frc.robot.Constants.Drivetrain.WHEEL_SIZE_INCHES;
 import static frc.robot.Constants.Drivetrain.*;
-import static frc.robot.util.DriveModes.Arcade;
-import static frc.robot.util.DriveModes.Limelight;
-import static frc.robot.util.DriveModes.Tank;
+import static frc.robot.subsystems.Drivetrain.*;
 
 import java.util.ArrayList;
 
@@ -25,6 +23,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -36,10 +35,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.util.DriveModes;
-import frc.robot.util.RobotStatus;
+import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.TankDriveModule;
 import frc.robot.util.TeleopSpeeds;
 
@@ -53,11 +52,9 @@ public class Drivetrain extends SubsystemBase {
   private static final Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
   private static final DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
 
-  private final ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();
-
   //Teleop object that allows easy use of joysticks to motor powers
-  private DriveModes driveMode = Tank;
-  private DriveModes prevDriveMode = Tank;
+  private DriveModes driveMode = DriveModes.Tank;
+  private DriveModes prevDriveMode = DriveModes.Tank;
   private boolean reversed = false;
   private int reversedMult = 1;
 
@@ -88,17 +85,9 @@ public class Drivetrain extends SubsystemBase {
   }
 
   //General Methods
-
   public void setNeutralMotorBehavior(NeutralMode mode) {
-    for(TalonFX motor : motors) {
-      motor.setNeutralMode(mode);
-    }
-  }
-
-  public void setDampening(double smoothing) {
-    for(TalonFX motor : motors) {
-      motor.configOpenloopRamp(1);
-    }
+    leftModule.setNeutralMode(mode);
+    rightModule.setNeutralMode(mode);
   }
 
   /**
@@ -116,21 +105,88 @@ public class Drivetrain extends SubsystemBase {
   }
   
   //Teleop Methods
+  public void tankDrivePID(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, true);}
 
-  //TODO: I'm much too lazy to do this now, so we'll have to do it later
-  public static void arcadeDrivePID(double linearSpeed, double turnSpeed) {
+  public void tankDrivePID(double inputLeft, double inputRight, boolean applyDeadZone) {
+    if(applyDeadZone) {
+      //Create dead zones
+      if(Math.abs(inputLeft) < 0.25) inputLeft = 0;
+      if(Math.abs(inputRight) < 0.25) inputRight = 0;
+    }
 
-  }
-
-  public void tankDrivePID(double inputLeft, double inputRight) {
-    if(Math.abs(inputLeft) < 0.25) inputLeft = 0;
-    if(Math.abs(inputRight) < 0.25) inputRight = 0;
+    inputLeft *= -1;
+    inputRight *= -1;
 
     double speedLeft = adjustJoystick(inputLeft) * MAX_LINEAR_VELOCITY;
     double speedRight = adjustJoystick(inputRight) * MAX_LINEAR_VELOCITY;
 
     leftModule.setTargetVelocity(speedLeft);
     rightModule.setTargetVelocity(speedRight);
+  }
+
+  public void arcadeDrivePID(double linearInput, double turnInput) {arcadeDrivePID(linearInput, turnInput, true);}
+
+  public void arcadeDrivePID(double linearInput, double turnInput, boolean applyDeadZone) {
+    if(applyDeadZone) {
+      //Create dead zones
+      if(Math.abs(linearInput) < 0.25) linearInput = 0;
+      if(Math.abs(turnInput) < 0.25) turnInput = 0;
+    }
+
+    WheelSpeeds tankInputs = arcadeDriveIK(adjustJoystick(linearInput), adjustJoystick(turnInput));
+
+    tankDrivePID(tankInputs.left, tankInputs.right, false);
+  }
+
+  /**
+   * Arcade drive inverse kinematics to get the tank equivalent of arcade inputs
+   * @param xSpeed
+   * @param zRotation
+   * @return Wheelspeeds object (interpreted by tankDrive method as joystick inputs)
+   */
+  private WheelSpeeds arcadeDriveIK(double xSpeed, double zRotation) {
+    xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
+    zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
+
+    //TODO: What and why?
+    // Square the inputs (while preserving the sign) to increase fine control
+    // while permitting full power.
+    xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
+    zRotation = Math.copySign(zRotation * zRotation, zRotation);
+
+    double leftInput;
+    double rightInput;
+
+    double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
+
+    if (xSpeed >= 0.0) {
+      // First quadrant, else second quadrant
+      if (zRotation >= 0.0) {
+        leftInput = maxInput;
+        rightInput = xSpeed - zRotation;
+      } else {
+        leftInput = xSpeed + zRotation;
+        rightInput = maxInput;
+      }
+    } else {
+      // Third quadrant, else fourth quadrant
+      if (zRotation >= 0.0) {
+        leftInput = xSpeed + zRotation;
+        rightInput = maxInput;
+      } else {
+        leftInput = maxInput;
+        rightInput = xSpeed - zRotation;
+      }
+    }
+
+    // Normalize the wheel speeds
+    double maxMagnitude = Math.max(Math.abs(leftInput), Math.abs(rightInput));
+    if (maxMagnitude > 1.0) {
+      leftInput /= maxMagnitude;
+      rightInput /= maxMagnitude;
+    }
+
+    return new WheelSpeeds(leftInput, rightInput);
   }
 
   /**
@@ -166,11 +222,11 @@ public class Drivetrain extends SubsystemBase {
 
   /**Toggle between tank and arcade drive */
   public void toggleDriveMode() {
-    driveMode = driveMode == Tank ? Arcade : Tank;
+    driveMode = driveMode == DriveModes.Tank ? DriveModes.Arcade : DriveModes.Tank;
   }
 
   public boolean isToggleDriveModeAllowed() {
-    return driveMode != Limelight;
+    return driveMode != DriveModes.Limelight;
   }
 
   /**Change whether drivetrain is reversed or not */
@@ -269,4 +325,8 @@ public class Drivetrain extends SubsystemBase {
   public TankDriveModule getRightModule() {
     return rightModule;
   }
+
+  public static enum DriveModes {
+    Tank, Arcade, Limelight
+}
 }

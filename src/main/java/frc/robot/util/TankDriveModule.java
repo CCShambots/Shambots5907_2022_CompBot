@@ -61,28 +61,20 @@ public class TankDriveModule {
 
     public double getVoltage() {return leader.getMotorOutputVoltage();}
 
-    public void stop() {leader.setVoltage(0);}
+    private double countsToMeters(double counts) {return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254; }
 
+    public void resetEncoder() {leader.setSelectedSensorPosition(0);}
+
+    public void stop() {leader.setVoltage(0);}
+    
     public void setNeutralMode(NeutralMode mode) {
         leader.setNeutralMode(mode);
         follower.setNeutralMode(mode);
     }
 
-    private double countsToMeters(double counts) {
-        return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254;
-    }
+    public double getPIDOutput() {return pidOutput;}
 
-    public void resetEncoder() {
-        leader.setSelectedSensorPosition(0);
-    }
-
-    public double getPIDOutput() {
-        return pidOutput;
-    }
-
-    public double getFeedForwardOutput() {
-        return feedForwardOutput;
-    }
+    public double getFeedForwardOutput() {return feedForwardOutput;}
 
     public void runControlLoop() {
         pidOutput = pidController.calculate(getVelocity());

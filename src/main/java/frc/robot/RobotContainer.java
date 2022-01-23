@@ -6,12 +6,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.LimeLightTurnCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
-import frc.robot.util.AutoPaths;
-import frc.robot.util.DriveModes;
-import frc.robot.util.RobotStatus;
 import frc.robot.util.TrajectoryCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -24,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import static frc.robot.util.TeleopSpeeds.*;
-import static frc.robot.util.AutoPaths.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +28,7 @@ import java.util.Map;
 
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.Constants.Limelight.*;
+import static frc.robot.subsystems.Drivetrain.*;
 
 public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
@@ -62,7 +58,7 @@ public class RobotContainer {
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
-    autoChooser.setDefaultOption("example", Example);
+    autoChooser.setDefaultOption("example", AutoPaths.Example);
 
     SmartDashboard.putData(autoChooser);
 
@@ -109,13 +105,24 @@ public class RobotContainer {
     //TODO: Decide if this is necessary
     // drivetrain.setDampening(1);
 
-    drivetrain.setDefaultCommand(
-      new RunCommand(
-        () -> drivetrain.tankDrivePID(
-          driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-          driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), 
-       drivetrain)
+    Map<Object, Command> drivetrainCommands = Map.ofEntries(
+      Map.entry(DriveModes.Tank, new RunCommand(() -> drivetrain.tankDrivePID(
+        driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
+        driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), drivetrain)),
+      Map.entry(DriveModes.Arcade, new RunCommand(() -> drivetrain.arcadeDrivePID(
+        driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
+        driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS)), drivetrain))
     );
+
+    drivetrain.setDefaultCommand(new SelectCommand(drivetrainCommands, drivetrain::getDriveMode));
+
+    // drivetrain.setDefaultCommand(
+    //   new RunCommand(
+    //     () -> drivetrain.tankDrivePID(
+    //       driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
+    //       driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), 
+    //    drivetrain)
+    // );
 
     setTeleop();
   }
@@ -144,4 +151,13 @@ public class RobotContainer {
   public void setDisabled() {
     Constants.Drivetrain.robotStatus = RobotStatus.DISABLED;
   }
+
+  public static enum RobotStatus {
+    AUTO, TELEOP, DISABLED
+  } 
+
+  public enum AutoPaths {
+    Example
+  }
+
 }

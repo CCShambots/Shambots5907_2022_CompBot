@@ -7,7 +7,8 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import edu.wpi.first.math.controller.PIDController;
-import frc.robot.util.RobotStatus;
+import edu.wpi.first.wpilibj.RobotState;
+import frc.robot.RobotContainer.RobotStatus;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -39,16 +40,16 @@ public final class Constants {
         //Robot mode (for odometry toggling)
         public static RobotStatus robotStatus = RobotStatus.AUTO;
 
-        public static double RIGHT_P = 0;
-        public static double RIGHT_I = 0;
-        public static double RIGHT_D = 0;
-
         public static double LEFT_P = 0;
         public static double LEFT_I = 0;
         public static double LEFT_D = 0;
 
         public static double LEFT_KS = 1.0052;
         public static double LEFT_KV = 2.0;
+
+        public static double RIGHT_P = 0;
+        public static double RIGHT_I = 0;
+        public static double RIGHT_D = 0;
 
         public static double RIGHT_KS = 1.0052;
         public static double RIGHT_KV = 2.4;
