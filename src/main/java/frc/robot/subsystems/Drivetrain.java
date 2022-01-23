@@ -88,7 +88,7 @@ public class Drivetrain extends SubsystemBase {
    * @return the gyro's heading relative to gravity
    */
   public double getGyroHeading() {
-    return -pigeonIMU.getFusedHeading();
+    return pigeonIMU.getFusedHeading();
   }
 
   /**
@@ -154,7 +154,6 @@ public class Drivetrain extends SubsystemBase {
     xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
     zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
 
-    //TODO: What and why?
     // Square the inputs (while preserving the sign) to increase fine control
     // while permitting full power.
     xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
@@ -308,8 +307,7 @@ public class Drivetrain extends SubsystemBase {
   }
   
   private Rotation2d getGyroHeadingOdometry() {
-    //TODO: Idk whether this should be negative or not (WPILib docs says it should be)
-    return Rotation2d.fromDegrees(-pigeonIMU.getFusedHeading());
+    return Rotation2d.fromDegrees(getGyroHeading());
   }
 
   @Override

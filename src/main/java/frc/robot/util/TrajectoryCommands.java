@@ -1,19 +1,14 @@
 package frc.robot.util;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGenerationException;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.subsystems.Drivetrain;
 
@@ -43,7 +38,7 @@ public class TrajectoryCommands {
                 .addConstraint(autoVoltageConstraint);
         
         Trajectory trajecotry = TrajectoryGenerator.generateTrajectory(startPose, passThroughPoints, endPose, config);
-
+        
         // RamseteCommand ramseteCommand =
         // new RamseteCommand(
         //     trajecotry,
