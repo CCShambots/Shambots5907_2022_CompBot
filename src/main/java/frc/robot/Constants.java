@@ -53,8 +53,6 @@ public final class Constants {
         public static double RIGHT_KS = 1.0052;
         public static double RIGHT_KV = 2.4;
 
-        public static PIDController turnController = new PIDController(0, 0, 0);
-
         //Max velocity (in meters per second because that's what pathweaver does)
         public static double MAX_LINEAR_VELOCITY = 3;
         //Max angular velocity (in degrees per second (because radians are cringe))
