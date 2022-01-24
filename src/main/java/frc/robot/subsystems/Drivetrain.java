@@ -16,30 +16,39 @@ import static frc.robot.Constants.Drivetrain.*;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.DrivetrainModuleConstants;
 import frc.robot.util.TankDriveModule;
+import java.util.Map;
 
 public class Drivetrain extends SubsystemBase {
   //Hardware declarations
   private static DrivetrainModuleConstants leftConstants= new DrivetrainModuleConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
-  private static final TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, leftConstants);
+  private static final TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, true, leftConstants);
   private static DrivetrainModuleConstants rightConstants= new DrivetrainModuleConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
-  private static final TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, rightConstants);
+  private static final TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, false, rightConstants);
 
   private static final PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
@@ -52,19 +61,39 @@ public class Drivetrain extends SubsystemBase {
   private boolean reversed = false;
   private int reversedMult = 1;
 
+
+  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
   //Controllers for driving with PID Cotnrol
   
   public static PIDController linearControllerLeft = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
 
   public static PIDController linearController = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
 
+  public static SlewRateLimiter leftSlewRate = new SlewRateLimiter(5);
+  public static SlewRateLimiter rightSlewRate = new SlewRateLimiter(5);
+
   private double normalSpeed = .6;
   private double turboSpeed = 1;
   private double speedMult = normalSpeed;
+  private double smoothing = 1;
 
   //Autonomous objects (odometry, trajectory following, etc)
   RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
   DifferentialDriveOdometry odometry;
+
+  private NetworkTableEntry smoothingSlider = driveTab.add("Smoothing", smoothing)
+  .withWidget(BuiltInWidgets.kNumberSlider)
+  .withProperties(Map.of("min", 2, "max", 15))
+  .getEntry();
+private NetworkTableEntry turboSpeedSlider = driveTab.add("TurboSpeed", turboSpeed)
+.withWidget(BuiltInWidgets.kNumberSlider)
+.withProperties(Map.of("min", 1,"max", 4))
+.getEntry();
+private NetworkTableEntry breakModeToggle = driveTab.add("BreakMode", false)
+.withWidget(BuiltInWidgets.kToggleButton)
+.getEntry();
+
+
 
 
   /**
@@ -97,7 +126,19 @@ public class Drivetrain extends SubsystemBase {
   public void setGyroHeading(double heading) {
     pigeonIMU.setFusedHeading(heading);
   }
-  
+
+  public void setDriveTrainVariables(){
+      smoothing = smoothingSlider.getDouble(5);
+      leftSlewRate = new SlewRateLimiter(smoothing);
+      rightSlewRate = new SlewRateLimiter(smoothing);
+      turboSpeed = turboSpeedSlider.getDouble(3);
+      if(breakModeToggle.getBoolean(false)){
+        setNeutralMotorBehavior(NeutralMode.Coast);
+      }   else{
+        setNeutralMotorBehavior(NeutralMode.Brake);
+      }
+  }
+
   //Teleop Methods
   //Version of tank drive for joystick inputs
   public void tankDriveJoystick(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, true, true);}
@@ -106,28 +147,15 @@ public class Drivetrain extends SubsystemBase {
   public void tankDriveAuto(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, false, false);}
 
   public void tankDrivePID(double inputLeft, double inputRight, boolean applyDeadZone, boolean fromJoysticks) {
-    if(applyDeadZone) {
-      //Create dead zones
-      if(Math.abs(inputLeft) < 0.25) inputLeft = 0;
-      if(Math.abs(inputRight) < 0.25) inputRight = 0;
-    } 
-
+  
     double speedLeft = 0;
     double speedRight = 0;
 
-    if(fromJoysticks) {
-      inputLeft *= -1;
-      inputRight *= -1;
-  
-      speedLeft = adjustJoystick(inputLeft) * MAX_LINEAR_VELOCITY;
-      speedRight = adjustJoystick(inputRight) * MAX_LINEAR_VELOCITY;
-    } else {
-      speedLeft = inputLeft;
-      speedRight = inputRight;
-    }
+    speedLeft = adjustJoystick(inputLeft) * turboSpeed * -1;
+    speedRight = adjustJoystick(inputRight) * turboSpeed * -1;
 
-    leftModule.setTargetVelocity(speedLeft);
-    rightModule.setTargetVelocity(speedRight);
+    leftModule.setTargetVelocity(leftSlewRate.calculate(speedLeft));
+    rightModule.setTargetVelocity(rightSlewRate.calculate(speedRight));
   }
 
   public void arcadeDriveJoystick(double linearInput, double turnInput) {arcadeDrivePID(linearInput, turnInput, true);}
@@ -199,7 +227,14 @@ public class Drivetrain extends SubsystemBase {
    * @param input Raw joystick input
    * @return the input after being sped up, slowed down, or reversed, as per the current drivetrain settings
    */
-  public double adjustJoystick(double input) {return input * speedMult * reversedMult;}
+  public double adjustJoystick(double input) {
+    //Create dead zones
+    if(Math.abs(input) < 0.05) return 0;
+
+    double output = input * Math.abs(input);
+
+    return output * speedMult * reversedMult;
+  }
 
   public double getLeftVelocity() {return leftModule.getVelocity();}
   public double getRightVelocity() {return rightModule.getVelocity();}

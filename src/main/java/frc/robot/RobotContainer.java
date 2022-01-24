@@ -109,6 +109,9 @@ public class RobotContainer {
     //       driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), 
     //    drivetrain)
     // );
+    drivetrain.setDriveTrainVariables();
+
+
 
     setTeleop();
   }

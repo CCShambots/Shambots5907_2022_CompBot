@@ -70,6 +70,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // new InstantCommand(() -> m_robotContainer.doTeleopSetup()).schedule();
+    m_robotContainer.doTeleopSetup();
   }
 
   /** This function is called periodically during operator control. */

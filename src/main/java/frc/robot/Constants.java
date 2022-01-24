@@ -20,7 +20,7 @@ import frc.robot.RobotContainer.RobotStatus;
 public final class Constants {
 
     //Current limit for stopping motors from exceeding max power draw
-    public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
+    public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 10, 10, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
     public static class Drivetrain {
         public static final int RIGHT_DRIVETRAIN_LEADER = 01;
@@ -51,7 +51,7 @@ public final class Constants {
         public static double RIGHT_D = 0;
 
         public static double RIGHT_KS = 1.0052;
-        public static double RIGHT_KV = 2.4;
+        public static double RIGHT_KV = 2.3;
 
         //Max velocity (in meters per second because that's what pathweaver does)
         public static double MAX_LINEAR_VELOCITY = 3;
