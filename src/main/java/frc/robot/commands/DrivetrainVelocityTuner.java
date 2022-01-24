@@ -8,7 +8,7 @@ public class DrivetrainVelocityTuner extends CommandBase{
     private Drivetrain drivetrain;
 
     private double currentPercentage = 0;
-    private double holdTime = 3000; //The time the drivetrain will hold at the maximum speed
+    private double holdTime = 1500; //The time the drivetrain will hold at the maximum speed
     private double incrementPercentage = 0.01; //The time it takes (in MS) to go from zero to full speed
 
     private double holdStart = 0;
@@ -30,6 +30,7 @@ public class DrivetrainVelocityTuner extends CommandBase{
         if(state == States.Accelerate) {
             if(currentPercentage >= 1) {
                 state = States.HoldForward;
+                printState();
                 holdStart = System.currentTimeMillis();
                 return;
             } 
@@ -41,11 +42,15 @@ public class DrivetrainVelocityTuner extends CommandBase{
         else if(state == States.HoldForward) {
             if(System.currentTimeMillis() - holdStart >= holdTime) {
                 state = States.Deccelerate;
+                printState();
+
             }
         }
         else if(state == States.Deccelerate) {
             if(currentPercentage <= -1) {
                 state = States.HoldBackward;
+                printState();
+
                 holdStart = System.currentTimeMillis();
                 return;
             }
@@ -57,13 +62,18 @@ public class DrivetrainVelocityTuner extends CommandBase{
         else if(state == States.HoldBackward) {
             if(System.currentTimeMillis() - holdStart >= holdTime) {
                 state = States.Accelerate;
+                printState();
             }
         }
     
     }
 
     private void setVelocity(double percentage) {
-        drivetrain.tankDriveJoystick(percentage*MAX_LINEAR_VELOCITY, percentage*MAX_LINEAR_VELOCITY);
+        drivetrain.tankDriveAuto(percentage*MAX_LINEAR_VELOCITY, percentage*MAX_LINEAR_VELOCITY);
+    }
+
+    private void printState() {
+        System.out.println("State: " + state.name());
     }
 
     @Override

@@ -2,15 +2,19 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.DrivetrainVelocityTuner;
 import frc.robot.commands.DrivingCommand;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.util.HashMap;
@@ -20,6 +24,7 @@ import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
 
 public class RobotContainer {
+  Field2d field = new Field2d();
   private final Drivetrain drivetrain = new Drivetrain();
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
@@ -55,15 +60,18 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     //Add button for setting turbo speed when a certain button is held
-    new JoystickButton(operatorController, OPERATOR_A)
+    new JoystickButton(driverController, DRIVER_A)
       .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
       .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
 
-    new JoystickButton(operatorController, OPERATOR_B)
+    new JoystickButton(driverController, DRIVER_B)
       .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
       
-    new JoystickButton(operatorController, OPERATOR_X)
+    new JoystickButton(driverController, DRIVER_X)
       .whenPressed(new InstantCommand(drivetrain::toggleReversed));
+
+    new JoystickButton(operatorController, DRIVER_Y)
+      .whenPressed(new SequentialCommandGroup(new PrintCommand("Trying velocity tuner"), new DrivetrainVelocityTuner(drivetrain), new PrintCommand("finished velocity tuner")));
   }
 
   public void telemetry() {
@@ -82,6 +90,8 @@ public class RobotContainer {
     SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
     SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
     SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
+    field.setRobotPose(drivetrain.getOdometryPose());
+    SmartDashboard.putData("field", field);
   }
 
   public void doTeleopSetup() {

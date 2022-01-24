@@ -102,7 +102,7 @@ public class Drivetrain extends SubsystemBase {
   //Version of tank drive for joystick inputs
   public void tankDriveJoystick(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, true, true);}
 
-  //Version of tank drive for autonomous/trajectory inputs
+  //Version of tank drive for autonomous/trajectory inputs (in m/s)
   public void tankDriveAuto(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, false, false);}
 
   public void tankDrivePID(double inputLeft, double inputRight, boolean applyDeadZone, boolean fromJoysticks) {
@@ -112,8 +112,8 @@ public class Drivetrain extends SubsystemBase {
       if(Math.abs(inputRight) < 0.25) inputRight = 0;
     } 
 
-    double speedLeft = MAX_LINEAR_VELOCITY;
-    double speedRight = MAX_LINEAR_VELOCITY;
+    double speedLeft = 0;
+    double speedRight = 0;
 
     if(fromJoysticks) {
       inputLeft *= -1;
@@ -122,8 +122,8 @@ public class Drivetrain extends SubsystemBase {
       speedLeft = adjustJoystick(inputLeft) * MAX_LINEAR_VELOCITY;
       speedRight = adjustJoystick(inputRight) * MAX_LINEAR_VELOCITY;
     } else {
-      speedLeft *= inputLeft;
-      speedRight *= inputRight;
+      speedLeft = inputLeft;
+      speedRight = inputRight;
     }
 
     leftModule.setTargetVelocity(speedLeft);

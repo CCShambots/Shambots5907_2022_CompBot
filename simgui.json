@@ -30,7 +30,15 @@
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/SmartDashboard/RightPID": "PIDController",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/leftPID": "PIDController"
+    },
+    "windows": {
+      "/SmartDashboard/field": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   }
 }
