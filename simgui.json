@@ -1,0 +1,36 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "Talon FX[1]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[1]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[4]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Drivetrain": "Subsystem",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/SmartDashboard/RightPID": "PIDController",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/leftPID": "PIDController"
+    }
+  }
+}

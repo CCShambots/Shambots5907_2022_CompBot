@@ -130,7 +130,7 @@ public class Drivetrain extends SubsystemBase {
     rightModule.setTargetVelocity(speedRight);
   }
 
-  public void arcadeDrivePID(double linearInput, double turnInput) {arcadeDrivePID(linearInput, turnInput, true);}
+  public void arcadeDriveJoystick(double linearInput, double turnInput) {arcadeDrivePID(linearInput, turnInput, true);}
 
   public void arcadeDrivePID(double linearInput, double turnInput, boolean applyDeadZone) {
     if(applyDeadZone) {

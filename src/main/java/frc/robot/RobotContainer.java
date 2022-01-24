@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.DrivingCommand;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -86,18 +87,10 @@ public class RobotContainer {
   public void doTeleopSetup() {
 
     //TODO: Decide if this is necessary
-    // drivetrain.setDampening(1);
+    // drivetrain.setDampening(1);x
 
-    Map<Object, Command> drivetrainCommands = Map.ofEntries(
-      Map.entry(DriveModes.Tank, new RunCommand(() -> drivetrain.tankDriveJoystick(
-        driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-        driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), drivetrain)),
-      Map.entry(DriveModes.Arcade, new RunCommand(() -> drivetrain.arcadeDrivePID(
-        driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-        driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS)), drivetrain))
-    );
-
-    drivetrain.setDefaultCommand(new SelectCommand(drivetrainCommands, drivetrain::getDriveMode));
+    drivetrain.setDefaultCommand(new DrivingCommand(drivetrain, () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS), 
+    () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), () -> driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)));
 
     // drivetrain.setDefaultCommand(
     //   new RunCommand(
