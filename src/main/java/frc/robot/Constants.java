@@ -46,13 +46,24 @@ public final class Constants {
     }
 
     public static class Intake {
-         //Intake Variables
+        //Hardware
         public static final int CARGO_INTAKE_MOTOR = 11;
         public static final int ROTATE_INTAKE_MOTOR = 12;
+
         public static final double INTAKE_SPEED = 0.5;
-        public static final PIDController INTAKE_CONTROLLER = new PIDController(0, 0, 0);
+
         public static final double INTAKE_RAISED_COUNTS = 0;
         public static final double INTAKE_LOWERED_COUNTS = 512;
+
+        public static final double ROTATIONAL_P = 0; 
+        public static final double ROTATIONAL_I = 0; 
+        public static final double ROTATIONAL_D = 0;
+
+        public static final double ROTATIONAL_MAX_VEL = 0; 
+        public static final double ROTATIONAL_MAX_ACCEL = 0;
+
+        public static final double ROTATIONAL_KS = 0; 
+        public static final double ROTATIONAL_KV = 0; 
     }
 
     public static class Controller {

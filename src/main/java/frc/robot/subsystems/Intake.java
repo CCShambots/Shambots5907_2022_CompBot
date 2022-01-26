@@ -8,6 +8,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.IntakeDirections;
 import frc.robot.util.IntakeStates;
@@ -27,7 +30,10 @@ public class Intake extends SubsystemBase {
 
   private IntakeDirections direction = Stopped;
   private IntakeStates intakeState = IntakeStates.Raised;
-  PIDController controller = INTAKE_CONTROLLER;
+
+  ProfiledPIDController rotationalPID = new ProfiledPIDController(ROTATIONAL_P, ROTATIONAL_I, ROTATIONAL_D, 
+    new TrapezoidProfile.Constraints(ROTATIONAL_MAX_VEL, ROTATIONAL_MAX_ACCEL));
+  SimpleMotorFeedforward
 
   /** Creates a new Intake. */
   public Intake(){
