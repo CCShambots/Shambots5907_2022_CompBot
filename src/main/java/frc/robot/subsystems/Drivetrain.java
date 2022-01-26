@@ -148,26 +148,21 @@ private NetworkTableEntry breakModeToggle = driveTab.add("BreakMode", false)
 
   public void tankDrivePID(double inputLeft, double inputRight, boolean applyDeadZone, boolean fromJoysticks) {
   
-    double speedLeft = 0;
-    double speedRight = 0;
+    double speedLeft = inputLeft;
+    double speedRight = inputRight;
 
-    speedLeft = adjustJoystick(inputLeft) * turboSpeed * -1;
-    speedRight = adjustJoystick(inputRight) * turboSpeed * -1;
-
-    leftModule.setTargetVelocity(leftSlewRate.calculate(speedLeft));
-    rightModule.setTargetVelocity(rightSlewRate.calculate(speedRight));
-  }
-
-  public void arcadeDriveJoystick(double linearInput, double turnInput) {arcadeDrivePID(linearInput, turnInput, true);}
-
-  public void arcadeDrivePID(double linearInput, double turnInput, boolean applyDeadZone) {
-    if(applyDeadZone) {
-      //Create dead zones
-      if(Math.abs(linearInput) < 0.25) linearInput = 0;
-      if(Math.abs(turnInput) < 0.25) turnInput = 0;
+    if(fromJoysticks) {
+      speedLeft = leftSlewRate.calculate(adjustJoystick(inputLeft) * turboSpeed * -1);
+      speedRight = rightSlewRate.calculate(adjustJoystick(inputRight) * turboSpeed * -1);
     }
 
-    WheelSpeeds tankInputs = arcadeDriveIK(adjustJoystick(linearInput), adjustJoystick(turnInput));
+    leftModule.setTargetVelocity(speedLeft);
+    rightModule.setTargetVelocity(speedRight);
+  }
+
+  public void arcadeDriveJoysticks(double linearInput, double turnInput) {
+
+    WheelSpeeds tankInputs = arcadeDriveIK(adjustJoystick(-linearInput), adjustJoystick(turnInput));
 
     tankDrivePID(tankInputs.left, tankInputs.right, false, false);
   }

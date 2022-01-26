@@ -29,7 +29,7 @@ public class DrivingCommand extends CommandBase{
         if(drivetrain.getDriveMode() == DriveModes.Tank) {
             drivetrain.tankDriveJoystick(leftY.get(), rightY.get());
         } else if(drivetrain.getDriveMode() == DriveModes.Arcade) {
-            drivetrain.arcadeDriveJoystick(leftY.get(), leftX.get());
+            drivetrain.arcadeDriveJoysticks(leftY.get(), leftX.get());
         }
     }
 
