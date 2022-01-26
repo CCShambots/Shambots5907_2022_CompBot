@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.CURRENT_LIMIT;
-import static frc.robot.Constants.Drivetrain.COUNTS_PER_REV_DRIVE_MOTORS;
 import static frc.robot.Constants.Drivetrain.LEFT_DRIVETRAIN_FOLLOWER;
 import static frc.robot.Constants.Drivetrain.LEFT_DRIVETRAIN_LEADER;
 import static frc.robot.Constants.Drivetrain.PIGEON_GYRO;
@@ -16,10 +14,8 @@ import static frc.robot.Constants.Drivetrain.*;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,7 +23,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -36,7 +31,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.DrivetrainModuleConstants;
@@ -45,15 +39,16 @@ import java.util.Map;
 
 public class Drivetrain extends SubsystemBase {
   //Hardware declarations
-  private static DrivetrainModuleConstants leftConstants= new DrivetrainModuleConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
-  private static final TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, true, leftConstants);
-  private static DrivetrainModuleConstants rightConstants= new DrivetrainModuleConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
-  private static final TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, false, rightConstants);
+  private DrivetrainModuleConstants leftConstants = new DrivetrainModuleConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
+  private DrivetrainModuleConstants rightConstants= new DrivetrainModuleConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
 
-  private static final PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
+  private TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, true, leftConstants);
+  private TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, false, rightConstants);
 
-  private static final Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
-  private static final DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
+  private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
+
+  private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
+  private DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
 
   //Teleop object that allows easy use of joysticks to motor powers
   private DriveModes driveMode = DriveModes.Tank;
@@ -65,12 +60,12 @@ public class Drivetrain extends SubsystemBase {
   private ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
   //Controllers for driving with PID Cotnrol
   
-  public static PIDController linearControllerLeft = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
+  //private PIDController linearControllerLeft = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
 
-  public static PIDController linearController = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
+  //private PIDController linearController = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
 
-  public static SlewRateLimiter leftSlewRate = new SlewRateLimiter(5);
-  public static SlewRateLimiter rightSlewRate = new SlewRateLimiter(5);
+  private SlewRateLimiter leftSlewRate = new SlewRateLimiter(5);
+  private SlewRateLimiter rightSlewRate = new SlewRateLimiter(5);
 
   private double normalSpeed = .6;
   private double turboSpeed = 1;
@@ -81,20 +76,9 @@ public class Drivetrain extends SubsystemBase {
   RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
   DifferentialDriveOdometry odometry;
 
-  private NetworkTableEntry smoothingSlider = driveTab.add("Smoothing", smoothing)
-  .withWidget(BuiltInWidgets.kNumberSlider)
-  .withProperties(Map.of("min", 2, "max", 15))
-  .getEntry();
-private NetworkTableEntry turboSpeedSlider = driveTab.add("TurboSpeed", turboSpeed)
-.withWidget(BuiltInWidgets.kNumberSlider)
-.withProperties(Map.of("min", 1,"max", 4))
-.getEntry();
-private NetworkTableEntry breakModeToggle = driveTab.add("BreakMode", false)
-.withWidget(BuiltInWidgets.kToggleButton)
-.getEntry();
-
-
-
+  private NetworkTableEntry smoothingSlider;
+  private NetworkTableEntry turboSpeedSlider;
+  private NetworkTableEntry breakModeToggle;
 
   /**
    * Initializes the drivetrain object and adds each motor to the motors list for setup.
@@ -105,8 +89,29 @@ private NetworkTableEntry breakModeToggle = driveTab.add("BreakMode", false)
     compressor.enableDigital();
     shifter.toggle();
 
+    initShuffleboard();
   }
 
+  private void initShuffleboard(){
+    smoothingSlider = driveTab.add("Smoothing", smoothing)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(Map.of("min", 2, "max", 15))
+      .getEntry();
+
+    turboSpeedSlider = driveTab.add("TurboSpeed", turboSpeed)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(Map.of("min", 1,"max", 4))
+      .getEntry();
+
+    breakModeToggle = driveTab.add("BreakMode", false)
+      .withWidget(BuiltInWidgets.kToggleButton)
+      .getEntry();
+
+      setDriveTrainVariables();
+  }
+
+
+  
   //General Methods
   public void setNeutralMotorBehavior(NeutralMode mode) {
     leftModule.setNeutralMode(mode);
@@ -129,12 +134,15 @@ private NetworkTableEntry breakModeToggle = driveTab.add("BreakMode", false)
 
   public void setDriveTrainVariables(){
       smoothing = smoothingSlider.getDouble(5);
+      turboSpeed = turboSpeedSlider.getDouble(3);
+
       leftSlewRate = new SlewRateLimiter(smoothing);
       rightSlewRate = new SlewRateLimiter(smoothing);
-      turboSpeed = turboSpeedSlider.getDouble(3);
-      if(breakModeToggle.getBoolean(false)){
+
+      if(breakModeToggle.getBoolean(false)) {
         setNeutralMotorBehavior(NeutralMode.Coast);
-      }   else{
+      }   
+      else {
         setNeutralMotorBehavior(NeutralMode.Brake);
       }
   }
@@ -161,7 +169,6 @@ private NetworkTableEntry breakModeToggle = driveTab.add("BreakMode", false)
   }
 
   public void arcadeDriveJoysticks(double linearInput, double turnInput) {
-
     WheelSpeeds tankInputs = arcadeDriveIK(adjustJoystick(-linearInput), adjustJoystick(turnInput));
 
     tankDrivePID(tankInputs.left, tankInputs.right, false, false);
@@ -192,16 +199,19 @@ private NetworkTableEntry breakModeToggle = driveTab.add("BreakMode", false)
       if (zRotation >= 0.0) {
         leftInput = maxInput;
         rightInput = xSpeed - zRotation;
-      } else {
+      } 
+      else {
         leftInput = xSpeed + zRotation;
         rightInput = maxInput;
       }
-    } else {
+    } 
+    else {
       // Third quadrant, else fourth quadrant
       if (zRotation >= 0.0) {
         leftInput = xSpeed + zRotation;
         rightInput = maxInput;
-      } else {
+      } 
+      else {
         leftInput = maxInput;
         rightInput = xSpeed - zRotation;
       }

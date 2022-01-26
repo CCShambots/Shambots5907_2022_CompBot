@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -102,16 +101,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new DrivingCommand(drivetrain, () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS), 
     () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), () -> driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)));
 
-    // drivetrain.setDefaultCommand(
-    //   new RunCommand(
-    //     () -> drivetrain.tankDrivePID(
-    //       driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), 
-    //       driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)), 
-    //    drivetrain)
-    // );
     drivetrain.setDriveTrainVariables();
-
-
 
     setTeleop();
   }

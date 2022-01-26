@@ -19,13 +19,15 @@ public class TrajectoryCommands {
     
     public static RamseteCommand getRamseteCommand(Pose2d startPose, List<Translation2d> passThroughPoints, Pose2d endPose, Drivetrain drivetrain) {
         // Create a voltage constraint to ensure we don't accelerate too fast
-        var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+        DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(
                 ksVolts,
                 kvVoltSecondsPerMeter,
-                kaVoltSecondsSquaredPerMeter),
+                kaVoltSecondsSquaredPerMeter
+            ),
             kDriveKinematics,
-            10);
+            10
+        );
 
         // Create config for trajectory
         TrajectoryConfig config =
