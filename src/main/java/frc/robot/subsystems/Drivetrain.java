@@ -107,7 +107,7 @@ public class Drivetrain extends SubsystemBase {
       .withWidget(BuiltInWidgets.kToggleButton)
       .getEntry();
 
-      setDriveTrainVariables();
+    setDriveTrainVariables();
   }
 
 
@@ -180,6 +180,7 @@ public class Drivetrain extends SubsystemBase {
    * @param zRotation
    * @return Wheelspeeds object (interpreted by tankDrive method as joystick inputs)
    */
+  //TODO: change this to curvature drive from differentialdrive class
   private WheelSpeeds arcadeDriveIK(double xSpeed, double zRotation) {
     xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
     zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
