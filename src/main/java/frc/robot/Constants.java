@@ -7,7 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import edu.wpi.first.math.controller.PIDController;
-import frc.robot.util.RobotStatus;
+import frc.robot.RobotContainer.RobotStatus;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -20,15 +20,17 @@ import frc.robot.util.RobotStatus;
 public final class Constants {
 
     //Current limit for stopping motors from exceeding max power draw
-    public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
+    public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 10, 10, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
     public static class Drivetrain {
         public static final int RIGHT_DRIVETRAIN_LEADER = 01;
         public static final int RIGHT_DRIVETRAIN_FOLLOWER = 02;
-        public static final int LEFT_DRIVETRAIN_LEADER = 03;
-        public static final int LEFT_DRIVETRAIN_FOLLOWER = 04;
+        public static final int LEFT_DRIVETRAIN_LEADER = 04;
+        public static final int LEFT_DRIVETRAIN_FOLLOWER = 03;
 
-        public static final int PIGEON_GYRO = 05; 
+        public static final int PIGEON_GYRO = 05;
+        
+        public static final int COMPRESSOR = 06;
 
         //Values for converting the motor counts to distance traveled
         public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
@@ -36,6 +38,25 @@ public final class Constants {
 
         //Robot mode (for odometry toggling)
         public static RobotStatus robotStatus = RobotStatus.AUTO;
+
+        public static double LEFT_P = 0;
+        public static double LEFT_I = 0;
+        public static double LEFT_D = 0;
+
+        public static double LEFT_KS = 1.0052;
+        public static double LEFT_KV = 2.0;
+
+        public static double RIGHT_P = 0;
+        public static double RIGHT_I = 0;
+        public static double RIGHT_D = 0;
+
+        public static double RIGHT_KS = 1.0052;
+        public static double RIGHT_KV = 2.3;
+
+        //Max velocity (in meters per second because that's what pathweaver does)
+        public static double MAX_LINEAR_VELOCITY = 3;
+        //Max angular velocity (in degrees per second (because radians are cringe))
+        public static double MAX_ANGULAR_VELOCITY = Math.toDegrees(Math.PI);
     }
 
     public static class Limelight {
@@ -70,14 +91,15 @@ public final class Constants {
         //Driver Controller
         public static final int DRIVER_CONTROLLER_PORT = 0;
         public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
-        public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 2; //Left stick x
+        public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 0; //Left stick x
         public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
+        public static final int DRIVER_A = 1; //Turbo/normal speed control
+        public static final int DRIVER_B = 2; //Arcade/Tank drive
+        public static final int DRIVER_X = 3; //Drivetrain reversed or not
+        public static final int DRIVER_Y = 4; //TODO: (temporary) Velocity tuning command
 
         //Operator Controller
-        public static final int OPERATOR_CONTROLLER_PORT = 1;
-        public static final int OPERATOR_BUTTON_6 = 6; //Turbo/normal speed control
-        public static final int OPERATOR_BUTTON_5 = 5; //Arcade/Tank drive
-        public static final int OPERATOR_BUTTON_4 = 4; //Drivetrain reversed or not
+        public static final int OPERATOR_CONTROLLER_PORT = 0;
         public static final int OPERATOR_BUTTON_3 = 3; //Control for switching to limelight turning 
         public static final int OPERATOR_4_2 = 7; //Runs the Intake Forwards
         public static final int OPERATOR_4_3 = 8; //Runs the Intake Backwards
