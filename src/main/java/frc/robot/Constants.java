@@ -87,6 +87,13 @@ public final class Constants {
         public static final double ROTATIONAL_KV = 0; 
     }
 
+    public static class Conveyor {
+        //Hardware
+        public static final int CONVEYOR_1 = 21;
+
+        public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
+    }
+
     public static class Controller {
         //Driver Controller
         public static final int DRIVER_CONTROLLER_PORT = 0;
@@ -99,7 +106,7 @@ public final class Constants {
         public static final int DRIVER_Y = 4; //TODO: (temporary) Velocity tuning command
 
         //Operator Controller
-        public static final int OPERATOR_CONTROLLER_PORT = 0;
+        public static final int OPERATOR_CONTROLLER_PORT = 1;
         public static final int OPERATOR_BUTTON_3 = 3; //Control for switching to limelight turning 
         public static final int OPERATOR_4_2 = 7; //Runs the Intake Forwards
         public static final int OPERATOR_4_3 = 8; //Runs the Intake Backwards
