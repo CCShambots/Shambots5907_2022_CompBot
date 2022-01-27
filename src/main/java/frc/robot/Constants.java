@@ -79,11 +79,10 @@ public final class Constants {
         public static final int OPERATOR_BUTTON_5 = 5; //Arcade/Tank drive
         public static final int OPERATOR_BUTTON_4 = 4; //Drivetrain reversed or not
         public static final int OPERATOR_BUTTON_3 = 3; //Control for switching to limelight turning 
-        public static final int OPERATOR_BUTTON_7 = 7; //Runs the Intake Forwards
-        public static final int OPERATOR_BUTTON_8 = 8; //Runs the Intake Backwards
-        public static final int DRIVER_BUTTON_9 = 9; //Stops the Intake
-        public static final int OPERATOR_BUTTON_10 = 10; //Raises the Intake
-        public static final int OPERATOR_BUTTON_11 = 11; //Lowers the Intake
+        public static final int OPERATOR_4_2 = 7; //Runs the Intake Forwards
+        public static final int OPERATOR_4_3 = 8; //Runs the Intake Backwards
+        public static final int OPERATOR_2_1 = 10; //Raises the Intake
+        public static final int OPERATOR_3_1 = 11; //Lowers the Intake
     }
     
 }

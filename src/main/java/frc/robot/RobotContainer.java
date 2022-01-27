@@ -82,21 +82,18 @@ public class RobotContainer {
 
     //TODO: Should the intake continue running until stopped with a different button, or just run while held down
     //TODO: Prioritize running the inatke forwards or backwards
-    new JoystickButton(driverController, OPERATOR_BUTTON_7)
-      .whenPressed(new InstantCommand(intake::runIntakeForward));
-      // .whenReleased(new InstantCommand(intake::stopIntake));
+    new JoystickButton(driverController, OPERATOR_4_2)
+      .whenPressed(new InstantCommand(intake::intakeBalls))
+      .whenReleased(new InstantCommand(intake::stopIntake));
       
-    new JoystickButton(driverController, OPERATOR_BUTTON_8)
-      .whenPressed(new InstantCommand(intake::runIntakeBackward));
-      // .whenReleased(new InstantCommand(intake::stopIntake));
-    
-    new JoystickButton(driverController, OPERATOR_BUTTON_8)
-      .whenPressed(new InstantCommand(intake::stopIntake));
+    new JoystickButton(driverController, OPERATOR_4_3)
+      .whenPressed(new InstantCommand(intake::exhaustBalls))
+      .whenReleased(new InstantCommand(intake::stopIntake));
 
-    new JoystickButton(driverController, OPERATOR_BUTTON_10)
+    new JoystickButton(driverController, OPERATOR_2_1)
       .whenPressed(new InstantCommand(intake::raiseIntake));
       
-    new JoystickButton(driverController, OPERATOR_BUTTON_11)
+    new JoystickButton(driverController, OPERATOR_3_1)
       .whenPressed(new InstantCommand(intake::lowerIntake));
   }
 

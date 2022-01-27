@@ -31,9 +31,13 @@ public class Intake extends SubsystemBase {
   private IntakeDirections direction = Stopped;
   private IntakeStates intakeState = IntakeStates.Raised;
 
-  ProfiledPIDController rotationalPID = new ProfiledPIDController(ROTATIONAL_P, ROTATIONAL_I, ROTATIONAL_D, 
+  private ProfiledPIDController rotationalPID = new ProfiledPIDController(ROTATIONAL_P, ROTATIONAL_I, ROTATIONAL_D, 
     new TrapezoidProfile.Constraints(ROTATIONAL_MAX_VEL, ROTATIONAL_MAX_ACCEL));
-  SimpleMotorFeedforward
+  private SimpleMotorFeedforward rotationalFeedForward = new SimpleMotorFeedforward(ROTATIONAL_KS, ROTATIONAL_KV);
+
+  private double rotationalSetpoint = 0;
+  private double rotationalPIDOutput = 0;
+  private double rotationalFeedForwardOutput = 0;
 
   /** Creates a new Intake. */
   public Intake(){
@@ -50,18 +54,14 @@ public class Intake extends SubsystemBase {
 
   //Code for rotating the intake up and down
 
-  public void updatePIDLoop() {
-    rotateIntakeMotor.set(controller.calculate(getRotationalEncoder()));
-  }
-
     /**
    * Sets the target point of the intake's PID controller to the inputted state.
    * @param state Raised or lowered 
    */
-  public void setTargetPoint(IntakeStates state) {
+  private void setTargetPoint(IntakeStates state) {
     intakeState = state;
-    if(state == Raised) controller.setSetpoint(INTAKE_RAISED_COUNTS);
-    else controller.setSetpoint(INTAKE_LOWERED_COUNTS);
+    if(state == Raised) rotationalSetpoint = INTAKE_RAISED_COUNTS;
+    else rotationalSetpoint = INTAKE_LOWERED_COUNTS;
   }
 
   public void raiseIntake() {
@@ -95,15 +95,15 @@ public class Intake extends SubsystemBase {
   }
 
 
-  //Code for actually spinning the intake
+  //Code for spinning the intake
 
   //TODO: Prioritize running the intake either forward or backward
-  public void runIntakeForward(){
+  public void intakeBalls(){
     cargoIntakeMotor.set(INTAKE_SPEED);
     direction = Forwards;
   }
 
-  public void runIntakeBackward(){
+  public void exhaustBalls(){
     cargoIntakeMotor.set(INTAKE_SPEED);
     direction = Backwards;
   }
@@ -117,13 +117,15 @@ public class Intake extends SubsystemBase {
     return direction;
   }
 
-
-  
   /**
    * Periodic loop
    */
   @Override
   public void periodic() {
-    updatePIDLoop();
+    
+    rotationalPIDOutput = rotationalPID.calculate(getRotationalEncoder(), rotationalSetpoint);
+    rotationalFeedForwardOutput = rotationalFeedForward.calculate(rotationalPID.getGoal().velocity);
+
+    rotateIntakeMotor.setVoltage(rotationalFeedForwardOutput + rotationalPIDOutput);
   }
 }
