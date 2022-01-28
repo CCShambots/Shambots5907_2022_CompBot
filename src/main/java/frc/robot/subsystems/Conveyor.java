@@ -12,9 +12,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 
 public class Conveyor extends SubsystemBase{
-    private static WPI_TalonFX conveyor1 = new WPI_TalonFX(CONVEYOR_1);
+    private final WPI_TalonFX conveyor1 = new WPI_TalonFX(CONVEYOR_1);
     
-    private static List<WPI_TalonFX> conveyorMotors = new ArrayList<>();
+    private List<WPI_TalonFX> conveyorMotors = new ArrayList<>();
 
     public Conveyor() {
         conveyorMotors.add(conveyor1);

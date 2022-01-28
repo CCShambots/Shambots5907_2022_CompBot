@@ -25,8 +25,8 @@ public class Intake extends SubsystemBase {
 
   //TODO: Add override for stopping control of the intake until it is fully in one state (up/down)
 
-  private static final WPI_TalonFX cargoIntakeMotor = new WPI_TalonFX(CARGO_INTAKE_MOTOR);
-  private static final WPI_TalonFX rotateIntakeMotor = new WPI_TalonFX(ROTATE_INTAKE_MOTOR);
+  private final WPI_TalonFX cargoIntakeMotor = new WPI_TalonFX(CARGO_INTAKE_MOTOR);
+  private final WPI_TalonFX rotateIntakeMotor = new WPI_TalonFX(ROTATE_INTAKE_MOTOR);
 
   private IntakeDirections direction = Stopped;
   private IntakeStates intakeState = IntakeStates.Raised;
