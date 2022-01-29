@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -22,7 +21,6 @@ import static frc.robot.Constants.*;
 
 
 public class Intake extends SubsystemBase {
-
   //TODO: Add override for stopping control of the intake until it is fully in one state (up/down)
 
   private final WPI_TalonFX cargoIntakeMotor = new WPI_TalonFX(CARGO_INTAKE_MOTOR);
@@ -31,6 +29,7 @@ public class Intake extends SubsystemBase {
   private IntakeDirections direction = Stopped;
   private IntakeStates intakeState = IntakeStates.Raised;
 
+  //Controllers for rotation of the intake
   private ProfiledPIDController rotationalPID = new ProfiledPIDController(ROTATIONAL_P, ROTATIONAL_I, ROTATIONAL_D, 
     new TrapezoidProfile.Constraints(ROTATIONAL_MAX_VEL, ROTATIONAL_MAX_ACCEL));
   private SimpleMotorFeedforward rotationalFeedForward = new SimpleMotorFeedforward(ROTATIONAL_KS, ROTATIONAL_KV);
