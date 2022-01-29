@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -58,19 +59,12 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    //Add button for setting turbo speed when a certain button is held
-    new JoystickButton(driverController, DRIVER_A)
-      .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
-      .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
+    new JoystickButton(driverController, Button.kRightBumper.value)
+      .whenPressed(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)))
+      .whenReleased(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)));
 
-    new JoystickButton(driverController, DRIVER_B)
-      .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
-      
-    new JoystickButton(driverController, DRIVER_X)
-      .whenPressed(new InstantCommand(drivetrain::toggleReversed));
-
-    new JoystickButton(operatorController, DRIVER_Y)
-      .whenPressed(new SequentialCommandGroup(new PrintCommand("Trying velocity tuner"), new DrivetrainVelocityTuner(drivetrain), new PrintCommand("finished velocity tuner")));
+    new JoystickButton(driverController, Button.kLeftBumper.value)
+      .whenPressed(new ConditionalCommand(new InstantCommand(drivetrain::toggleDriveMode), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
   }
 
   public void telemetry() {

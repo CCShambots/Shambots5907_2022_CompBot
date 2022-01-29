@@ -74,8 +74,6 @@ public final class Constants {
         public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
         public static final int DRIVER_A = 1; //Turbo/normal speed control
         public static final int DRIVER_B = 2; //Arcade/Tank drive
-        public static final int DRIVER_X = 3; //Drivetrain reversed or not
-        public static final int DRIVER_Y = 4; //TODO: (temporary) Velocity tuning command
 
         //Operator Controller
         public static final int OPERATOR_CONTROLLER_PORT = 0;

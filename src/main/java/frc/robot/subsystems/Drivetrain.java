@@ -271,6 +271,7 @@ public class Drivetrain extends SubsystemBase {
     driveMode = driveMode == DriveModes.Tank ? DriveModes.Arcade : DriveModes.Tank;
   }
 
+  //TODO: Update for setting drive mode with limelight (once we merge turret code)
   public boolean isToggleDriveModeAllowed() {
     return driveMode != DriveModes.Limelight;
   }
