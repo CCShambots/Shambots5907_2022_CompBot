@@ -12,12 +12,12 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 
 public class Conveyor extends SubsystemBase{
-    private final WPI_TalonFX conveyor1 = new WPI_TalonFX(CONVEYOR_1);
+    private final WPI_TalonFX lowerConveyor = new WPI_TalonFX(LOWER_CONVEYOR_ID);
     
     private List<WPI_TalonFX> conveyorMotors = new ArrayList<>();
 
     public Conveyor() {
-        conveyorMotors.add(conveyor1);
+        conveyorMotors.add(lowerConveyor);
 
         for(WPI_TalonFX motor : conveyorMotors) {
             motor.configFactoryDefault();
@@ -38,5 +38,8 @@ public class Conveyor extends SubsystemBase{
             motor.set(ControlMode.PercentOutput, speed);
         }
     }
+
+    public void intakeLower() {lowerConveyor.set(ControlMode.PercentOutput, DEFAULT_CONVEYOR_SPEED);}
+    public void exhaustLower() {lowerConveyor.set(ControlMode.PercentOutput, -DEFAULT_CONVEYOR_SPEED);}
 
 }

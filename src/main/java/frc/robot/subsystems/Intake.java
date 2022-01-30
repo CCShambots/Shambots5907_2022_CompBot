@@ -7,47 +7,38 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.IntakeDirections;
-import frc.robot.util.IntakeStates;
 
-import static frc.robot.util.IntakeDirections.*;
-import static frc.robot.util.IntakeStates.*;
 import static frc.robot.Constants.Intake.*;
+
 import static frc.robot.Constants.*;
 
 
 public class Intake extends SubsystemBase {
-  //TODO: Add override for stopping control of the intake until it is fully in one state (up/down)
+  //TODO: Add override for stopping control of the intake when it is up (and make it stop by default when up)
 
-  private final WPI_TalonFX cargoIntakeMotor = new WPI_TalonFX(CARGO_INTAKE_MOTOR);
-  private final WPI_TalonFX rotateIntakeMotor = new WPI_TalonFX(ROTATE_INTAKE_MOTOR);
+  private WPI_TalonFX cargoIntakeMotor = new WPI_TalonFX(CARGO_INTAKE_MOTOR_ID);
 
-  private IntakeDirections direction = Stopped;
-  private IntakeStates intakeState = IntakeStates.Raised;
+  private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
+  private DoubleSolenoid rotationalSolenoid = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.CTREPCM, 1, 2);
 
-  //Controllers for rotation of the intake
-  private ProfiledPIDController rotationalPID = new ProfiledPIDController(ROTATIONAL_P, ROTATIONAL_I, ROTATIONAL_D, 
-    new TrapezoidProfile.Constraints(ROTATIONAL_MAX_VEL, ROTATIONAL_MAX_ACCEL));
-  private SimpleMotorFeedforward rotationalFeedForward = new SimpleMotorFeedforward(ROTATIONAL_KS, ROTATIONAL_KV);
+  private IntakeDirection direction = IntakeDirection.Stopped;
+  private IntakeState intakeState = IntakeState.Raised;
 
-  private double rotationalSetpoint = 0;
-  private double rotationalPIDOutput = 0;
-  private double rotationalFeedForwardOutput = 0;
 
   /** Creates a new Intake. */
   public Intake(){
     cargoIntakeMotor.configFactoryDefault();
-    rotateIntakeMotor.configFactoryDefault();
-
     cargoIntakeMotor.setNeutralMode(NeutralMode.Brake);
-    rotateIntakeMotor.setNeutralMode(NeutralMode.Brake);
-
     cargoIntakeMotor.configSupplyCurrentLimit(CURRENT_LIMIT);
-    rotateIntakeMotor.configSupplyCurrentLimit(CURRENT_LIMIT);
+
+    compressor.enableDigital();
+    rotationalSolenoid.toggle();
   }
 
 
@@ -57,39 +48,23 @@ public class Intake extends SubsystemBase {
    * Sets the target point of the intake's PID controller to the inputted state.
    * @param state Raised or lowered 
    */
-  private void setTargetPoint(IntakeStates state) {
+  private void setIntakeState(IntakeState state) {
     intakeState = state;
-    if(state == Raised) rotationalSetpoint = INTAKE_RAISED_COUNTS;
-    else rotationalSetpoint = INTAKE_LOWERED_COUNTS;
+    if(state == IntakeState.Raised && getRotationalPosition() == Value.kForward)  {
+      stop();
+      rotationalSolenoid.toggle();
+    }
+    else if(state == IntakeState.Lowered && getRotationalPosition() == Value.kReverse) rotationalSolenoid.toggle();
   }
 
-  public void raiseIntake() {
-    setTargetPoint(Raised);
+  public void raiseIntake() {setIntakeState(IntakeState.Raised);}
+  public void lowerIntake() {setIntakeState(IntakeState.Lowered);}
+
+  public Value getRotationalPosition() {
+    return rotationalSolenoid.get();
   }
 
-  public void lowerIntake() {
-    setTargetPoint(Lowered);
-  }
-
-  /**
-   * Resets the encoder to the zero position (raised)
-   */
-  public void resetRotationalEncoder() {
-    rotateIntakeMotor.setSelectedSensorPosition(0);
-  }
-
-  /**
-   * @return The rotational intake encoder's position
-   */
-  public double getRotationalEncoder() {
-    return rotateIntakeMotor.getSelectedSensorPosition();
-  }
-
-  public void rotateIntake(double power) {
-    rotateIntakeMotor.set(power);
-  }
-
-  public IntakeStates getIntakeState() {
+  public IntakeState getIntakeState() {
     return intakeState;
   }
 
@@ -97,22 +72,26 @@ public class Intake extends SubsystemBase {
   //Code for spinning the intake
 
   //TODO: Prioritize running the intake either forward or backward
-  public void intakeBalls(){
-    cargoIntakeMotor.set(INTAKE_SPEED);
-    direction = Forwards;
+  public void intake(){setIntakeDirection(IntakeDirection.Intaking);}
+  public void exhaust(){setIntakeDirection(IntakeDirection.Exhausting);}
+  public void stop(){setIntakeDirection(IntakeDirection.Stopped);}
+
+  private void setIntakeDirection(IntakeDirection direction) {
+    //The intake will not be allowed to be commanded to different speeds when it is raised
+    if(getIntakeState() == IntakeState.Raised) return;
+
+    this.direction = direction;
+    if(direction == IntakeDirection.Intaking) {
+      cargoIntakeMotor.set(INTAKE_SPEED);
+    }else if(direction == IntakeDirection.Exhausting) {
+      cargoIntakeMotor.set(-INTAKE_SPEED);
+    } else {
+      cargoIntakeMotor.set(0);
+    }
+
   }
 
-  public void exhaustBalls(){
-    cargoIntakeMotor.set(INTAKE_SPEED);
-    direction = Backwards;
-  }
-
-  public void stopIntake(){
-    cargoIntakeMotor.set(0);
-    direction = Stopped;
-  }
-
-  public IntakeDirections getIntakeMode() {
+  public IntakeDirection getIntakeDirection() {
     return direction;
   }
 
@@ -121,10 +100,15 @@ public class Intake extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    
-    rotationalPIDOutput = rotationalPID.calculate(getRotationalEncoder(), rotationalSetpoint);
-    rotationalFeedForwardOutput = rotationalFeedForward.calculate(rotationalPID.getGoal().velocity);
-
-    rotateIntakeMotor.setVoltage(rotationalFeedForwardOutput + rotationalPIDOutput);
+    //TODO: Remove this once we figure out how to actually use solenoids
+    SmartDashboard.putData(rotationalSolenoid);
   }
+
+  public static enum IntakeState {
+    Raised, Lowered
+  }
+  
+  public enum IntakeDirection {
+    Intaking, Exhausting, Stopped
+}
 }

@@ -68,8 +68,10 @@ public final class Constants {
 
     public static class Intake {
         //Hardware
-        public static final int CARGO_INTAKE_MOTOR = 11;
+        public static final int CARGO_INTAKE_MOTOR_ID = 11;
         public static final int ROTATE_INTAKE_MOTOR = 12;
+
+        public static final int COMPRESSOR_ID = 13;
 
         public static final double INTAKE_SPEED = 0.5;
 
@@ -89,7 +91,7 @@ public final class Constants {
 
     public static class Conveyor {
         //Hardware
-        public static final int CONVEYOR_1 = 21;
+        public static final int LOWER_CONVEYOR_ID = 21;
 
         public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
     }

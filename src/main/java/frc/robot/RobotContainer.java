@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.util.HashMap;
@@ -63,6 +62,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     //Add button for setting turbo speed when a certain button is held
+    //TODO: Disable Intake commands when the turret is shooting
     new JoystickButton(driverController, DRIVER_A)
       .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
       .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
@@ -73,23 +73,19 @@ public class RobotContainer {
     new JoystickButton(driverController, DRIVER_X)
       .whenPressed(new InstantCommand(drivetrain::toggleReversed));
 
-
-    //TODO: Should the intake continue running until stopped with a different button, or just run while held down
-    //TODO: Prioritize running the inatke forwards or backwards
-    new JoystickButton(driverController, OPERATOR_4_2)
-      .whenPressed(new InstantCommand(intake::intakeBalls))
-      .whenReleased(new InstantCommand(intake::stopIntake));
+    new JoystickButton(operatorController, OPERATOR_4_2)
+      .whenPressed(new InstantCommand(intake::intake))
+      .whenReleased(new InstantCommand(intake::stop));
       
-    new JoystickButton(driverController, OPERATOR_4_3)
-      .whenPressed(new InstantCommand(intake::exhaustBalls))
-      .whenReleased(new InstantCommand(intake::stopIntake));
+    new JoystickButton(operatorController, OPERATOR_4_3)
+      .whenPressed(new InstantCommand(intake::exhaust))
+      .whenReleased(new InstantCommand(intake::stop));
 
-    new JoystickButton(driverController, OPERATOR_2_1)
+    new JoystickButton(operatorController, OPERATOR_2_1)
       .whenPressed(new InstantCommand(intake::raiseIntake));
       
-    new JoystickButton(driverController, OPERATOR_3_1)
+    new JoystickButton(operatorController, OPERATOR_3_1)
       .whenPressed(new InstantCommand(intake::lowerIntake));
-    
   }
 
   public void telemetry() {
