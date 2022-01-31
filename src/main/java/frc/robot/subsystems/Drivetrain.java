@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 import frc.robot.RobotContainer.RobotStatus;
@@ -56,19 +55,14 @@ public class Drivetrain extends SubsystemBase {
   private boolean reversed = false;
   private int reversedMult = 1;
 
-
-  private ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
-  //Controllers for driving with PID Cotnrol
+  private ShuffleboardTab driveTab; 
   
-  //private PIDController linearControllerLeft = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
-
-  //private PIDController linearController = new PIDController(RIGHT_P, RIGHT_I, RIGHT_D);
-
+  //Limiters for how fast the joysticks can accelerate
   private SlewRateLimiter leftSlewRate = new SlewRateLimiter(5);
   private SlewRateLimiter rightSlewRate = new SlewRateLimiter(5);
 
-  private double normalSpeed = .6;
-  private double turboSpeed = 1; //The fastest speed the robot should reach (in meters/sec)
+  private double normalSpeed = 1;
+  private double turboSpeed = 1.5; //The fastest speed the robot should reach (in meters/sec)
   private double speedMult = normalSpeed;
   private double smoothing = 1;
 
@@ -83,16 +77,18 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Initializes the drivetrain object and adds each motor to the motors list for setup.
    */
-  public Drivetrain() {
+  public Drivetrain(ShuffleboardTab driveTab) {
     odometry = new DifferentialDriveOdometry(getGyroHeadingOdometry(), new Pose2d());
 
     compressor.enableDigital();
     shifter.toggle();
 
-    initShuffleboard();
+    initShuffleboard(driveTab);
   }
 
-  private void initShuffleboard(){
+  private void initShuffleboard(ShuffleboardTab driveTab){
+    driveTab =  driveTab;
+
     smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 2, "max", 15))
