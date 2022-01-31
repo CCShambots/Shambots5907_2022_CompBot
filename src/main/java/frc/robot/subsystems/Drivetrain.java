@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.Drivetrain.LEFT_DRIVETRAIN_FOLLOWER;
@@ -53,17 +49,12 @@ public class Drivetrain extends SubsystemBase {
   private DriveModes driveMode = DriveModes.Tank;
   private DriveModes prevDriveMode = DriveModes.Tank;
   private boolean reversed = false;
-  private int reversedMult = 1;
-
-  private ShuffleboardTab driveTab; 
   
-  //Limiters for how fast the joysticks can accelerate
-  private SlewRateLimiter leftSlewRate = new SlewRateLimiter(5);
-  private SlewRateLimiter rightSlewRate = new SlewRateLimiter(5);
 
-  private double normalSpeed = 1;
-  private double turboSpeed = 1.5; //The fastest speed the robot should reach (in meters/sec)
-  private double speedMult = normalSpeed;
+  //Speed controls
+  private TeleopSpeeds speedMode = TeleopSpeeds.Normal;
+  private double maxSpeed = 2;
+
   private double smoothing = 1;
 
   //Autonomous objects (odometry, trajectory following, etc)
@@ -71,7 +62,7 @@ public class Drivetrain extends SubsystemBase {
   DifferentialDriveOdometry odometry;
 
   private NetworkTableEntry smoothingSlider;
-  private NetworkTableEntry turboSpeedSlider;
+  private NetworkTableEntry speedSlider;
   private NetworkTableEntry breakModeToggle;
 
   /**
@@ -86,15 +77,17 @@ public class Drivetrain extends SubsystemBase {
     initShuffleboard(driveTab);
   }
 
+  /**
+   * Send the driving variables to Shuffleboard
+   */
   private void initShuffleboard(ShuffleboardTab driveTab){
-    driveTab =  driveTab;
 
     smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 2, "max", 15))
       .getEntry();
 
-    turboSpeedSlider = driveTab.add("TurboSpeed", turboSpeed)
+    speedSlider = driveTab.add("Speed", maxSpeed)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 1,"max", 4))
       .getEntry();
@@ -106,10 +99,24 @@ public class Drivetrain extends SubsystemBase {
     setDriveTrainVariables();
   }
 
+  /**
+   * Setup drivetrain variables based on the states of the shuffleboard tab
+   */
+  public void setDriveTrainVariables(){
+    smoothing = smoothingSlider.getDouble(5);
+    maxSpeed = speedSlider.getDouble(3);
+
+    if(breakModeToggle.getBoolean(false)) {
+      setNeutralMotorBehavior(NeutralMode.Coast);
+    }   
+    else {
+      setNeutralMotorBehavior(NeutralMode.Brake);
+    }
+  }
 
   
   //General Methods
-  public void setNeutralMotorBehavior(NeutralMode mode) {
+  private void setNeutralMotorBehavior(NeutralMode mode) {
     leftModule.setNeutralMode(mode);
     rightModule.setNeutralMode(mode);
   }
@@ -124,50 +131,20 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Set the fused heading (gravity oriented heading) of the pigeon gyro
    */
-  public void setGyroHeading(double heading) {
+  public void resetGyroHeading(double heading) {
     pigeonIMU.setFusedHeading(heading);
   }
 
-  public void setDriveTrainVariables(){
-      smoothing = smoothingSlider.getDouble(5);
-      turboSpeed = turboSpeedSlider.getDouble(3);
-
-      leftSlewRate = new SlewRateLimiter(smoothing);
-      rightSlewRate = new SlewRateLimiter(smoothing);
-
-      if(breakModeToggle.getBoolean(false)) {
-        setNeutralMotorBehavior(NeutralMode.Coast);
-      }   
-      else {
-        setNeutralMotorBehavior(NeutralMode.Brake);
-      }
-  }
-
   //Teleop Methods
-  //Version of tank drive for joystick inputs
-  public void tankDriveJoystick(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, true);}
 
-  //Version of tank drive for autonomous/trajectory inputs (in m/s)
-  public void tankDriveAuto(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, false);}
-
-  public void tankDrivePID(double inputLeft, double inputRight, boolean fromJoysticks) {
-  
-    double speedLeft = inputLeft;
-    double speedRight = inputRight;
-
-    if(fromJoysticks) {
-      speedLeft = leftSlewRate.calculate(adjustJoystick(inputLeft) * -1);
-      speedRight = rightSlewRate.calculate(adjustJoystick(inputRight) * -1);
-    }
-
+  /**
+   * 
+   * @param speedLeft velocity (m/s) for the left side
+   * @param speedRight velocity (m/s) for the right side
+   */
+  public void tankDrive(double speedLeft, double speedRight) {
     leftModule.setTargetVelocity(speedLeft);
     rightModule.setTargetVelocity(speedRight);
-  }
-
-  public void arcadeDriveJoysticks(double linearInput, double turnInput) {
-    WheelSpeeds tankInputs = arcadeDriveIK(adjustJoystick(-linearInput), adjustJoystick(turnInput));
-
-    tankDrivePID(tankInputs.left, tankInputs.right, false);
   }
 
   /**
@@ -177,7 +154,7 @@ public class Drivetrain extends SubsystemBase {
    * @return Wheelspeeds object (interpreted by tankDrive method as joystick inputs)
    */
   //TODO: change this to curvature drive from differentialdrive class
-  private WheelSpeeds arcadeDriveIK(double xSpeed, double zRotation) {
+  public WheelSpeeds arcadeDrive(double xSpeed, double zRotation) {
     xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
     zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
 
@@ -224,19 +201,9 @@ public class Drivetrain extends SubsystemBase {
     return new WheelSpeeds(leftInput, rightInput);
   }
 
-  /**
-   * 
-   * @param input Raw joystick input
-   * @return the input after being sped up, slowed down, or reversed, as per the current drivetrain settings
-   */
-  public double adjustJoystick(double input) {
-    //Create dead zones
-    if(Math.abs(input) < 0.05) return 0;
-
-    double output = input * Math.abs(input);
-
-    return output * speedMult * reversedMult;
-  }
+  public double getMaxSpeed() {return maxSpeed;}
+  public Drivetrain.TeleopSpeeds getSpeedMode() {return speedMode;}
+  public double getSmoothing() {return smoothing;}
 
   public double getLeftVelocity() {return leftModule.getVelocity();}
   public double getRightVelocity() {return rightModule.getVelocity();}
@@ -275,12 +242,9 @@ public class Drivetrain extends SubsystemBase {
   /**Change whether drivetrain is reversed or not */
   public void setReversed(boolean value) {
     this.reversed = value;
-
-    if(value) reversedMult = -1;
-    else reversedMult = 1;
   }
 
-  public boolean getReversed() {
+  public boolean isReversed() {
     return reversed;
   }
 
@@ -293,7 +257,7 @@ public class Drivetrain extends SubsystemBase {
    * @param speed speed to set to
    */
   public void setSpeed(TeleopSpeeds speed) {
-    speedMult = speed == TeleopSpeeds.Normal ? normalSpeed : turboSpeed;
+    this.speedMode = speed;
   }
 
   //Autonomous Methods
