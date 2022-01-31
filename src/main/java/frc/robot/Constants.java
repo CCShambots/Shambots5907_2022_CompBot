@@ -39,19 +39,19 @@ public final class Constants {
         //Robot mode (for odometry toggling)
         public static RobotStatus robotStatus = RobotStatus.AUTO;
 
-        public static double LEFT_P = 0;
+        public static double LEFT_P = 0.05;
         public static double LEFT_I = 0;
         public static double LEFT_D = 0;
 
         public static double LEFT_KS = 1.0052;
-        public static double LEFT_KV = 2.0;
+        public static double LEFT_KV = 1.35;
 
-        public static double RIGHT_P = 0;
+        public static double RIGHT_P = 0.05;
         public static double RIGHT_I = 0;
         public static double RIGHT_D = 0;
 
         public static double RIGHT_KS = 1.0052;
-        public static double RIGHT_KV = 2.3;
+        public static double RIGHT_KV = 1.35;
 
         //Max velocity (in meters per second because that's what pathweaver does)
         public static double MAX_LINEAR_VELOCITY = 3;

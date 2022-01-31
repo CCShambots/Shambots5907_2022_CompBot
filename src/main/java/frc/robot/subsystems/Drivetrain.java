@@ -68,7 +68,7 @@ public class Drivetrain extends SubsystemBase {
   private SlewRateLimiter rightSlewRate = new SlewRateLimiter(5);
 
   private double normalSpeed = .6;
-  private double turboSpeed = 1;
+  private double turboSpeed = 1; //The fastest speed the robot should reach (in meters/sec)
   private double speedMult = normalSpeed;
   private double smoothing = 1;
 
@@ -149,19 +149,19 @@ public class Drivetrain extends SubsystemBase {
 
   //Teleop Methods
   //Version of tank drive for joystick inputs
-  public void tankDriveJoystick(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, true, true);}
+  public void tankDriveJoystick(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, true);}
 
   //Version of tank drive for autonomous/trajectory inputs (in m/s)
-  public void tankDriveAuto(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, false, false);}
+  public void tankDriveAuto(double inputLeft, double inputRight) {tankDrivePID(inputLeft, inputRight, false);}
 
-  public void tankDrivePID(double inputLeft, double inputRight, boolean applyDeadZone, boolean fromJoysticks) {
+  public void tankDrivePID(double inputLeft, double inputRight, boolean fromJoysticks) {
   
     double speedLeft = inputLeft;
     double speedRight = inputRight;
 
     if(fromJoysticks) {
-      speedLeft = leftSlewRate.calculate(adjustJoystick(inputLeft) * turboSpeed * -1);
-      speedRight = rightSlewRate.calculate(adjustJoystick(inputRight) * turboSpeed * -1);
+      speedLeft = leftSlewRate.calculate(adjustJoystick(inputLeft) * -1);
+      speedRight = rightSlewRate.calculate(adjustJoystick(inputRight) * -1);
     }
 
     leftModule.setTargetVelocity(speedLeft);
@@ -171,7 +171,7 @@ public class Drivetrain extends SubsystemBase {
   public void arcadeDriveJoysticks(double linearInput, double turnInput) {
     WheelSpeeds tankInputs = arcadeDriveIK(adjustJoystick(-linearInput), adjustJoystick(turnInput));
 
-    tankDrivePID(tankInputs.left, tankInputs.right, false, false);
+    tankDrivePID(tankInputs.left, tankInputs.right, false);
   }
 
   /**
