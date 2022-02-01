@@ -51,13 +51,16 @@ public class TankDriveModule {
         pidController.setSetpoint(velocity);
     }
 
-    public double getVelocity() {return countsToMeters(leader.getSelectedSensorVelocity());}
+    public double getVelocity() {
+        return 
+            positionToMeters(leader.getSelectedSensorVelocity()) 
+            * 10;}
 
-    public double getEncoderMeters() {return countsToMeters(leader.getSelectedSensorPosition());}
+    public double getEncoderMeters() {return positionToMeters(leader.getSelectedSensorPosition());}
 
     public double getVoltage() {return leader.getMotorOutputVoltage();}
 
-    private double countsToMeters(double counts) {return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254; }
+    private double positionToMeters(double counts) {return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) / 7.08 * 0.0254; }
 
     public void resetEncoder() {leader.setSelectedSensorPosition(0);}
 

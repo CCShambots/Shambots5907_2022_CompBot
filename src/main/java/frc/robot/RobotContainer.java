@@ -6,11 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.DrivingCommand;
-import frc.robot.subsystems.Conveyor;
+import frc.robot.Constants.Conveyor;
+import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,8 +29,11 @@ import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
 
 public class RobotContainer {
+  ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
+
   Field2d field = new Field2d();
-  private final Drivetrain drivetrain = new Drivetrain();
+
+  private final Drivetrain drivetrain = new Drivetrain(driveTab);
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
 
@@ -61,18 +67,18 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    //Add button for setting turbo speed when a certain button is held
     //TODO: Disable Intake commands when the turret is shooting
-    new JoystickButton(driverController, DRIVER_A)
-      .whenPressed(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed))
-      .whenReleased(new ConditionalCommand(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
 
-    new JoystickButton(driverController, DRIVER_B)
-      .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
-      
-    new JoystickButton(driverController, DRIVER_X)
-      .whenPressed(new InstantCommand(drivetrain::toggleReversed));
+    //Drivetrain controls
+    new JoystickButton(driverController, Button.kRightBumper.value)
+      .whenPressed(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)))
+      .whenReleased(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)));
 
+    new JoystickButton(driverController, Button.kLeftBumper.value)
+      .whenPressed(new ConditionalCommand(new InstantCommand(drivetrain::toggleDriveMode), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
+
+
+    //Intake controls
     new JoystickButton(operatorController, OPERATOR_4_2)
       .whenPressed(new InstantCommand(intake::intake))
       .whenReleased(new InstantCommand(intake::stop));
@@ -86,7 +92,8 @@ public class RobotContainer {
       
     new JoystickButton(operatorController, OPERATOR_3_1)
       .whenPressed(new InstantCommand(intake::lowerIntake));
-  }
+    
+    }
 
   public void telemetry() {
 
