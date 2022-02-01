@@ -19,18 +19,19 @@
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/SmartDashboard/RightPID": "PIDController",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/leftPID": "PIDController"
     }
   },
   "NetworkTables Settings": {
     "mode": "Client",
-    "serverTeam": "localhost"
+    "serverTeam": "1111"
   },
   "Plots": {
     "Plot <0>": {
       "plots": [
         {
-          "height": 208,
+          "height": -9,
           "series": [
             {
               "color": [
@@ -57,7 +58,7 @@
     "Plot <1>": {
       "plots": [
         {
-          "height": 229,
+          "height": -9,
           "series": [
             {
               "color": [
@@ -84,7 +85,7 @@
     "Plot <2>": {
       "plots": [
         {
-          "height": 321,
+          "height": -9,
           "series": [
             {
               "color": [
@@ -120,7 +121,7 @@
     "Plot <3>": {
       "plots": [
         {
-          "height": 220,
+          "height": -9,
           "series": [
             {
               "color": [
@@ -130,6 +131,33 @@
                 1.0
               ],
               "id": "NT:/SmartDashboard/Left voltage"
+            }
+          ]
+        }
+      ]
+    },
+    "Plot <4>": {
+      "plots": [
+        {
+          "height": 332,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Right velocity"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/right setpoint"
             }
           ]
         }

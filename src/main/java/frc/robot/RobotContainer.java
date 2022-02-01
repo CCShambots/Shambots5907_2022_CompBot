@@ -103,6 +103,9 @@ public class RobotContainer {
 
     drivetrain.setDriveTrainVariables();
 
+    drivetrain.getLeftModule().resetEncoder();
+    drivetrain.getRightModule().resetEncoder();
+
     setTeleop();
   }
 

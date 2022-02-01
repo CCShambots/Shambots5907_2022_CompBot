@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import frc.robot.Constants;
 
 import static frc.robot.Constants.Drivetrain.*;
 import static frc.robot.Constants.*;
@@ -51,13 +52,13 @@ public class TankDriveModule {
         pidController.setSetpoint(velocity);
     }
 
-    public double getVelocity() {return countsToMeters(leader.getSelectedSensorVelocity());}
+    public double getVelocity() {return countsToMeters(leader.getSelectedSensorVelocity()*10);}
 
     public double getEncoderMeters() {return countsToMeters(leader.getSelectedSensorPosition());}
 
     public double getVoltage() {return leader.getMotorOutputVoltage();}
 
-    private double countsToMeters(double counts) {return (counts / COUNTS_PER_REV_DRIVE_MOTORS) * (WHEEL_SIZE_INCHES * Math.PI) * 0.0254; }
+    private double countsToMeters(double counts) {return counts / Constants.Drivetrain.TICKS_PER_METER;}
 
     public void resetEncoder() {leader.setSelectedSensorPosition(0);}
 

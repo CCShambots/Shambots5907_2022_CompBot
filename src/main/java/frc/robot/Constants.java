@@ -28,13 +28,14 @@ public final class Constants {
         public static final int LEFT_DRIVETRAIN_LEADER = 04;
         public static final int LEFT_DRIVETRAIN_FOLLOWER = 03;
 
-        public static final int PIGEON_GYRO = 05;
+        public static final int PIGEON_GYRO = 0;
         
         public static final int COMPRESSOR = 06;
 
         //Values for converting the motor counts to distance traveled
         public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
         public static final double WHEEL_SIZE_INCHES = 6;
+        public static final double TICKS_PER_METER = 45000;
 
         //Robot mode (for odometry toggling)
         public static RobotStatus robotStatus = RobotStatus.AUTO;
@@ -51,7 +52,7 @@ public final class Constants {
         public static double RIGHT_D = 0;
 
         public static double RIGHT_KS = 1.0052;
-        public static double RIGHT_KV = 2.3;
+        public static double RIGHT_KV = 2.0;
 
         //Max velocity (in meters per second because that's what pathweaver does)
         public static double MAX_LINEAR_VELOCITY = 3;

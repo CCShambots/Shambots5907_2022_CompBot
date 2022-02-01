@@ -47,8 +47,8 @@ public class Drivetrain extends SubsystemBase {
 
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
-  private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
-  private DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
+  //private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
+  //private DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
 
   //Teleop object that allows easy use of joysticks to motor powers
   private DriveModes driveMode = DriveModes.Tank;
@@ -86,8 +86,8 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     odometry = new DifferentialDriveOdometry(getGyroHeadingOdometry(), new Pose2d());
 
-    compressor.enableDigital();
-    shifter.toggle();
+    //compressor.enableDigital();
+    //shifter.toggle();
 
     initShuffleboard();
   }
