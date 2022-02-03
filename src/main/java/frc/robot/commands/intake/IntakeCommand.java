@@ -8,8 +8,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.util.Ball.BallPosition;
 
 public class IntakeCommand extends CommandBase{
-    //TODO: Make this actually do things :)
-
+    
     private Intake intake;
     private Conveyor conveyor;
 

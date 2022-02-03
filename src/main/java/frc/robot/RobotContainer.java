@@ -80,8 +80,10 @@ public class RobotContainer {
 
 
     //Intake controls
+    
+    //Runs the intake command if the robot has fewer than two balls
     new JoystickButton(operatorController, OPERATOR_3_1)
-      .whenPressed(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(OPERATOR_3_3)));
+      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(OPERATOR_3_3)), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
     
   }
 
@@ -100,9 +102,6 @@ public class RobotContainer {
   // }
 
   public void doTeleopSetup() {
-    //TODO: Decide if this is necessary
-    // drivetrain.setDampening(1);x
-
     drivetrain.setDefaultCommand(new DrivingCommand(drivetrain, () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS), 
     () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), () -> driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)));
 

@@ -75,8 +75,6 @@ public class Intake extends SubsystemBase {
 
 
   //Code for spinning the intake
-
-  //TODO: Prioritize running the intake either forward or backward
   public void intake(){setIntakeDirection(IntakeDirection.Intaking);}
   public void exhaust(){setIntakeDirection(IntakeDirection.Exhausting);}
   public void stop(){setIntakeDirection(IntakeDirection.Stopped);}
