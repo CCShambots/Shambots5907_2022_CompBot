@@ -4,10 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -17,28 +17,30 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.Intake.*;
 
 import static frc.robot.Constants.*;
+import static frc.robot.Constants.Drivetrain.*;
 
 
 public class Intake extends SubsystemBase {
-  //TODO: Add override for stopping control of the intake when it is up (and make it stop by default when up)
+  private WPI_TalonFX roller1 = new WPI_TalonFX(ROLLER_1_ID);
+  private WPI_TalonFX roller2 = new WPI_TalonFX(ROLLER_2_ID);
 
-  private WPI_TalonFX cargoIntakeMotor = new WPI_TalonFX(CARGO_INTAKE_MOTOR_ID);
-
-  private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
-  private DoubleSolenoid rotationalSolenoid = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.CTREPCM, 1, 2);
+  private DoubleSolenoid rotationalSolenoid = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, 1, 2);
 
   private IntakeDirection direction = IntakeDirection.Stopped;
   private IntakeState intakeState = IntakeState.Raised;
 
-
   /** Creates a new Intake. */
   public Intake(){
-    cargoIntakeMotor.configFactoryDefault();
-    cargoIntakeMotor.setNeutralMode(NeutralMode.Brake);
-    cargoIntakeMotor.configSupplyCurrentLimit(CURRENT_LIMIT);
+    setupMotor(roller1);
+    setupMotor(roller2);
 
-    compressor.enableDigital();
     rotationalSolenoid.toggle();
+  }
+
+  private void setupMotor(WPI_TalonFX motor) {
+    motor.configFactoryDefault();
+    motor.setNeutralMode(NeutralMode.Brake);
+    motor.configSupplyCurrentLimit(CURRENT_LIMIT);
   }
 
 
@@ -54,7 +56,10 @@ public class Intake extends SubsystemBase {
       stop();
       rotationalSolenoid.toggle();
     }
-    else if(state == IntakeState.Lowered && getRotationalPosition() == Value.kReverse) rotationalSolenoid.toggle();
+    else if(state == IntakeState.Lowered && getRotationalPosition() == Value.kReverse) { 
+      rotationalSolenoid.toggle();
+
+    }
   }
 
   public void raiseIntake() {setIntakeState(IntakeState.Raised);}
@@ -76,20 +81,26 @@ public class Intake extends SubsystemBase {
   public void exhaust(){setIntakeDirection(IntakeDirection.Exhausting);}
   public void stop(){setIntakeDirection(IntakeDirection.Stopped);}
 
+  /**
+   * 
+   * @param direction The direction the intake roller should move
+   * @return Whether the motors were sucessfully set or not
+   */
   private void setIntakeDirection(IntakeDirection direction) {
-    //The intake will not be allowed to be commanded to different speeds when it is raised
-    if(getIntakeState() == IntakeState.Raised) return;
-
     this.direction = direction;
     if(direction == IntakeDirection.Intaking) {
-      cargoIntakeMotor.set(INTAKE_SPEED);
+      setMotors(INTAKE_SPEED);
     }else if(direction == IntakeDirection.Exhausting) {
-      cargoIntakeMotor.set(-INTAKE_SPEED);
+      setMotors(-INTAKE_SPEED);
     } else {
-      cargoIntakeMotor.set(0);
+      setMotors(0);
     }
-
   }
+
+  private void setMotors(double speed) {
+    roller1.set(ControlMode.PercentOutput, speed);
+    roller2.set(ControlMode.PercentOutput, speed);
+  } 
 
   public IntakeDirection getIntakeDirection() {
     return direction;
@@ -102,6 +113,8 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     //TODO: Remove this once we figure out how to actually use solenoids
     SmartDashboard.putData(rotationalSolenoid);
+
+    
   }
 
   public static enum IntakeState {

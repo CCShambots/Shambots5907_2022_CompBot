@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.Conveyor;
 import frc.robot.commands.drivetrain.DrivingCommand;
+import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -79,21 +80,10 @@ public class RobotContainer {
 
 
     //Intake controls
-    new JoystickButton(operatorController, OPERATOR_4_2)
-      .whenPressed(new InstantCommand(intake::intake))
-      .whenReleased(new InstantCommand(intake::stop));
-      
-    new JoystickButton(operatorController, OPERATOR_4_3)
-      .whenPressed(new InstantCommand(intake::exhaust))
-      .whenReleased(new InstantCommand(intake::stop));
-
-    new JoystickButton(operatorController, OPERATOR_2_1)
-      .whenPressed(new InstantCommand(intake::raiseIntake));
-      
     new JoystickButton(operatorController, OPERATOR_3_1)
-      .whenPressed(new InstantCommand(intake::lowerIntake));
+      .whenPressed(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(OPERATOR_3_3)));
     
-    }
+  }
 
   public void telemetry() {
 
