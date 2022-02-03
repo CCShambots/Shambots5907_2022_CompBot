@@ -57,7 +57,7 @@ public class IntakeCommand extends CommandBase{
             }
         } else if(state == State.Cancelling) {
             //If the frist ball is not between two stages, we can safely end the command
-            if(!(conveyor.getBall1Pos() == BallPosition.BetweenStages)) {
+            if(!(conveyor.getBall1Pos() == BallPosition.BetweenStages) && !(conveyor.getBall1Pos() == BallPosition.Stage1)) {
                 conveyor.stopAll();
                 finished = true;
             }
