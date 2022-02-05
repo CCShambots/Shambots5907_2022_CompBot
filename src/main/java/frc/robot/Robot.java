@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
   }
 
   /**
@@ -73,7 +74,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // new InstantCommand(() -> m_robotContainer.doTeleopSetup()).schedule();
-    m_robotContainer.doTeleopSetup();
+    m_robotContainer.doDrivetrainSetup();
   }
 
   /** This function is called periodically during operator control. */

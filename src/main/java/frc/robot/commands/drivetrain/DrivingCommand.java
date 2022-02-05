@@ -66,7 +66,7 @@ public class DrivingCommand extends CommandBase{
      * @param input Raw joystick input
      * @return the adjusted joystick (in range -1.0 to 1.0)
      */
-  private double adjustJoystick(double input) {
+    private double adjustJoystick(double input) {
         //Create dead zones
         if(Math.abs(input) < 0.05) return 0;
 

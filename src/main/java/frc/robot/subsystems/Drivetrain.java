@@ -42,7 +42,7 @@ public class Drivetrain extends SubsystemBase {
   private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
   private DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
 
-  //Teleop object that allows easy use of joysticks to motor powers
+  //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
   private DriveModes prevDriveMode = DriveModes.Tank;
   private boolean reversed = false;
