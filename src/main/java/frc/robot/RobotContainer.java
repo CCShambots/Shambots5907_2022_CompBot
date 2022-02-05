@@ -91,13 +91,11 @@ public class RobotContainer {
   }
 
   public void doTeleopSetup() {
-
-    //TODO: Decide if this is necessary
-    // drivetrain.setDampening(1);x
-
+    //Set the default command for easy driving
     drivetrain.setDefaultCommand(new DrivingCommand(drivetrain, () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS), 
     () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), () -> driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)));
 
+    //This updates variables from the dashbaord sliders
     drivetrain.setDriveTrainVariables();
 
     setTeleop();

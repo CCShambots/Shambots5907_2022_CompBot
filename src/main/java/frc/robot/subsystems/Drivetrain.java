@@ -11,9 +11,7 @@ import static frc.robot.Constants.Drivetrain.*;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -22,7 +20,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -147,60 +144,6 @@ public class Drivetrain extends SubsystemBase {
     rightModule.setTargetVelocity(speedRight);
   }
 
-  /**
-   * Arcade drive inverse kinematics to get the tank equivalent of arcade inputs
-   * @param xSpeed
-   * @param zRotation
-   * @return Wheelspeeds object (interpreted by tankDrive method as joystick inputs)
-   */
-  //TODO: change this to curvature drive from differentialdrive class
-  public WheelSpeeds arcadeDrive(double xSpeed, double zRotation) {
-    xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
-    zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
-
-    // Square the inputs (while preserving the sign) to increase fine control
-    // while permitting full power.
-    xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
-    zRotation = Math.copySign(zRotation * zRotation, zRotation);
-
-    double leftInput;
-    double rightInput;
-
-    double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
-
-    if (xSpeed >= 0.0) {
-      // First quadrant, else second quadrant
-      if (zRotation >= 0.0) {
-        leftInput = maxInput;
-        rightInput = xSpeed - zRotation;
-      } 
-      else {
-        leftInput = xSpeed + zRotation;
-        rightInput = maxInput;
-      }
-    } 
-    else {
-      // Third quadrant, else fourth quadrant
-      if (zRotation >= 0.0) {
-        leftInput = xSpeed + zRotation;
-        rightInput = maxInput;
-      } 
-      else {
-        leftInput = maxInput;
-        rightInput = xSpeed - zRotation;
-      }
-    }
-
-    // Normalize the wheel speeds
-    double maxMagnitude = Math.max(Math.abs(leftInput), Math.abs(rightInput));
-    if (maxMagnitude > 1.0) {
-      leftInput /= maxMagnitude;
-      rightInput /= maxMagnitude;
-    }
-
-    return new WheelSpeeds(leftInput, rightInput);
-  }
-
   public double getMaxSpeed() {return maxSpeed;}
   public Drivetrain.TeleopSpeeds getSpeedMode() {return speedMode;}
   public double getSmoothing() {return smoothing;}
@@ -231,7 +174,7 @@ public class Drivetrain extends SubsystemBase {
 
   /**Toggle between tank and arcade drive */
   public void toggleDriveMode() {
-    driveMode = driveMode == DriveModes.Tank ? DriveModes.Arcade : DriveModes.Tank;
+    driveMode = driveMode == DriveModes.Tank ? DriveModes.Curvature : DriveModes.Tank;
   }
 
   //TODO: Update for setting drive mode with limelight (once we merge turret code)
@@ -329,7 +272,7 @@ public class Drivetrain extends SubsystemBase {
   public TankDriveModule getRightModule() {return rightModule;}
 
   public static enum DriveModes {
-    Tank, Arcade, Limelight
+    Tank, Curvature, Limelight
   }
 
   public static enum TeleopSpeeds {
