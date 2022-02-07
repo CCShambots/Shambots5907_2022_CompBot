@@ -54,7 +54,7 @@ public class TankDriveModule {
 
     public double getVelocity() {return countsToMeters(leader.getSelectedSensorVelocity()*10);}
 
-    public double getEncoderMeters() {return countsToMeters(leader.getSelectedSensorPosition());}
+    public double getEncoderMeters() {return positionToMeters(leader.getSelectedSensorPosition());}
 
     public double getVoltage() {return leader.getMotorOutputVoltage();}
 
@@ -80,7 +80,6 @@ public class TankDriveModule {
         leader.setVoltage(feedForwardOutput + pidOutput);
     }
 
-
     //TODO: Remove this after tuning
     public double getSetpoint() {
         return pidController.getSetpoint();
@@ -89,5 +88,4 @@ public class TankDriveModule {
     public PIDController getPIDController() {
         return pidController;
     }
-    
 }

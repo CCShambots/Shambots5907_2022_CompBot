@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
 
 /**
@@ -40,14 +41,14 @@ public final class Constants {
         //Robot mode (for odometry toggling)
         public static RobotStatus robotStatus = RobotStatus.AUTO;
 
-        public static double LEFT_P = 0;
+        public static double LEFT_P = 0.05;
         public static double LEFT_I = 0;
         public static double LEFT_D = 0;
 
         public static double LEFT_KS = 1.0052;
-        public static double LEFT_KV = 2.0;
+        public static double LEFT_KV = 1.35;
 
-        public static double RIGHT_P = 0;
+        public static double RIGHT_P = 0.05;
         public static double RIGHT_I = 0;
         public static double RIGHT_D = 0;
 
@@ -55,9 +56,24 @@ public final class Constants {
         public static double RIGHT_KV = 2.0;
 
         //Max velocity (in meters per second because that's what pathweaver does)
-        public static double MAX_LINEAR_VELOCITY = 3;
+        public static final double MAX_LINEAR_VELOCITY = 2;
+        public static final double MAX_LINEAR_ACCELERATION = 2;
         //Max angular velocity (in degrees per second (because radians are cringe))
-        public static double MAX_ANGULAR_VELOCITY = Math.toDegrees(Math.PI);
+        public static final double MAX_ANGULAR_VELOCITY = Math.toDegrees(Math.PI);
+
+        public static final double MAX_VOLTAGE = 11.5;
+        
+        public static final double TRACK_WIDTH = 0.64135; //meters
+
+        //Tested to be good values by WPILib
+        public static final double K_RAMSETE_B = 2.0;
+        public static final double K_RAMSETE_ZETA = 0.7;
+
+        public static final double kPDriveVel = 0;
+
+        //TODO: Set this to the actual achievable error
+        public static final double PREFERRED_DISTANCE_ERROR = Units.inchesToMeters(3);
+        public static final double PREFERRED_ANGLE_ERROR = Units.degreesToRadians(5);
     }
 
     public static class Limelight {
@@ -75,8 +91,6 @@ public final class Constants {
         public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
         public static final int DRIVER_A = 1; //Turbo/normal speed control
         public static final int DRIVER_B = 2; //Arcade/Tank drive
-        public static final int DRIVER_X = 3; //Drivetrain reversed or not
-        public static final int DRIVER_Y = 4; //TODO: (temporary) Velocity tuning command
 
         //Operator Controller
         public static final int OPERATOR_CONTROLLER_PORT = 0;
