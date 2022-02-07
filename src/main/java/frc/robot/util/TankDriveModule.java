@@ -54,7 +54,7 @@ public class TankDriveModule {
 
     public double getVelocity() {return countsToMeters(leader.getSelectedSensorVelocity()*10);}
 
-    public double getEncoderMeters() {return positionToMeters(leader.getSelectedSensorPosition());}
+    public double getEncoderMeters() {return countsToMeters(leader.getSelectedSensorPosition());}
 
     public double getVoltage() {return leader.getMotorOutputVoltage();}
 
