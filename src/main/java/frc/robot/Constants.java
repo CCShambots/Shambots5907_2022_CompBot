@@ -55,6 +55,9 @@ public final class Constants {
         public static double RIGHT_KS = 1.0052;
         public static double RIGHT_KV = 2.0;
 
+        //The multiplier used by default when the robot is in normal mode (instead of turbo)
+        public static double NORMAL_SPEED_MULT = 0.6;
+
         //Max velocity (in meters per second because that's what pathweaver does)
         public static final double MAX_LINEAR_VELOCITY = 2;
         public static final double MAX_LINEAR_ACCELERATION = 2;
