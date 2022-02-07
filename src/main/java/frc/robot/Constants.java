@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
 
 /**
@@ -58,9 +59,24 @@ public final class Constants {
         public static double NORMAL_SPEED_MULT = 0.6;
 
         //Max velocity (in meters per second because that's what pathweaver does)
-        public static double MAX_LINEAR_VELOCITY = 3;
+        public static final double MAX_LINEAR_VELOCITY = 2;
+        public static final double MAX_LINEAR_ACCELERATION = 2;
         //Max angular velocity (in degrees per second (because radians are cringe))
-        public static double MAX_ANGULAR_VELOCITY = Math.toDegrees(Math.PI);
+        public static final double MAX_ANGULAR_VELOCITY = Math.toDegrees(Math.PI);
+
+        public static final double MAX_VOLTAGE = 11.5;
+        
+        public static final double TRACK_WIDTH = 0.64135; //meters
+
+        //Tested to be good values by WPILib
+        public static final double K_RAMSETE_B = 2.0;
+        public static final double K_RAMSETE_ZETA = 0.7;
+
+        public static final double kPDriveVel = 0;
+
+        //TODO: Set this to the actual achievable error
+        public static final double PREFERRED_DISTANCE_ERROR = Units.inchesToMeters(3);
+        public static final double PREFERRED_ANGLE_ERROR = Units.degreesToRadians(5);
     }
 
     public static class Limelight {
