@@ -65,10 +65,10 @@ public class RobotContainer {
 
     commands.put(AutoPaths.Example, new SequentialCommandGroup(
       new InstantCommand(() -> {
-        System.out.println("Setting odo pose to " + paths.get("Example").sample(0).poseMeters);
+      //  System.out.println("Setting odo pose to " + paths.get("Example").sample(0).poseMeters);
         startPose = paths.get("Example").sample(0).poseMeters;
         doAutoSetup();
-        System.out.println("Robot pose after being set " + drivetrain.getOdometryPose());
+      //  System.out.println("Robot pose after being set " + drivetrain.getOdometryPose());
       }),
       new TrajectoryCommand(drivetrain, paths.get("Example"))
 
