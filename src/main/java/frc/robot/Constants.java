@@ -91,6 +91,11 @@ public final class Constants {
         public static final int ROLLER_1_ID = 11;
         public static final int ROLLER_2_ID = 12;
         public static final int ROTATE_INTAKE_MOTOR = 13;
+        
+        public static final int SOLENOID_1_PORT_1 = 0;
+        public static final int SOLENOID_1_PORT_2 = 1;
+        public static final int SOLENOID_2_PORT_1 = 2;
+        public static final int SOLENOID_2_PORT_2 = 3;
 
         public static final double INTAKE_SPEED = 0.5;
 
