@@ -134,13 +134,4 @@ public final class Constants {
         public static final int OPERATOR_3_3 = 5; //Cancels the intake command
     }
     
-    public static class Climber {
-        //TODO: fix these 
-        public static final int TALON_ONE_PORT = 0;
-        public static final int TALON_TWO_PORT = 0;
-
-        public static final int BRAKE_PORT = 0;
-
-        public static final long MAX_ENCODER_HEIGHT = 0;
-    }
 }
