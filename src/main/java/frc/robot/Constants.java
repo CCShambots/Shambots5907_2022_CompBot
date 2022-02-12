@@ -29,7 +29,7 @@ public final class Constants {
         public static final int LEFT_DRIVETRAIN_LEADER = 04;
         public static final int LEFT_DRIVETRAIN_FOLLOWER = 03;
 
-        public static final int PIGEON_GYRO = 0;
+        public static final int PIGEON_GYRO = 05;
         
         public static final int COMPRESSOR = 06;
 
@@ -46,7 +46,8 @@ public final class Constants {
         public static double LEFT_D = 0;
 
         public static double LEFT_KS = 1.0052;
-        public static double LEFT_KV = 1.35;
+        // public static double LEFT_KV = 1.35;
+        public static double LEFT_KV = 2.0;
 
         public static double RIGHT_P = 0.05;
         public static double RIGHT_I = 0;
