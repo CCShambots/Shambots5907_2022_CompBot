@@ -62,6 +62,8 @@ public class Robot extends TimedRobot {
   //TODO: Is this how this should be done?
   @Override
   public void autonomousInit() {
+    m_robotContainer.setAutonomous();
+
     m_robotContainer.getAutoCommand().schedule();
   }
 
@@ -74,6 +76,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // new InstantCommand(() -> m_robotContainer.doTeleopSetup()).schedule();
+    m_robotContainer.setTeleop();
     m_robotContainer.doDrivetrainSetup();
   }
 
@@ -86,6 +89,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.setTest();
   }
 
   /** This function is called periodically during test mode. */

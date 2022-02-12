@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
 
@@ -43,9 +45,10 @@ public class RobotContainer {
 
   Field2d field = new Field2d();
 
+
   private final Drivetrain drivetrain = new Drivetrain(driveTab);
-  private final Intake intake = new Intake();
-  private final Conveyor conveyor = new Conveyor();
+  // private final Intake intake = new Intake();
+  // private final Conveyor conveyor = new Conveyor();
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
@@ -61,7 +64,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
     
-    Map<String, Trajectory> paths = loadPaths(List.of("Example", "CSGO-1", "CSGO-2", "CSGO-3"));
+    Map<String, Trajectory> paths = loadPaths(List.of("Example", "CSGO-1", "CSGO-2", "CSGO-3-1", "CSGO-3-2"));
 
 
     commands.put(AutoPaths.Example, new SequentialCommandGroup(
@@ -81,8 +84,9 @@ public class RobotContainer {
     ));
 
     commands.put(AutoPaths.CSGO3, new SequentialCommandGroup(
-      drivetrain.setupAuto(paths.get("CSGO-3")),
-      new TrajectoryCommand(drivetrain, paths.get("CSGO-3"))
+      drivetrain.setupAuto(paths.get("CSGO-3-1")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-3-1")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-3-2"))
     ));
 
 
@@ -95,8 +99,13 @@ public class RobotContainer {
 
     driveTab.add(autoChooser);
     driveTab.add("field", field);
+    driveTab.addString("Robot Status", () -> getRobotStatus());
 
     doDrivetrainSetup();
+  }
+
+  private String getRobotStatus() {
+    return Constants.robotStatus.name();
   }
 
   private void configureButtonBindings() {
@@ -114,8 +123,8 @@ public class RobotContainer {
     //Intake controls
     
     //Runs the intake command if the robot has fewer than two balls
-    new JoystickButton(operatorController, OPERATOR_3_1)
-      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(OPERATOR_3_3)), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
+    // new JoystickButton(operatorController, OPERATOR_3_1)
+      // .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(OPERATOR_3_3)), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
     
   }
 
@@ -136,10 +145,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
     SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
     field.setRobotPose(drivetrain.getOdometryPose());
-    SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
-    SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
-    SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
-
+    SmartDashboard.putString("Robot Status", getRobotStatus());
   }
 
   public void doDrivetrainSetup() {
@@ -149,8 +155,6 @@ public class RobotContainer {
 
     //This updates variables from the dashbaord sliders
     drivetrain.setDriveTrainVariables();
-
-    setTeleop();
   }
 
   public Map<String, Trajectory> loadPaths(List<String> names) {
@@ -178,25 +182,27 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public void doAutoSetup() {
-    setAutonomous();
-    drivetrain.resetOdometry(startPose);
-  }
-
   public void setAutonomous() {
-    Constants.Drivetrain.robotStatus = RobotStatus.AUTO;
+    Constants.robotStatus = RobotStatus.AUTO;
+    drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
   }
 
   public void setTeleop() {
-    Constants.Drivetrain.robotStatus = RobotStatus.TELEOP;
+    Constants.robotStatus = RobotStatus.TELEOP;
+    drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
   }
 
   public void setDisabled() {
-    Constants.Drivetrain.robotStatus = RobotStatus.DISABLED;
+    Constants.robotStatus = RobotStatus.DISABLED;
+  }
+
+  public void setTest() {
+    Constants.robotStatus = RobotStatus.TEST;
+    drivetrain.setNeutralMotorBehavior(NeutralMode.Coast);
   }
 
   public static enum RobotStatus {
-    AUTO, TELEOP, DISABLED
+    AUTO, TELEOP, DISABLED, TEST
   } 
 
   public enum AutoPaths {

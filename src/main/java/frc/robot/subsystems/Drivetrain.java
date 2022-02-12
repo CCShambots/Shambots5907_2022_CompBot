@@ -81,17 +81,17 @@ public class Drivetrain extends SubsystemBase {
    */
   private void initShuffleboard(ShuffleboardTab driveTab){
 
-    smoothingSlider = driveTab.add("Smoothing", smoothing)
+    smoothingSlider = driveTab.addPersistent("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 2, "max", 15))
       .getEntry();
 
-    speedSlider = driveTab.add("Speed", maxSpeed)
+    speedSlider = driveTab.addPersistent("Speed", maxSpeed)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 1,"max", 4))
       .getEntry();
 
-    breakModeToggle = driveTab.add("BreakMode", false)
+    breakModeToggle = driveTab.addPersistent("BreakMode", false)
       .withWidget(BuiltInWidgets.kToggleButton)
       .getEntry();
 
@@ -115,7 +115,7 @@ public class Drivetrain extends SubsystemBase {
 
   
   //General Methods
-  private void setNeutralMotorBehavior(NeutralMode mode) {
+  public void setNeutralMotorBehavior(NeutralMode mode) {
     leftModule.setNeutralMode(mode);
     rightModule.setNeutralMode(mode);
   }
@@ -258,14 +258,13 @@ public class Drivetrain extends SubsystemBase {
   public InstantCommand setupAuto(Trajectory trajectory) {
     return new InstantCommand(() -> {
       resetOdometry(trajectory.getInitialPose());
-      Constants.Drivetrain.robotStatus = RobotStatus.AUTO;
     });
   }
 
   @Override
   public void periodic() {
     //We have no use (yet) for odometry in teleop, so it will only update in autonomous
-    if(robotStatus == RobotStatus.AUTO) {
+    if(Constants.robotStatus == RobotStatus.AUTO) {
       updateOdometry();
     }
 
