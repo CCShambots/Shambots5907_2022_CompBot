@@ -16,10 +16,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -251,6 +253,13 @@ public class Drivetrain extends SubsystemBase {
   
   private Rotation2d getGyroHeadingOdometry() {
     return Rotation2d.fromDegrees(getGyroHeading());
+  }
+
+  public InstantCommand setupAuto(Trajectory trajectory) {
+    return new InstantCommand(() -> {
+      resetOdometry(trajectory.getInitialPose());
+      Constants.Drivetrain.robotStatus = RobotStatus.AUTO;
+    });
   }
 
   @Override

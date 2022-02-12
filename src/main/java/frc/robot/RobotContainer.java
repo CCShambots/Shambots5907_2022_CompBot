@@ -61,23 +61,37 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
     
-    Map<String, Trajectory> paths = loadPaths(List.of("Example"));
+    Map<String, Trajectory> paths = loadPaths(List.of("Example", "CSGO-1", "CSGO-2", "CSGO-3"));
+
 
     commands.put(AutoPaths.Example, new SequentialCommandGroup(
-      new InstantCommand(() -> {
-      //  System.out.println("Setting odo pose to " + paths.get("Example").sample(0).poseMeters);
-        startPose = paths.get("Example").sample(0).poseMeters;
-        doAutoSetup();
-      //  System.out.println("Robot pose after being set " + drivetrain.getOdometryPose());
-      }),
+      drivetrain.setupAuto(paths.get("Example")),
       new TrajectoryCommand(drivetrain, paths.get("Example"))
 
+    ));
+
+    commands.put(AutoPaths.CSGO1, new SequentialCommandGroup(
+      drivetrain.setupAuto(paths.get("CSGO-1")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-1"))
+    ));
+
+    commands.put(AutoPaths.CSGO2, new SequentialCommandGroup(
+      drivetrain.setupAuto(paths.get("CSGO-2")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-2"))
+    ));
+
+    commands.put(AutoPaths.CSGO3, new SequentialCommandGroup(
+      drivetrain.setupAuto(paths.get("CSGO-3")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-3"))
     ));
 
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
     autoChooser.setDefaultOption("example", AutoPaths.Example);
+    autoChooser.addOption("CSGO-1", AutoPaths.CSGO1);
+    autoChooser.addOption("CSGO-2", AutoPaths.CSGO2);
+    autoChooser.addOption("CSGO-3", AutoPaths.CSGO3);
 
     driveTab.add(autoChooser);
     driveTab.add("field", field);
@@ -186,7 +200,10 @@ public class RobotContainer {
   } 
 
   public enum AutoPaths {
-    Example
+    Example,
+    CSGO1,
+    CSGO2,
+    CSGO3
   }
 
 }
