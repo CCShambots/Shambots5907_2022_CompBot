@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
+import frc.robot.util.Range;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -121,6 +122,56 @@ public final class Constants {
         public static final int PROX_STAGE2_ID = 1;
 
         public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
+
+    }
+
+    
+    public static final class Turret{
+        //TODO: Update all the hardware properties
+ 
+        //Hardware devices
+        public static final int FLYWHEEL = 41;
+        public static final int TURRET_SPINNER = 42;
+        public static final int HALL_EFFECT_CENTER = 2;
+
+        //Flywheel control
+        public static final double FLYWHEEL_S = 0.25;
+        public static final double FLYWHEEL_V = 0.0017;
+        public static final double FLYWHEEL_P = 0.01;
+        public static final double FLYWHEEL_I = 0;
+        public static final double FLYWHEEL_D = 0;
+
+        //TODO: Tune this value to attainable error
+        public static final double FLYWHEEL_ALLOWED_ERROR = 25; //The allowed error for the flywheel setpoint (in RPM)
+
+        //Spinner control
+        public static final double COUNTS_SPINNER_ENCODER = 2048;
+        public static final double TURRET_GEAR_RATIO = 10.0/140.0;
+
+        public static final double SPINNER_CLOCKWISE_LIMIT = -180; //Clockwise turns are negative
+        public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 180; //Counter-clockwise turns are psotiive
+        public static final double ACCEPTABLE_ERROR = 1; //How close the turret has to get to it's setpoint before isBusy() returns false
+        public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
+        
+        public static final double SPINNER_P = 0.14;
+        public static final double SPINNER_I = 0.05;
+        public static final double SPINNER_D = 0;
+        public static final double SPINNER_MAX_VEL = 360; //Deg/sec
+        public static final double SPINNER_MAX_ACCEL = 720; //Deg/sec/sec
+
+        public static final double SPINNER_S = 1.1762;
+        public static final double SPINNER_V = 0.004;
+        // public static final double SPINNER_KV = 0.065;
+    
+        public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
+
+    }
+
+    public static class Lidar {
+        public static final int MONITOR_PIN = 0;
+        public static final int TRIGGER_PIN = 0;
+
+        public static final double LIDAR_VALUE_IN_METERS = 0;
     }
 
     public static class Controller {

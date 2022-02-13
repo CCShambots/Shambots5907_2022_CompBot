@@ -22,6 +22,10 @@ import frc.robot.subsystems.Conveyor;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.commands.LimelightTracking.BasicTrackingCommand;
+import frc.robot.commands.LimelightTracking.TeleopTrackingCommand;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Turret.Direction;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -34,6 +38,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
@@ -46,9 +51,12 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain(driveTab);
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
+  private final Turret turret = new Turret(driveTab);
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
+
+  private BasicTrackingCommand limeLightTurretCommand = null;
 
   //TODO: Make this based on the chosen auto route (idk how but it needs to be done!)
   private Pose2d startPose = new Pose2d();
@@ -103,6 +111,16 @@ public class RobotContainer {
     new JoystickButton(operatorController, OPERATOR_3_1)
       .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(OPERATOR_3_3)), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
     
+
+    //Turret Controls
+    new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> toggleLimelightTargeting(() -> driverController.getRawButton(Button.kLeftBumper.value))));
+      
+      new JoystickButton(driverController, Button.kRightBumper.value).whenPressed(new InstantCommand(() -> turret.toggleSearchDirection()));
+      new JoystickButton(operatorController, 5).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
+      new JoystickButton(operatorController, 9).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
+  
+      new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> turret.setFlywheelTarget(2000))).whenReleased(new InstantCommand(() -> turret.setFlywheelTarget(0)));
   }
 
   public void telemetry() {
@@ -125,7 +143,26 @@ public class RobotContainer {
     SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
     SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
     SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
+  }
 
+  private void toggleLimelightTargeting(BooleanSupplier shootingSupplier) {
+    if(limeLightTurretCommand != null) {
+      endLimelightTargeting();
+    } else {
+      startLimelightTargeting(new TeleopTrackingCommand(turret, shootingSupplier));
+    }
+  }
+
+  private void startLimelightTargeting(BasicTrackingCommand command) {
+    limeLightTurretCommand = command;
+
+    limeLightTurretCommand.schedule();
+  }
+
+  private void endLimelightTargeting() {
+    limeLightTurretCommand.cancel();
+
+    limeLightTurretCommand = null;  
   }
 
   public void doDrivetrainSetup() {
