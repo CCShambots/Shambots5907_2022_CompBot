@@ -24,6 +24,7 @@ public final class Constants {
     public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 10, 10, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
     public static class Drivetrain {
+        //Hardware ID's
         public static final int RIGHT_DRIVETRAIN_LEADER = 01;
         public static final int RIGHT_DRIVETRAIN_FOLLOWER = 02;
         public static final int LEFT_DRIVETRAIN_LEADER = 04;
@@ -31,7 +32,7 @@ public final class Constants {
 
         public static final int PIGEON_GYRO = 05;
         
-        public static final int COMPRESSOR = 06;
+        public static final int COMPRESSOR_ID = 06;
 
         //Values for converting the motor counts to distance traveled
         public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
@@ -85,6 +86,43 @@ public final class Constants {
         public static final double LIMELIGHT_TOLERANCE = 5;
     }
 
+    public static class Intake {
+        //Hardware
+        public static final int ROLLER_1_ID = 11;
+        public static final int ROLLER_2_ID = 12;
+        public static final int ROTATE_INTAKE_MOTOR = 13;
+        
+        public static final int SOLENOID_1_PORT_1 = 0;
+        public static final int SOLENOID_1_PORT_2 = 1;
+        public static final int SOLENOID_2_PORT_1 = 2;
+        public static final int SOLENOID_2_PORT_2 = 3;
+
+        public static final double INTAKE_SPEED = 0.5;
+
+        public static final double INTAKE_RAISED_COUNTS = 0;
+        public static final double INTAKE_LOWERED_COUNTS = 512;
+
+        public static final double ROTATIONAL_P = 0; 
+        public static final double ROTATIONAL_I = 0; 
+        public static final double ROTATIONAL_D = 0;
+
+        public static final double ROTATIONAL_MAX_VEL = 0; 
+        public static final double ROTATIONAL_MAX_ACCEL = 0;
+
+        public static final double ROTATIONAL_KS = 0; 
+        public static final double ROTATIONAL_KV = 0; 
+    }
+
+    public static class Conveyor {
+        //Hardware
+        public static final int CONVEYOR_STAGE1_ID = 21;
+        public static final int CONVEYOR_STAGE2_ID = 22;
+        public static final int PROX_STAGE1_ID = 1;
+        public static final int PROX_STAGE2_ID = 1;
+
+        public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
+    }
+
     public static class Controller {
         //Driver Controller
         public static final int DRIVER_CONTROLLER_PORT = 0;
@@ -95,7 +133,10 @@ public final class Constants {
         public static final int DRIVER_B = 2; //Arcade/Tank drive
 
         //Operator Controller
-        public static final int OPERATOR_CONTROLLER_PORT = 0;
+        public static final int OPERATOR_CONTROLLER_PORT = 1;
         public static final int OPERATOR_BUTTON_3 = 3; //Control for switching to limelight turning 
+        public static final int OPERATOR_3_1 = 1; //Begins the intake command
+        public static final int OPERATOR_3_3 = 5; //Cancels the intake command
     }
+    
 }

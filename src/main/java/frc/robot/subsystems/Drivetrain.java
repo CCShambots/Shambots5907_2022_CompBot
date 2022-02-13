@@ -39,8 +39,8 @@ public class Drivetrain extends SubsystemBase {
 
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
-  private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM);
-  private DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR, PneumaticsModuleType.CTREPCM, 1, 2);
+  private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.CTREPCM);
+  private DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.CTREPCM, 1, 2);
 
   //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
@@ -223,9 +223,7 @@ public class Drivetrain extends SubsystemBase {
     odometry.resetPosition(pose, getGyroHeadingOdometry());
   }
 
-  /**
-   * @return the speeds of the wheel in meters per second
-   */
+  /**Returns the speeds of the wheel in meters per second */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
       leftModule.getVelocity(), 

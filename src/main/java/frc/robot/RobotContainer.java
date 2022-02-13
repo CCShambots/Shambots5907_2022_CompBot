@@ -1,3 +1,7 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -13,8 +17,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.drivetrain.DrivingCommand;
+import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.subsystems.Conveyor;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,7 +42,10 @@ public class RobotContainer {
   ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
 
   Field2d field = new Field2d();
+
   private final Drivetrain drivetrain = new Drivetrain(driveTab);
+  private final Intake intake = new Intake();
+  private final Conveyor conveyor = new Conveyor();
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
@@ -44,9 +54,7 @@ public class RobotContainer {
   private Pose2d startPose = new Pose2d();
 
   private SelectCommand autoCommands;
-  private Map<Object, Command> commands = new HashMap<>();
-
-  //Sendable chooser for picking an auton route
+  Map<Object, Command> commands = new HashMap<>();
   SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
 
 
@@ -78,15 +86,24 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    //TODO: Disable Intake commands when the turret is shooting
+
+    //Drivetrain controls
     new JoystickButton(driverController, Button.kRightBumper.value)
       .whenPressed(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)))
       .whenReleased(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)));
 
     new JoystickButton(driverController, Button.kLeftBumper.value)
       .whenPressed(new ConditionalCommand(new InstantCommand(drivetrain::toggleDriveMode), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
+
+
+    //Intake controls
     
-    System.out.println("Configured button bindings");
-    }
+    //Runs the intake command if the robot has fewer than two balls
+    new JoystickButton(operatorController, OPERATOR_3_1)
+      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(OPERATOR_3_3)), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
+    
+  }
 
   public void telemetry() {
     SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
