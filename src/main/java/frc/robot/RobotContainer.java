@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.climber.MoveClimberCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.subsystems.Drivetrain;
@@ -26,6 +28,7 @@ import frc.robot.commands.LimelightTracking.BasicTrackingCommand;
 import frc.robot.commands.LimelightTracking.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.Direction;
+import frc.robot.subsystems.Climber.ClimberState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -52,6 +55,8 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
+  private final Climber climber = new Climber();
+  
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
@@ -73,10 +78,10 @@ public class RobotContainer {
 
     commands.put(AutoPaths.Example, new SequentialCommandGroup(
       new InstantCommand(() -> {
-        System.out.println("Setting odo pose to " + paths.get("Example").sample(0).poseMeters);
+      //  System.out.println("Setting odo pose to " + paths.get("Example").sample(0).poseMeters);
         startPose = paths.get("Example").sample(0).poseMeters;
         doAutoSetup();
-        System.out.println("Robot pose after being set " + drivetrain.getOdometryPose());
+      //  System.out.println("Robot pose after being set " + drivetrain.getOdometryPose());
       }),
       new TrajectoryCommand(drivetrain, paths.get("Example"))
 
@@ -121,6 +126,12 @@ public class RobotContainer {
       new JoystickButton(operatorController, 9).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
   
       new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> turret.setFlywheelTarget(2000))).whenReleased(new InstantCommand(() -> turret.setFlywheelTarget(0)));
+  
+      new JoystickButton(operatorController, 2)
+      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
+    
+    new JoystickButton(operatorController, 4)
+      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
   }
 
   public void telemetry() {

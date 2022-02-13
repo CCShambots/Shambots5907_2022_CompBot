@@ -25,14 +25,14 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 import frc.robot.RobotContainer.RobotStatus;
-import frc.robot.util.DrivetrainModuleConstants;
+import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
 import java.util.Map;
 
 public class Drivetrain extends SubsystemBase {
   //Hardware declarations
-  private DrivetrainModuleConstants leftConstants = new DrivetrainModuleConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
-  private DrivetrainModuleConstants rightConstants= new DrivetrainModuleConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
+  private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
+  private PIDandFFConstants rightConstants= new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
 
   private TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, true, leftConstants);
   private TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, false, rightConstants);

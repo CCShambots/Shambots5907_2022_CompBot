@@ -97,11 +97,11 @@
   "robotJoysticks": [
     {
       "guid": "Keyboard0",
-      "name": "Left Stick"
+      "name": "XBox Contorller"
     },
     {
       "guid": "Keyboard2",
-      "name": "Right Stick"
+      "name": "Button Panel"
     }
   ]
 }

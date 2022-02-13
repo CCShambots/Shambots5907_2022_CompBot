@@ -20,7 +20,7 @@ public class TankDriveModule {
     private double pidOutput = 0;
     private double feedForwardOutput = 0;
 
-    public TankDriveModule(int leaderID, int followerID, boolean inverted, DrivetrainModuleConstants c) {
+    public TankDriveModule(int leaderID, int followerID, boolean inverted, PIDandFFConstants c) {
         pidController = new PIDController(c.getP(), c.getI(), c.getD());
         feedForwardController = new SimpleMotorFeedforward(c.getKS(), c.getKV());
         
