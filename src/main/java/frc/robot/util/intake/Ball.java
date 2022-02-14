@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot.util.intake;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;

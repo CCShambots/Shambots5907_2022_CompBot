@@ -43,6 +43,9 @@ public class Climber extends SubsystemBase {
     @Override
     public void periodic() {
         leftModule.periodic(); //Run the main control loop on the left module, which also updates the right module
+
+        //TODO: Remove this telemetry once we're done with it
+        //TODO: Write this telemtry before we use it
     }
     
     public static enum ClimberState { Low, Mid, Lowered};

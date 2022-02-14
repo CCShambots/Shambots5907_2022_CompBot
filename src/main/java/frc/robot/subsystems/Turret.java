@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.FakeGyro;
@@ -27,7 +28,8 @@ import static frc.robot.Constants.Lidar.*;
 public class Turret extends SubsystemBase{
 
     //Hardware devices
-    private WPI_TalonFX flywheel = new WPI_TalonFX(FLYWHEEL);
+    private WPI_TalonFX bottomFlywheel = new WPI_TalonFX(FLYWHEEL1);
+    private WPI_TalonFX topFlywheel = new WPI_TalonFX(FLYWHEEL2);
     private WPI_TalonFX spinner = new WPI_TalonFX(TURRET_SPINNER);
     private Limelight limelight = new Limelight();
 
@@ -38,13 +40,17 @@ public class Turret extends SubsystemBase{
     private WPI_PigeonIMU gyro; 
 
     // Flywheel controls
-    //TODO: Make private
-    private PIDController flywheelPID = new PIDController(FLYWHEEL_P, FLYWHEEL_I, FLYWHEEL_D);
-    private SimpleMotorFeedforward flywheelFeedForward = new SimpleMotorFeedforward(FLYWHEEL_S, FLYWHEEL_V);
+    private PIDController bottomFlywheelPID = new PIDController(BOTTOM_FLYWHEEL_P, BOTTOM_FLYWHEEL_I, BOTTOM_FLYWHEEL_D);
+    private SimpleMotorFeedforward bottomFlywheelFeedforward = new SimpleMotorFeedforward(BOTTOM_FLYWHEEL_S, BOTTOM_FLYWHEEL_V);
+
+    private PIDController topFlywheelPID = new PIDController(TOP_FLYWHEEL_P, TOP_FLYWHEEL_I, TOP_FLYWHEEL_D);
+    private SimpleMotorFeedforward topFlywheelFeedforward = new SimpleMotorFeedforward(TOP_FLYWHEEL_S, TOP_FLYWHEEL_V);
 
     //Monitoring variables for telemetry
-    private double flywheelPIDOutput = 0;
-    private double flywheelFeedForwardOutput = 0;
+    private double bottomFlywheelPIDOutput = 0;
+    private double bottomFlywheelFFOutput = 0;
+    private double topFlywheelPIDOutput = 0;
+    private double topFlywheelFFOutput = 0;
 
     // Spinner controls
     private ProfiledPIDController spinnerPIDController = new ProfiledPIDController(
@@ -59,23 +65,28 @@ public class Turret extends SubsystemBase{
     private Direction overRotatedDirection = Direction.CounterClockwise;
     
     private double spinnerPIDOutput = 0;
-    private double spinnerFeedForwardOutput = 0;
+    private double spinnerFFOutput = 0;
 
     private double spinnerSetpoint = 0;
 
     private Direction searchDirection = Direction.Clockwise; //The direction the turret will spin in if no targets are spotted
 
     public Turret(ShuffleboardTab driveTab) {
-        flywheel.configFactoryDefault();
+        bottomFlywheel.configFactoryDefault();
+        topFlywheel.configFactoryDefault();
         spinner.configFactoryDefault();
 
-        flywheel.configSupplyCurrentLimit(CURRENT_LIMIT);
+        bottomFlywheel.configSupplyCurrentLimit(CURRENT_LIMIT);
+        topFlywheel.configSupplyCurrentLimit(CURRENT_LIMIT);
         spinner.configSupplyCurrentLimit(CURRENT_LIMIT);
 
         spinner.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         
-        flywheel.setNeutralMode(NeutralMode.Coast);
+        bottomFlywheel.setNeutralMode(NeutralMode.Coast);
+        topFlywheel.setNeutralMode(NeutralMode.Coast);
         spinner.setNeutralMode(NeutralMode.Brake);
+
+        topFlywheel.setInverted(true);
 
         fakeGyro = new FakeGyro(() -> 5);
         gyro = new WPI_PigeonIMU(0);
@@ -113,29 +124,26 @@ public class Turret extends SubsystemBase{
         setFlywheelTarget(rpm);
     }
 
-    /**
-     * @param RPM The flywheel's target (in RPM)
-     */
+
     public void setFlywheelTarget(double RPM) {
-        flywheelPID.setSetpoint(RPM);
+        bottomFlywheelPID.setSetpoint(RPM);
+        topFlywheelPID.setSetpoint(RPM);
     }
 
-    /**
-     * @return The flywhee's target RPM
-     */
     public double getFlywheelTarget() {
-        return flywheelPID.getSetpoint();
+        return bottomFlywheelPID.getSetpoint();
     }
 
+    public double getBottomFlyWheelRPM() {return countsToRPM(bottomFlywheel.getSelectedSensorVelocity());}
+    public double getTopFlyWheelRPM() {return countsToRPM(topFlywheel.getSelectedSensorVelocity());}
+
     /**
-     * @return The measured RPM of the flywheel
+     * Converts a value, in encoder counts, to RPM
+     * @param counts
+     * @return
      */
-    public double getFlyWheelRPM() {
-        return flywheel.getSelectedSensorVelocity() 
-        * 10 //To Counts/sec
-        / 2048 //To rotations/sec
-        * 60 //To rotations per minute
-        ;
+    private double countsToRPM(double counts) {
+        return counts * 10 / 2048.0 * 60;
     }
 
     /**
@@ -143,38 +151,16 @@ public class Turret extends SubsystemBase{
      * @return true if the flywheel is within the allowed error (i.e. it's close the target RPM); false if still not in that range
      */
     public boolean isFlywheelBusy() {
-        return Math.abs(getFlywheelTarget() - getFlywheelTarget()) > FLYWHEEL_ALLOWED_ERROR;
+        return Math.abs(getBottomFlyWheelRPM()- getFlywheelTarget()) > FLYWHEEL_ALLOWED_ERROR && Math.abs(getBottomFlyWheelRPM() - getFlywheelTarget()) > FLYWHEEL_ALLOWED_ERROR;
     }
 
-    /**
-     * Telemtry function
-     * @return the voltage the flywheel has been set to
-     */
-    public double getFlywheelVoltage() {
-        return flywheel.getMotorOutputVoltage();
-    }
+    public double getBottomFlywheelVoltage() {return bottomFlywheel.getMotorOutputVoltage();}
+    public double getTopFlywheelVoltage() {return bottomFlywheel.getMotorOutputVoltage();}
 
-    /**
-     * Resets the spinner's PID (as it increases voltage when idling which can cause jerking if not reset)
-     */
-    public void resetSpinnerPID() {
-        spinnerPIDController.reset(getSpinnerAngle());
-        spinnerSetpoint = getSpinnerAngle();
-    }
-
-    /**
-     * @return The current PID output of the flywheel
-     */
-    public double getFlywheelBangBangOutput() {
-        return flywheelPIDOutput;
-    }
-
-    /**
-     * @return The current Feedforward output of the flywheel
-     */
-    public double getFlywheelFeedforwardOutput() {
-        return flywheelFeedForwardOutput;
-    }
+    public double getBottomFlywheelPIDOutput() {return bottomFlywheelPIDOutput;}
+    public double getBottomFlywheelFFOutput() {return bottomFlywheelFFOutput;}
+    public double getTopFlywheelPIDOutput() {return topFlywheelPIDOutput;}
+    public double getTopFlywheelFFOutput() {return topFlywheelFFOutput;}
 
 
     /* Spinner methods */
@@ -196,6 +182,14 @@ public class Turret extends SubsystemBase{
         } 
 
         spinnerSetpoint = angle;
+    }
+
+    /**
+     * Resets the spinner's PID (as it increases voltage when idling which can cause jerking if not reset)
+     */
+    public void resetSpinnerPID() {
+        spinnerPIDController.reset(getSpinnerAngle());
+        spinnerSetpoint = getSpinnerAngle();
     }
 
     /**
@@ -243,15 +237,8 @@ public class Turret extends SubsystemBase{
             /Constants.Turret.COUNTS_SPINNER_ENCODER // Rotations
             * 360 //Degrees
             * Constants.Turret.TURRET_GEAR_RATIO //Degrees on the turret
-            * -1 //Convert to the right angle
+            * -1 //Convert to the right sign
         ;
-    }
-
-    /**
-     * @return The encoder value of the spinner (positive going counter-clockwise)
-     */
-    public double getRawSpinnerEncoderValue() {
-        return -(spinner.getSelectedSensorPosition());
     }
 
     /**
@@ -282,29 +269,12 @@ public class Turret extends SubsystemBase{
         spinnerPIDController.setConstraints(constraints);
     }
 
-    public double getSpinnerPIDOutput() {
-        return spinnerPIDOutput;
-    }
+    public double getSpinnerPIDOutput() {return spinnerPIDOutput;}
+    public double getSpinnerFeedForwardOutput() {return spinnerFFOutput;}
+    public double getSpinnerVoltage() {return spinner.getMotorOutputVoltage();}
+    public double getSpinnerTargetVelocity() {return spinnerPIDController.getSetpoint().velocity;}
 
-    public double getSpinnerFeedForwardOutput() {
-        return spinnerFeedForwardOutput;
-    }
-
-    /**
-     * @return the output voltage on the motor
-     */
-    public double getSpinnerVoltage() {
-        return spinner.getMotorOutputVoltage();
-    }
-
-    /**
-     * @return the velocity the spinner is currently trying to achieve
-     */
-    public double getSpinnerTargetVelocity() {
-        return spinnerPIDController.getSetpoint().velocity;
-    }
-
-    public double getSpinnnerVelocity() {
+    public double getSpinnerVelocity() {
         return 
             spinner.getSelectedSensorVelocity() //Counts per 100 ms
             * 10 //Counts per second (TalonFX is weird)
@@ -328,9 +298,7 @@ public class Turret extends SubsystemBase{
         return lidar;
     }
 
-    public HallEffectSensor getCenterHallEffectSensor() {
-        return centerHallEffect;
-    }
+    public boolean isHallEffectActivated() { return centerHallEffect.isActivated();}
 
 
     //Limelight meothods (just exposes the functions in the util class)
@@ -351,15 +319,48 @@ public class Turret extends SubsystemBase{
 
     @Override
     public void periodic() {
-        flywheelPIDOutput = flywheelPID.calculate(getFlyWheelRPM());
-        flywheelFeedForwardOutput = flywheelFeedForward.calculate(flywheelPID.getSetpoint());
+        bottomFlywheelPIDOutput = bottomFlywheelPID.calculate(getBottomFlyWheelRPM());
+        bottomFlywheelFFOutput = bottomFlywheelFeedforward.calculate(bottomFlywheelPID.getSetpoint());
 
-        if(getFlyWheelRPM()>=0) flywheel.setVoltage(flywheelPIDOutput + flywheelFeedForwardOutput);
+        bottomFlywheel.setVoltage(bottomFlywheelPIDOutput + bottomFlywheelFFOutput);
+
+        topFlywheelPIDOutput = topFlywheelPID.calculate(getTopFlyWheelRPM());
+        topFlywheelFFOutput = topFlywheelFeedforward.calculate(topFlywheelPID.getSetpoint());
+
+        topFlywheel.setVoltage(topFlywheelPIDOutput + topFlywheelFFOutput);
 
         spinnerPIDOutput = spinnerPIDController.calculate(getSpinnerAngle(), spinnerSetpoint);
-        spinnerFeedForwardOutput = spinnerFeedForward.calculate(spinnerPIDController.getSetpoint().velocity);
+        spinnerFFOutput = spinnerFeedForward.calculate(spinnerPIDController.getSetpoint().velocity);
 
-        spinner.setVoltage(spinnerPIDOutput + spinnerFeedForwardOutput);
+        spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
+
+
+        //TODO: Remove this telemetry when it's no longer used
+        
+        //Flywheel telemetry
+        SmartDashboard.putData("Top Flywheel PID", topFlywheelPID);
+        SmartDashboard.putData("Bottom Flywheel PID", bottomFlywheelPID);
+        SmartDashboard.putNumber("Top Flywheel PID Output", topFlywheelPIDOutput);
+        SmartDashboard.putNumber("Bottom Flywheel PID Output", bottomFlywheelPIDOutput);
+        SmartDashboard.putNumber("Top Flywheel FF Output", bottomFlywheelFFOutput);
+        SmartDashboard.putNumber("Bottom Flywheel FF Output", bottomFlywheelFFOutput);
+        SmartDashboard.putNumber("Top Flywheel Target Velo", topFlywheelPID.getSetpoint());
+        SmartDashboard.putNumber("Bottom Flywheel Target Velo", bottomFlywheelPID.getSetpoint());
+        SmartDashboard.putNumber("Top Flywheel Measured Velo", getTopFlyWheelRPM());
+        SmartDashboard.putNumber("Bottom Flywheel Measured Velo", getBottomFlyWheelRPM());
+        SmartDashboard.putNumber("Top Flywheel Voltage", bottomFlywheel.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Top Flywheel Voltage", topFlywheel.getMotorOutputVoltage());
+
+        //Spinner telemetry
+        SmartDashboard.putData("Spinner PID", spinnerPIDController);
+        SmartDashboard.putNumber("Spinner PID Output", spinnerPIDOutput);
+        SmartDashboard.putNumber("Spinner FF Output", spinnerFFOutput);
+        SmartDashboard.putNumber("Spinner Target Velo", getSpinnerTargetVelocity());
+        SmartDashboard.putNumber("Spinner Measured velo", getSpinnerVelocity());
+        SmartDashboard.putNumber("Spinner Target Angle", getSpinnerTarget());
+        SmartDashboard.putNumber("Spinner Measured Angle", getSpinnerAngle());
+        SmartDashboard.putNumber("Spinner Voltage", getSpinnerVoltage());
+
     }
 
     public enum Direction {

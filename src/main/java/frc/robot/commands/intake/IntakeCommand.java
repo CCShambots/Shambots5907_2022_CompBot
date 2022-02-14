@@ -5,7 +5,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
-import frc.robot.util.Ball.BallPosition;
+import frc.robot.util.intake.Ball.BallPosition;
 
 public class IntakeCommand extends CommandBase{
     

@@ -78,10 +78,8 @@ public class RobotContainer {
 
     commands.put(AutoPaths.Example, new SequentialCommandGroup(
       new InstantCommand(() -> {
-      //  System.out.println("Setting odo pose to " + paths.get("Example").sample(0).poseMeters);
         startPose = paths.get("Example").sample(0).poseMeters;
         doAutoSetup();
-      //  System.out.println("Robot pose after being set " + drivetrain.getOdometryPose());
       }),
       new TrajectoryCommand(drivetrain, paths.get("Example"))
 
@@ -113,21 +111,22 @@ public class RobotContainer {
     //Intake controls
     
     //Runs the intake command if the robot has fewer than two balls
-    new JoystickButton(operatorController, OPERATOR_3_1)
-      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(OPERATOR_3_3)), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
+    new JoystickButton(operatorController, 1)
+      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(3)), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
     
 
     //Turret Controls
     new JoystickButton(driverController, Button.kA.value)
         .whenPressed(new InstantCommand(() -> toggleLimelightTargeting(() -> driverController.getRawButton(Button.kLeftBumper.value))));
       
-      new JoystickButton(driverController, Button.kRightBumper.value).whenPressed(new InstantCommand(() -> turret.toggleSearchDirection()));
-      new JoystickButton(operatorController, 5).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
-      new JoystickButton(operatorController, 9).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
-  
-      new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> turret.setFlywheelTarget(2000))).whenReleased(new InstantCommand(() -> turret.setFlywheelTarget(0)));
-  
-      new JoystickButton(operatorController, 2)
+    new JoystickButton(operatorController, 5).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
+    new JoystickButton(operatorController, 9).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
+    
+    //TODO: Remove this
+    new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> turret.setFlywheelTarget(2000))).whenReleased(new InstantCommand(() -> turret.setFlywheelTarget(0)));
+    
+    //Climber controls
+    new JoystickButton(operatorController, 2)
       .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
     
     new JoystickButton(operatorController, 4)
@@ -135,6 +134,9 @@ public class RobotContainer {
   }
 
   public void telemetry() {
+    //TODO: Remove all this telemtry once we don't need it (other telemetry found in periodic() of subsystems)
+
+    //Drivetrain telemetry
     SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
     SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
     SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());

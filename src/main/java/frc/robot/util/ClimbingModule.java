@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.subsystems.Climber.ClimberState;
-import frc.robot.util.sensors.LimitSwitch;
+import frc.robot.util.hardware.HallEffectSensor;
 
 import static frc.robot.Constants.Drivetrain.*;
 import static frc.robot.Constants.Climber.*;
@@ -22,7 +22,7 @@ public class ClimbingModule {
     //Hardware
     private WPI_TalonFX motor; //Falcon that controls the height of the lift
     private DoubleSolenoid brake; //Solenoid that activates the brake on the lift
-    private LimitSwitch limitSwitch; //Limit switch located at the bottom of the lift
+    private HallEffectSensor limitSwitch; //Limit switch located at the bottom of the lift
 
     private ProfiledPIDController pidController;
     private SimpleMotorFeedforward ffController;
@@ -50,7 +50,7 @@ public class ClimbingModule {
         new TrapezoidProfile.Constraints(controllerConstants.getMaxVel(), controllerConstants.getMaxAccel()));
         ffController = new SimpleMotorFeedforward(controllerConstants.getKS(), controllerConstants.getKV());
 
-        limitSwitch = new LimitSwitch(limitSwitchPin);
+        limitSwitch = new HallEffectSensor(limitSwitchPin);
     }
 
     /**

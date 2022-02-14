@@ -27,9 +27,11 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
+
 import java.util.Map;
 
 public class Drivetrain extends SubsystemBase {
+  //TODO: Impelemtn amperage detectino and stuff
   //Hardware declarations
   private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
   private PIDandFFConstants rightConstants= new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
@@ -50,7 +52,7 @@ public class Drivetrain extends SubsystemBase {
 
   //Speed controls
   private TeleopSpeeds speedMode = TeleopSpeeds.Normal;
-  private double maxSpeed = 2;
+  private double maxSpeed = MAX_LINEAR_VELOCITY; //TODO: If this should not be the same as the autonomous max speed, change it (should be the same tho)
 
   private double smoothing = 1;
 

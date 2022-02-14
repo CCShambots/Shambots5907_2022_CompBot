@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.Range;
@@ -20,6 +19,13 @@ import frc.robot.util.Range;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    //TODO: Tune left DT ff and PID
+    //TODO: Tune right DT ff and PID
+    //TODO: Tune Spinner ff and PID
+    //TODO: Tune bottom flywheel ff and PID
+    //TODO: Tune top flywheel ff and PID
+    //TODO: Tune left climber ff and PID
 
     //Current limit for stopping motors from exceeding max power draw
     public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 10, 10, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
@@ -36,8 +42,8 @@ public final class Constants {
         public static final int COMPRESSOR_ID = 06;
 
         //Values for converting the motor counts to distance traveled
-        public static final double COUNTS_PER_REV_DRIVE_MOTORS = 2048;
-        public static final double WHEEL_SIZE_INCHES = 6;
+        public static final double COUNTS_PER_REV = 2048; //Drivetrain motors (falcon 500)
+        public static final double WHEEL_SIZE = 6; //In inches
 
         //Robot mode (for odometry toggling)
         public static RobotStatus robotStatus = RobotStatus.AUTO;
@@ -73,73 +79,56 @@ public final class Constants {
         public static final double K_RAMSETE_B = 2.0;
         public static final double K_RAMSETE_ZETA = 0.7;
 
-        public static final double kPDriveVel = 0;
-
         //TODO: Set this to the actual achievable error
         public static final double PREFERRED_DISTANCE_ERROR = Units.inchesToMeters(3);
         public static final double PREFERRED_ANGLE_ERROR = Units.degreesToRadians(5);
-    }
-
-    public static class Limelight {
-        //Limelight variables
-        public static final double LIMELIGHT_FIND_TARGET_SPEED = 0.25;
-        public static final PIDController Z_LIMELIGHT_PID = new PIDController(0, 0, 0);
-        public static final double LIMELIGHT_TOLERANCE = 5;
     }
 
     public static class Intake {
         //Hardware
         public static final int ROLLER_1_ID = 11;
         public static final int ROLLER_2_ID = 12;
-        public static final int ROTATE_INTAKE_MOTOR = 13;
         
         public static final int SOLENOID_1_PORT_1 = 0;
         public static final int SOLENOID_1_PORT_2 = 1;
         public static final int SOLENOID_2_PORT_1 = 2;
         public static final int SOLENOID_2_PORT_2 = 3;
 
+        //Control variables
         public static final double INTAKE_SPEED = 0.5;
-
-        public static final double INTAKE_RAISED_COUNTS = 0;
-        public static final double INTAKE_LOWERED_COUNTS = 512;
-
-        public static final double ROTATIONAL_P = 0; 
-        public static final double ROTATIONAL_I = 0; 
-        public static final double ROTATIONAL_D = 0;
-
-        public static final double ROTATIONAL_MAX_VEL = 0; 
-        public static final double ROTATIONAL_MAX_ACCEL = 0;
-
-        public static final double ROTATIONAL_KS = 0; 
-        public static final double ROTATIONAL_KV = 0; 
     }
 
     public static class Conveyor {
         //Hardware
         public static final int CONVEYOR_STAGE1_ID = 21;
         public static final int CONVEYOR_STAGE2_ID = 22;
-        public static final int PROX_STAGE1_ID = 1;
-        public static final int PROX_STAGE2_ID = 1;
+        public static final int PROX_STAGE1_ID = 0; //DIO port
+        public static final int PROX_STAGE2_ID = 1; //DIO port
 
+        //Control variables
         public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
-
     }
 
     
-    public static final class Turret{
-        //TODO: Update all the hardware properties
- 
+    public static final class Turret{ 
         //Hardware devices
-        public static final int FLYWHEEL = 41;
-        public static final int TURRET_SPINNER = 42;
-        public static final int HALL_EFFECT_CENTER = 2;
+        public static final int FLYWHEEL1 = 31;
+        public static final int FLYWHEEL2 = 32;
+        public static final int TURRET_SPINNER = 33;
+        public static final int HALL_EFFECT_CENTER = 2; //DIO port
 
         //Flywheel control
-        public static final double FLYWHEEL_S = 0.25;
-        public static final double FLYWHEEL_V = 0.0017;
-        public static final double FLYWHEEL_P = 0.01;
-        public static final double FLYWHEEL_I = 0;
-        public static final double FLYWHEEL_D = 0;
+        public static final double BOTTOM_FLYWHEEL_S = 0.25;
+        public static final double BOTTOM_FLYWHEEL_V = 0.0017;
+        public static final double BOTTOM_FLYWHEEL_P = 0.01;
+        public static final double BOTTOM_FLYWHEEL_I = 0;
+        public static final double BOTTOM_FLYWHEEL_D = 0;
+
+        public static final double TOP_FLYWHEEL_S = 0.25;
+        public static final double TOP_FLYWHEEL_V = 0.0017;
+        public static final double TOP_FLYWHEEL_P = 0.01;
+        public static final double TOP_FLYWHEEL_I = 0;
+        public static final double TOP_FLYWHEEL_D = 0;
 
         //TODO: Tune this value to attainable error
         public static final double FLYWHEEL_ALLOWED_ERROR = 25; //The allowed error for the flywheel setpoint (in RPM)
@@ -152,6 +141,8 @@ public final class Constants {
         public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 180; //Counter-clockwise turns are psotiive
         public static final double ACCEPTABLE_ERROR = 1; //How close the turret has to get to it's setpoint before isBusy() returns false
         public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
+        public static final double SEARCH_VEL = 270; //In deg/sec: The speed the spinner will search at when it doesn't have a target
+        public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
         
         public static final double SPINNER_P = 0.14;
         public static final double SPINNER_I = 0.05;
@@ -186,10 +177,10 @@ public final class Constants {
         public static final int RIGHT_LIMIT_SWITCH = 7;
 
         //TODO: fix these 
-        public static final int BRAKE_1_PORT_1 = 4;
-        public static final int BRAKE_1_PORT_2 = 5;
-        public static final int BRAKE_2_PORT_1 = 6;
-        public static final int BRAKE_2_PORT_2 = 7;
+        public static final int BRAKE_1_PORT_1 = 4; //Pneumatics port
+        public static final int BRAKE_1_PORT_2 = 5; //Pneumatics port
+        public static final int BRAKE_2_PORT_1 = 6; //Pneumatics port
+        public static final int BRAKE_2_PORT_2 = 7; //Pneumatics port
 
         //TODO: Tune
         public static final double LEFT_P = 0;
@@ -209,10 +200,9 @@ public final class Constants {
 
         //TODO: calculate these
 
-        public static final double MID_HEIGHT = 100;
-        public static final double LOW_HEIGHT = 50;
-        public static final double LOWERED_HEIGHT = 0;
-        public static final double ALLOWED_ERROR = 5; //TODO: Set this to the minimum attainable value
+        public static final double MID_HEIGHT = 24; //The height (in inches) that the climber will move to for the mid level climb
+        public static final double LOW_HEIGHT = 12; //Same as above (in inches) but for low goal
+        public static final double LOWERED_HEIGHT = 0; //The fully lowered position of the climber (also in inches)
     }
 
     public static class Controller {
@@ -221,14 +211,9 @@ public final class Constants {
         public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
         public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 0; //Left stick x
         public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
-        public static final int DRIVER_A = 1; //Turbo/normal speed control
-        public static final int DRIVER_B = 2; //Arcade/Tank drive
 
         //Operator Controller
         public static final int OPERATOR_CONTROLLER_PORT = 1;
-        public static final int OPERATOR_BUTTON_3 = 3; //Control for switching to limelight turning 
-        public static final int OPERATOR_3_1 = 1; //Begins the intake command
-        public static final int OPERATOR_3_3 = 5; //Cancels the intake command
     }
     
 }

@@ -1,14 +1,16 @@
-package frc.robot.util;
+package frc.robot.util.intake;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.util.Ball.Color;
-import frc.robot.util.Ball.BallPosition;
-import frc.robot.util.sensors.PresenceSensor;
+import frc.robot.util.hardware.PresenceSensor;
+import frc.robot.util.intake.Ball.BallPosition;
+import frc.robot.util.intake.Ball.Color;
 
-public class BallTracker{
+public class BallTracker implements Sendable{
     //TODO: Color sensor implementation
 
     private PresenceSensor stage1Sensor;
@@ -31,15 +33,11 @@ public class BallTracker{
     public BallPosition getBall1Pos() {return balls.get(0) != null ? balls.get(0).getPosition() : BallPosition.NotInBot;}
     public BallPosition getBall2Pos() {return balls.get(1) != null ? balls.get(1).getPosition() : BallPosition.NotInBot;}
 
-    public void update() {
+    public void periodic() {
         SmartDashboard.putNumber("Number of balls tracking", balls.size());
         for(Ball b : balls) {
             SmartDashboard.putData(b);
         }
-
-        //TODO: Remove this telemetry once we know how things are going to work
-        SmartDashboard.putBoolean("Stage one sensor", stage1Sensor.isActivated());
-        SmartDashboard.putBoolean("Stage two sensor", stage2Sensor.isActivated());
 
         //Create a new ball in the conveyor if the stage 1 sensor has just turned on
         if(stage1Sensor.isActivated() && stage1Sensor.isActivated() != prevStage1) {
@@ -63,5 +61,17 @@ public class BallTracker{
 
         prevStage1 = stage1Sensor.isActivated();
         prevStage2 = stage2Sensor.isActivated();
+
+        //TODO: Remove this telemetry later
+        SmartDashboard.putBoolean("Stage one sensor", stage1Sensor.isActivated());
+        SmartDashboard.putBoolean("Stage two sensor", stage2Sensor.isActivated());
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("Smart Dashboard");
+
+        builder.addBooleanProperty("Stage one sensor", () -> stage1Sensor.isActivated(), null);
+        builder.addBooleanProperty("Stage two sensor", () -> stage2Sensor.isActivated(), null);
     }
 }

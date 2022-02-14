@@ -1,9 +1,11 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.BallTracker;
-import frc.robot.util.Ball.BallPosition;
-import frc.robot.util.sensors.PresenceSensor;
+import frc.robot.util.hardware.PresenceSensor;
+import frc.robot.util.intake.BallTracker;
+import frc.robot.util.intake.Ball.BallPosition;
 
 import static frc.robot.Constants.Conveyor.*;
 import static frc.robot.Constants.*;
@@ -59,7 +61,10 @@ public class Conveyor extends SubsystemBase{
 
     @Override
     public void periodic() {
-        tracker.update();
+        tracker.periodic();
+
+        //TODO: Remove this telemetry later
+        SmartDashboard.putData("Ball tracker", tracker);
     }
 
 }

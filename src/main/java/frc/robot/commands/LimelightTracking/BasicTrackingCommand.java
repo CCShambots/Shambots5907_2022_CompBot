@@ -2,7 +2,6 @@ package frc.robot.commands.LimelightTracking;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -99,7 +98,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
             mode = Mode.Searching;
 
             //Slow down the spinner's velocity for searching for the target
-            turret.setSpinnerConstraints(new TrapezoidProfile.Constraints(270, SPINNER_MAX_ACCEL));
+            turret.setSpinnerConstraints(new TrapezoidProfile.Constraints(SEARCH_VEL, SPINNER_MAX_ACCEL));
             setSearchTarget(turret.getSearchDirection());
 
             prevDirection = turret.getSearchDirection();

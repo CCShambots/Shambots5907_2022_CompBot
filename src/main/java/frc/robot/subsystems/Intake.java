@@ -106,9 +106,9 @@ public class Intake extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    //TODO: Remove this once we figure out how to actually use solenoids
+    //TODO: Remove this telemetry after finished
     SmartDashboard.putData(rotationalSolenoid1);
-
+    SmartDashboard.putData(rotationalSolenoid2);
     
   }
 
