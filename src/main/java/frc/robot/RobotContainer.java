@@ -17,11 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.drivetrain.DrivingCommand;
-import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.subsystems.Conveyor;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -53,9 +50,6 @@ public class RobotContainer {
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
 
-  //TODO: Make this based on the chosen auto route (idk how but it needs to be done!)
-  private Pose2d startPose = new Pose2d();
-
   private SelectCommand autoCommands;
   Map<Object, Command> commands = new HashMap<>();
   SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
@@ -68,23 +62,23 @@ public class RobotContainer {
 
 
     commands.put(AutoPaths.Example, new SequentialCommandGroup(
-      drivetrain.setupAuto(paths.get("Example")),
+      setupAuto(paths.get("Example")),
       new TrajectoryCommand(drivetrain, paths.get("Example"))
 
     ));
 
     commands.put(AutoPaths.CSGO1, new SequentialCommandGroup(
-      drivetrain.setupAuto(paths.get("CSGO-1")),
+      setupAuto(paths.get("CSGO-1")),
       new TrajectoryCommand(drivetrain, paths.get("CSGO-1"))
     ));
 
     commands.put(AutoPaths.CSGO2, new SequentialCommandGroup(
-      drivetrain.setupAuto(paths.get("CSGO-2")),
+      setupAuto(paths.get("CSGO-2")),
       new TrajectoryCommand(drivetrain, paths.get("CSGO-2"))
     ));
 
     commands.put(AutoPaths.CSGO3, new SequentialCommandGroup(
-      drivetrain.setupAuto(paths.get("CSGO-3-1")),
+      setupAuto(paths.get("CSGO-3-1")),
       new TrajectoryCommand(drivetrain, paths.get("CSGO-3-1")),
       new TrajectoryCommand(drivetrain, paths.get("CSGO-3-2"))
     ));
@@ -102,10 +96,6 @@ public class RobotContainer {
     driveTab.addString("Robot Status", () -> getRobotStatus());
 
     doDrivetrainSetup();
-  }
-
-  private String getRobotStatus() {
-    return Constants.robotStatus.name();
   }
 
   private void configureButtonBindings() {
@@ -172,6 +162,20 @@ public class RobotContainer {
     }
 
     return trajectories;
+  }
+
+  
+  private SequentialCommandGroup setupAuto(Trajectory trajectory) {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> {
+        drivetrain.resetOdometry(trajectory.getInitialPose());
+        setAutonomous();
+      })
+    );
+  }
+
+  private String getRobotStatus() {
+    return Constants.robotStatus.name();
   }
 
   public SelectCommand getAutoCommand() {

@@ -255,12 +255,6 @@ public class Drivetrain extends SubsystemBase {
     return Rotation2d.fromDegrees(getGyroHeading());
   }
 
-  public InstantCommand setupAuto(Trajectory trajectory) {
-    return new InstantCommand(() -> {
-      resetOdometry(trajectory.getInitialPose());
-    });
-  }
-
   @Override
   public void periodic() {
     //We have no use (yet) for odometry in teleop, so it will only update in autonomous
