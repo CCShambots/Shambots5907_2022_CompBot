@@ -1,4 +1,4 @@
-package frc.robot.commands.LimelightTracking;
+package frc.robot.commands.limelight;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;

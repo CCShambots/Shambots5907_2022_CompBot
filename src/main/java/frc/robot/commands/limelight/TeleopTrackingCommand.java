@@ -1,4 +1,4 @@
-package frc.robot.commands.LimelightTracking;
+package frc.robot.commands.limelight;
 
 import java.util.function.BooleanSupplier;
 

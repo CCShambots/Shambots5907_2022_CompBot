@@ -1,4 +1,4 @@
-package frc.robot.commands.TurretCommands;
+package frc.robot.commands.turret;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
