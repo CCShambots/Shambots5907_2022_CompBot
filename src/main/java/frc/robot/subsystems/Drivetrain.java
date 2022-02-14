@@ -18,7 +18,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -42,7 +41,6 @@ public class Drivetrain extends SubsystemBase {
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
   private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.CTREPCM);
-  private DoubleSolenoid shifter = new DoubleSolenoid(Constants.Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.CTREPCM, 1, 2);
 
   //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
@@ -71,7 +69,6 @@ public class Drivetrain extends SubsystemBase {
     odometry = new DifferentialDriveOdometry(getGyroHeadingOdometry(), new Pose2d());
 
     compressor.enableDigital();
-    shifter.toggle();
 
     initShuffleboard(driveTab);
   }
@@ -258,7 +255,8 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     //We have no use (yet) for odometry in teleop, so it will only update in autonomous
-    if(robotStatus == RobotStatus.AUTO) {
+    //TODO: Disable odometry running all the time; Just want to test it in teleop right now to see if it is any reliability
+    if(robotStatus == RobotStatus.AUTO || true) {
       updateOdometry();
     }
 

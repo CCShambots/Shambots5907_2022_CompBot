@@ -53,9 +53,9 @@ public class Intake extends SubsystemBase {
    */
   private void setIntakeState(IntakeState state) {
     intakeState = state;
-    Value value = state == IntakeState.Lowered ? Value.kReverse : Value.kForward;
+    Value value = state == IntakeState.Raised ? Value.kReverse : Value.kForward;
 
-    rotationalSolenoid2.set(value);
+    rotationalSolenoid1.set(value);
     rotationalSolenoid2.set(value);
   }
 
@@ -91,6 +91,8 @@ public class Intake extends SubsystemBase {
       setMotors(0);
     }
   }
+
+  public boolean isRunning() {return direction != IntakeDirection.Stopped;}
 
   private void setMotors(double speed) {
     roller1.set(ControlMode.PercentOutput, speed);

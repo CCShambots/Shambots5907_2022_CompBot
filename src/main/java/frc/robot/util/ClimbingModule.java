@@ -7,8 +7,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.util.hardware.HallEffectSensor;
@@ -17,7 +20,7 @@ import static frc.robot.Constants.Drivetrain.*;
 import static frc.robot.Constants.Climber.*;
 import static frc.robot.Constants.*;
 
-public class ClimbingModule {
+public class ClimbingModule implements Sendable{
 
     //Hardware
     private WPI_TalonFX motor; //Falcon that controls the height of the lift
@@ -29,7 +32,10 @@ public class ClimbingModule {
 
     private ClimberState climberState = ClimberState.Lowered;
     private boolean braked = false;
+
     private ClimbingModule follower = null;
+    private ClimbingModule leader = null;
+
     private boolean following = false; //This flag is here to ensure that a ClimbingModule that is already following cannot become the leader of anther motor
 
     private double pidOutput = 0;
@@ -38,7 +44,9 @@ public class ClimbingModule {
     //This value is set to true if one of the conditions is fulfilled that must reset the motor to zero.  It's purpose is to reset the pidController to avoid weird super high voltage spikes
     private boolean forceStop = false; 
 
-    public ClimbingModule(int motorID, int brake1Port, int brake2Port, int limitSwitchPin, PIDandFFConstants controllerConstants) {
+    String name;
+
+    public ClimbingModule(int motorID, int brake1Port, int brake2Port, int limitSwitchPin, PIDandFFConstants controllerConstants, String name) {
         motor = new WPI_TalonFX(motorID);
         brake = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, brake1Port, brake2Port);
 
@@ -51,6 +59,8 @@ public class ClimbingModule {
         ffController = new SimpleMotorFeedforward(controllerConstants.getKS(), controllerConstants.getKV());
 
         limitSwitch = new HallEffectSensor(limitSwitchPin);
+
+        this.name = name;
     }
 
     /**
@@ -112,11 +122,13 @@ public class ClimbingModule {
         //If any of these conditions are true, the motor should not be moving at all
         if(pushingSwitch || motorOverExtended || isBraked()) {
             motor.setVoltage(0);
+            brake();
             forceStop = true;
         } else {
             //Reset the PID controller if the motor was just being forced to stop (as it can build up very high voltage setpoints when voltages are not actually applied)
             if(forceStop) {
                 forceStop = false;
+                unBrake();
                 pidController.reset(motor.getSelectedSensorPosition());
             }
 
@@ -152,6 +164,7 @@ public class ClimbingModule {
         if(!following) {
             this.follower = follower;
             follower.setFollowing(true);
+            follower.setLeader(this);
             return true;
         } else {return false;}
     }
@@ -165,7 +178,29 @@ public class ClimbingModule {
     public boolean isBraked() {return braked;}
     public ClimberState getClimberState() {return climberState;}
     public double getPosition() {return motor.getSelectedSensorPosition();}
-    public double getVelocity() {return getPosition() * 10;}
+    public double getVelocity() {return motor.getSelectedSensorVelocity() * 10;}
     public ProfiledPIDController getPID() {return pidController;}
     public double getVoltage() {return pidOutput + ffOutput;}
+    public String getName() {return name;}
+    public void setLeader(ClimbingModule leader) {this.leader = leader;}
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("Climbing Module");
+        builder.addStringProperty("Module name", () -> getName(), null);
+        builder.addBooleanProperty("Limit switch activated", () -> limitSwitch.isActivated(), null);
+        builder.addBooleanProperty("Force stopped", () -> forceStop, null);
+        builder.addBooleanProperty("Braked", () -> brake.get().equals(Value.kForward), null);
+        builder.addDoubleProperty("Module target", () -> climberTarget, null);
+        builder.addDoubleProperty("Measured position", () -> getPosition(), null);
+        builder.addDoubleProperty("Target velocity", () -> pidController.getSetpoint().velocity, null);
+        builder.addDoubleProperty("Measured velocity", () -> getVelocity(), null);
+        builder.addDoubleProperty("PID Output", () -> pidOutput, null);
+        builder.addDoubleProperty("FF Output", () -> ffOutput, null);
+        builder.addDoubleProperty("Motor voltage", () -> getVoltage(), null);
+        builder.addBooleanProperty("Following another module?", () -> following, null);
+        builder.addStringProperty("Name of leading module", () -> {
+            return leader != null ? leader.getName() : "Not following another module";
+        }, null);
+    }
 }

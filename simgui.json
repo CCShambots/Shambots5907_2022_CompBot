@@ -1,22 +1,12 @@
 {
   "HALProvider": {
+    "DIO": {
+      "window": {
+        "visible": true
+      }
+    },
     "Other Devices": {
-      "Talon FX[1]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[1]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[41]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[42]": {
+      "Talon FX[12]/Integrated Sensor": {
         "header": {
           "open": true
         }
@@ -25,6 +15,16 @@
         "header": {
           "open": true
         }
+      }
+    },
+    "Solenoids": {
+      "6": {
+        "header": {
+          "open": true
+        }
+      },
+      "window": {
+        "visible": true
       }
     }
   },
@@ -35,15 +35,22 @@
       "/LiveWindow/Conveyor": "Subsystem",
       "/LiveWindow/Drivetrain": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
+      "/LiveWindow/Turret": "Subsystem",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[2]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[3]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[5]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[6]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[7]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalOutput[4]": "Digital Output",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/Talon FX [11]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [12]": "Motor Controller",
@@ -51,14 +58,20 @@
       "/LiveWindow/Ungrouped/Talon FX [21]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [22]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [2]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [31]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [32]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [33]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [3]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [41]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [42]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [4]": "Motor Controller",
       "/Shuffleboard/Drive Team/SendableChooser[0]": "String Chooser",
       "/Shuffleboard/Drive Team/field": "Field2d",
+      "/SmartDashboard/Bottom Flywheel PID": "PIDController",
+      "/SmartDashboard/Intake command": "Command",
       "/SmartDashboard/RightPID": "PIDController",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Top Flywheel PID": "PIDController",
       "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/leftPID": "PIDController"
     },
@@ -68,6 +81,17 @@
           "visible": true
         }
       }
+    }
+  },
+  "NetworkTables": {
+    "LiveWindow": {
+      "Intake": {
+        "open": true
+      },
+      "Ungrouped": {
+        "open": true
+      },
+      "open": true
     }
   }
 }

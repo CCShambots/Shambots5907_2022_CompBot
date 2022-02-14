@@ -43,6 +43,8 @@ public final class Constants {
 
         //Values for converting the motor counts to distance traveled
         public static final double COUNTS_PER_REV = 2048; //Drivetrain motors (falcon 500)
+        public static final double GEAR_RATIO = 
+            ((12.0) / (40.0)) / (14.0 / 40.0);
         public static final double WHEEL_SIZE = 6; //In inches
 
         //Robot mode (for odometry toggling)
@@ -159,11 +161,10 @@ public final class Constants {
     }
 
     public static class Lidar {
-        public static final int MONITOR_PIN = 0;
-        public static final int TRIGGER_PIN = 0;
+        public static final int MONITOR_PIN = 3;
+        public static final int TRIGGER_PIN = 4;
 
         public static final double LIDAR_VALUE_IN_METERS = 0;
-        public static final int PROX_STAGE2_ID = 2;
 
         public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
     }
@@ -173,8 +174,8 @@ public final class Constants {
         public static final int LEFT_CLIMBER_ID = 41;
         public static final int RIGHT_CLIMBER_ID = 42;
         //TODO: Update these to actual values
-        public static final int LEFT_LIMIT_SWITCH = 6;
-        public static final int RIGHT_LIMIT_SWITCH = 7;
+        public static final int LEFT_LIMIT_SWITCH = 5;
+        public static final int RIGHT_LIMIT_SWITCH = 6;
 
         //TODO: fix these 
         public static final int BRAKE_1_PORT_1 = 4; //Pneumatics port

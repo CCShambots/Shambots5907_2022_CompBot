@@ -6,7 +6,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,7 +18,6 @@ import frc.robot.util.hardware.Limelight;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import static frc.robot.Constants.Turret.*;
 
@@ -37,7 +35,6 @@ public class Turret extends SubsystemBase{
     private HallEffectSensor centerHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
 
     private FakeGyro fakeGyro;
-    private WPI_PigeonIMU gyro; 
 
     // Flywheel controls
     private PIDController bottomFlywheelPID = new PIDController(BOTTOM_FLYWHEEL_P, BOTTOM_FLYWHEEL_I, BOTTOM_FLYWHEEL_D);
@@ -89,26 +86,13 @@ public class Turret extends SubsystemBase{
         topFlywheel.setInverted(true);
 
         fakeGyro = new FakeGyro(() -> 5);
-        gyro = new WPI_PigeonIMU(0);
 
         initShuffleboard(driveTab);
 
     }
 
     private void initShuffleboard(ShuffleboardTab driveTrab) {
-        // driveTrab.add("Spinner Angle", fakeGyro)
-        // .withWidget(BuiltInWidgets.kGyro);
-        // // .withProperties(Map.of("min", SPINNER_COUNTERCLOCKWISE_LIMIT, "max", SPINNER_CLOCKWISE_LIMIT))
-        // ;
-
-        gyro.setFusedHeading(1000000000);
-
-        driveTrab.add("Analog Angle", gyro)
-        .withWidget(BuiltInWidgets.kGyro);
-        // .withProperties(Map.of("min", SPINNER_COUNTERCLOCKWISE_LIMIT, "max", SPINNER_CLOCKWISE_LIMIT))
-        ;
-
-        driveTrab.addNumber("Spinner angle (just number)", () -> getSpinnerAngle());
+        //TODO: Figure out shuffleboard
     }
 
     /* Flywheel methods */
@@ -348,8 +332,8 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("Bottom Flywheel Target Velo", bottomFlywheelPID.getSetpoint());
         SmartDashboard.putNumber("Top Flywheel Measured Velo", getTopFlyWheelRPM());
         SmartDashboard.putNumber("Bottom Flywheel Measured Velo", getBottomFlyWheelRPM());
-        SmartDashboard.putNumber("Top Flywheel Voltage", bottomFlywheel.getMotorOutputVoltage());
         SmartDashboard.putNumber("Top Flywheel Voltage", topFlywheel.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Bottom Flywheel Voltage", bottomFlywheel.getMotorOutputVoltage());
 
         //Spinner telemetry
         SmartDashboard.putData("Spinner PID", spinnerPIDController);

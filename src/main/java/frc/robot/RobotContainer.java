@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -112,7 +113,9 @@ public class RobotContainer {
     
     //Runs the intake command if the robot has fewer than two balls
     new JoystickButton(operatorController, 1)
-      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(3)), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
+      .whenPressed(new ConditionalCommand(new InstantCommand(() -> {
+        new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(3)).schedule();;
+      }), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
     
 
     //Turret Controls
@@ -187,6 +190,9 @@ public class RobotContainer {
     drivetrain.setDriveTrainVariables();
 
     setTeleop();
+
+    //TODO: Disable resetting odometry if (and when) we are no longer using it in teleop
+    drivetrain.resetOdometry(new Pose2d(13.5, 27.0, new Rotation2d(0.0)));
   }
 
   public Map<String, Trajectory> loadPaths(List<String> names) {

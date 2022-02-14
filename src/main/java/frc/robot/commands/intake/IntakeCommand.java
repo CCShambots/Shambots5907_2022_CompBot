@@ -2,6 +2,9 @@ package frc.robot.commands.intake;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
+// import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
@@ -48,7 +51,7 @@ public class IntakeCommand extends CommandBase{
             if(conveyor.getBall1Pos() == BallPosition.Stage2) {conveyor.stopStage2();}
 
             //If the second ball has reached stage 1, we will end the command and stop and raise the intake/conveyor
-            if(conveyor.getBall2Pos() == BallPosition.Stage1) {
+            if(conveyor.getBall2Pos() == BallPosition.BetweenStages) {
                 conveyor.stopStage1();
                 intake.stop();
                 intake.raiseIntake();
@@ -67,7 +70,10 @@ public class IntakeCommand extends CommandBase{
         if(state == State.Normal && cancelSupplier.getAsBoolean()) {
             intake.stop();
             intake.raiseIntake();
+            state = State.Cancelling;
         }
+
+        SmartDashboard.putData("Intake command", this);
 
     }
 
@@ -90,6 +96,13 @@ public class IntakeCommand extends CommandBase{
 
     private static enum State {
         Normal, Cancelling
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        // super.initSendable(builder);
+        builder.setSmartDashboardType("Intake Command");
+        builder.addStringProperty("Current status", () -> state.name(), null);
     }
     
 }

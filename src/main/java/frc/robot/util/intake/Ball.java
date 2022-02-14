@@ -12,6 +12,11 @@ public class Ball implements Sendable{
         position = BallPosition.Stage1;
     }
 
+    public Ball(Color color, BallPosition position) {
+        this.color = color;
+        this.position = position;
+    }
+
     public void advancePosition() {position = position.next();}
     public void setPosition(BallPosition pos) {position = pos;}
     public BallPosition getPosition() {return position;}

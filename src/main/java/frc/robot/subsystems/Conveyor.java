@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.hardware.PresenceSensor;
@@ -23,7 +22,9 @@ public class Conveyor extends SubsystemBase{
     private PresenceSensor proxStage1 = new PresenceSensor(PROX_STAGE1_ID);
     private PresenceSensor proxStage2 = new PresenceSensor(PROX_STAGE2_ID);
 
-    private BallTracker tracker = new BallTracker(proxStage1, proxStage2);
+    private BallTracker tracker = new BallTracker(proxStage1, proxStage2, this);
+    
+    boolean running = false;
     
     public Conveyor() {
         setupMotor(conveyorStage1);
@@ -44,7 +45,7 @@ public class Conveyor extends SubsystemBase{
     public void stopStage1() {setStage1(0);}
     public void intakeStage2() {setStage2(DEFAULT_CONVEYOR_SPEED);}
     public void exhaustStage2() {setStage2(-DEFAULT_CONVEYOR_SPEED);}
-    public void stopStage2() {setStage1(0);}
+    public void stopStage2() {setStage2(0);}
 
     private void setAll(double power) {
         setStage1(power);
@@ -59,12 +60,18 @@ public class Conveyor extends SubsystemBase{
     public BallPosition getBall1Pos() {return tracker.getBall1Pos();} 
     public BallPosition getBall2Pos() {return tracker.getBall2Pos();} 
 
+    public boolean isRunning() {return running;}
+
     @Override
     public void periodic() {
         tracker.periodic();
 
+        running = !(conveyorStage1.getMotorOutputPercent() == 0 && conveyorStage1.getMotorOutputPercent() == 0);
+
         //TODO: Remove this telemetry later
         SmartDashboard.putData("Ball tracker", tracker);
+        SmartDashboard.putNumber("Stage 1 speed", conveyorStage1.getMotorOutputPercent());
+        SmartDashboard.putNumber("Stage 2 speed", conveyorStage2.getMotorOutputPercent());
     }
 
 }

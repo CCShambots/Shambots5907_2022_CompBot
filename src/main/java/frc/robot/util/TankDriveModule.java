@@ -60,7 +60,7 @@ public class TankDriveModule {
 
     public double getVoltage() {return leader.getMotorOutputVoltage();}
 
-    private double positionToMeters(double counts) {return (counts / COUNTS_PER_REV) * (WHEEL_SIZE * Math.PI) / 7.08 * 0.0254; }
+    private double positionToMeters(double counts) {return (counts / COUNTS_PER_REV) * (WHEEL_SIZE * Math.PI) * GEAR_RATIO * 0.0254; }
 
     public void resetEncoder() {leader.setSelectedSensorPosition(0);}
 

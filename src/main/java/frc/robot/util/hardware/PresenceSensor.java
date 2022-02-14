@@ -10,6 +10,6 @@ public class PresenceSensor {
     }
 
     public boolean isActivated() {
-        return input.get();
+        return !input.get();
     }
 }
