@@ -16,9 +16,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -78,17 +80,17 @@ public class Drivetrain extends SubsystemBase {
    */
   private void initShuffleboard(ShuffleboardTab driveTab){
 
-    smoothingSlider = driveTab.add("Smoothing", smoothing)
+    smoothingSlider = driveTab.addPersistent("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 2, "max", 15))
       .getEntry();
 
-    speedSlider = driveTab.add("Speed", maxSpeed)
+    speedSlider = driveTab.addPersistent("Speed", maxSpeed)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 1,"max", 4))
       .getEntry();
 
-    breakModeToggle = driveTab.add("BreakMode", false)
+    breakModeToggle = driveTab.addPersistent("BreakMode", false)
       .withWidget(BuiltInWidgets.kToggleButton)
       .getEntry();
 
@@ -112,7 +114,7 @@ public class Drivetrain extends SubsystemBase {
 
   
   //General Methods
-  private void setNeutralMotorBehavior(NeutralMode mode) {
+  public void setNeutralMotorBehavior(NeutralMode mode) {
     leftModule.setNeutralMode(mode);
     rightModule.setNeutralMode(mode);
   }
@@ -256,7 +258,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     //We have no use (yet) for odometry in teleop, so it will only update in autonomous
     //TODO: Disable odometry running all the time; Just want to test it in teleop right now to see if it is any reliability
-    if(robotStatus == RobotStatus.AUTO || true) {
+    if(Constants.robotStatus == RobotStatus.AUTO || true) {
       updateOdometry();
     }
 

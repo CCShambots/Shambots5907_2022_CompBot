@@ -27,6 +27,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.LimelightTracking.BasicTrackingCommand;
 import frc.robot.commands.LimelightTracking.TeleopTrackingCommand;
+import frc.robot.commands.TurretCommands.ZeroSpinnerCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.subsystems.Climber.ClimberState;
@@ -44,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
 
@@ -58,14 +61,10 @@ public class RobotContainer {
   private final Turret turret = new Turret(driveTab);
   private final Climber climber = new Climber();
   
+  BasicTrackingCommand limeLightTurretCommand = null;
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
-
-  private BasicTrackingCommand limeLightTurretCommand = null;
-
-  //TODO: Make this based on the chosen auto route (idk how but it needs to be done!)
-  private Pose2d startPose = new Pose2d();
 
   private SelectCommand autoCommands;
   Map<Object, Command> commands = new HashMap<>();
@@ -75,24 +74,42 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
     
-    Map<String, Trajectory> paths = loadPaths(List.of("Example"));
+    Map<String, Trajectory> paths = loadPaths(List.of("Example", "CSGO-1", "CSGO-2", "CSGO-3-1", "CSGO-3-2"));
+
 
     commands.put(AutoPaths.Example, new SequentialCommandGroup(
-      new InstantCommand(() -> {
-        startPose = paths.get("Example").sample(0).poseMeters;
-        doAutoSetup();
-      }),
+      setupAuto(paths.get("Example")),
       new TrajectoryCommand(drivetrain, paths.get("Example"))
 
+    ));
+
+    commands.put(AutoPaths.CSGO1, new SequentialCommandGroup(
+      setupAuto(paths.get("CSGO-1")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-1"))
+    ));
+
+    commands.put(AutoPaths.CSGO2, new SequentialCommandGroup(
+      setupAuto(paths.get("CSGO-2")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-2"))
+    ));
+
+    commands.put(AutoPaths.CSGO3, new SequentialCommandGroup(
+      setupAuto(paths.get("CSGO-3-1")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-3-1")),
+      new TrajectoryCommand(drivetrain, paths.get("CSGO-3-2"))
     ));
 
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
     autoChooser.setDefaultOption("example", AutoPaths.Example);
+    autoChooser.addOption("CSGO-1", AutoPaths.CSGO1);
+    autoChooser.addOption("CSGO-2", AutoPaths.CSGO2);
+    autoChooser.addOption("CSGO-3", AutoPaths.CSGO3);
 
     driveTab.add(autoChooser);
     driveTab.add("field", field);
+    driveTab.addString("Robot Status", () -> getRobotStatus());
 
     doDrivetrainSetup();
   }
@@ -212,6 +229,22 @@ public class RobotContainer {
     return trajectories;
   }
 
+  
+  private SequentialCommandGroup setupAuto(Trajectory trajectory) {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> {
+        drivetrain.resetOdometry(trajectory.getInitialPose());
+        setAutonomous();
+      }),
+      new ZeroSpinnerCommand(turret, 45),
+      new 
+    );
+  }
+
+  private String getRobotStatus() {
+    return Constants.robotStatus.name();
+  }
+
   public SelectCommand getAutoCommand() {
     return autoCommands;
   }
@@ -220,29 +253,34 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  public void doAutoSetup() {
-    setAutonomous();
-    drivetrain.resetOdometry(startPose);
-  }
-
   public void setAutonomous() {
-    Constants.Drivetrain.robotStatus = RobotStatus.AUTO;
+    Constants.robotStatus = RobotStatus.AUTO;
+    drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
   }
 
   public void setTeleop() {
-    Constants.Drivetrain.robotStatus = RobotStatus.TELEOP;
+    Constants.robotStatus = RobotStatus.TELEOP;
+    drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
   }
 
   public void setDisabled() {
-    Constants.Drivetrain.robotStatus = RobotStatus.DISABLED;
+    Constants.robotStatus = RobotStatus.DISABLED;
+  }
+
+  public void setTest() {
+    Constants.robotStatus = RobotStatus.TEST;
+    drivetrain.setNeutralMotorBehavior(NeutralMode.Coast);
   }
 
   public static enum RobotStatus {
-    AUTO, TELEOP, DISABLED
+    AUTO, TELEOP, DISABLED, TEST
   } 
 
   public enum AutoPaths {
-    Example
+    Example,
+    CSGO1,
+    CSGO2,
+    CSGO3
   }
 
 }

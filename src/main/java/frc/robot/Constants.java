@@ -30,6 +30,9 @@ public final class Constants {
     //Current limit for stopping motors from exceeding max power draw
     public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 10, 10, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
+    //Robot mode (for odometry toggling)
+    public static RobotStatus robotStatus = RobotStatus.AUTO;
+
     public static class Drivetrain {
         //Hardware ID's
         public static final int RIGHT_DRIVETRAIN_LEADER = 01;
@@ -46,9 +49,6 @@ public final class Constants {
         public static final double GEAR_RATIO = 
             ((12.0) / (40.0)) / (14.0 / 40.0);
         public static final double WHEEL_SIZE = 6; //In inches
-
-        //Robot mode (for odometry toggling)
-        public static RobotStatus robotStatus = RobotStatus.AUTO;
 
         public static double LEFT_P = 0.05;
         public static double LEFT_I = 0;

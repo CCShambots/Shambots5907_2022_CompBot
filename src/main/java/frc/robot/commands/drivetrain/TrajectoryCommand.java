@@ -108,7 +108,7 @@ public class TrajectoryCommand extends CommandBase{
             //The command will also finish if the robot has been trying to get to the endpoint for too long
             if((robotTranslation.getDistance(goal) < PREFERRED_DISTANCE_ERROR 
                 && Math.abs(robotPose.getRotation().getRadians() - goalPose.getRotation().getRadians()) < PREFERRED_ANGLE_ERROR)
-                || runTime > trajectory.getTotalTimeSeconds() * 1000 + 1000) {
+                || runTime > trajectory.getTotalTimeSeconds() * 1000 + 500) {
                 
                 finished = true;
                 return;
