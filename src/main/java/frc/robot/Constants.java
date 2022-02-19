@@ -160,15 +160,6 @@ public final class Constants {
 
     }
 
-    public static class Lidar {
-        public static final int MONITOR_PIN = 3;
-        public static final int TRIGGER_PIN = 4;
-
-        public static final double LIDAR_VALUE_IN_METERS = 0;
-
-        public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
-    }
-
     public static class Climber {
         //Hardware
         public static final int LEFT_CLIMBER_ID = 41;
@@ -188,16 +179,16 @@ public final class Constants {
         public static final double LEFT_I = 0;
         public static final double LEFT_D = 0;
         public static final double LEFT_KS = 1;
-        public static final double LEFT_KV = .005;
+        public static final double LEFT_KV = .000005;
 
         public static final double RIGHT_P = 0;
         public static final double RIGHT_I = 0;
         public static final double RIGHT_D = 0;
         public static final double RIGHT_KS = 1;
-        public static final double RIGHT_KV = .005;
+        public static final double RIGHT_KV = .000005;
 
-        public static final double MAX_VEL = 0;
-        public static final double MAX_ACCEL = 0;
+        public static final double MAX_VEL = 15.4 * 2048; //Encoder counts per second
+        public static final double MAX_ACCEL = 5 * 2048; //Encoder counts per second per second
 
         //TODO: calculate these
 

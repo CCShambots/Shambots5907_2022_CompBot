@@ -30,6 +30,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
     @Override
     public void additionalCodeInExecute() {
+        //TODO: Remove this telemetry later
         SmartDashboard.putBoolean("Shooting indicated", shootingSupplier.getAsBoolean());
         
 

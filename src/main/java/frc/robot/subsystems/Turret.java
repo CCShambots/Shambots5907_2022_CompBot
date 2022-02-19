@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.FakeGyro;
 import frc.robot.util.hardware.HallEffectSensor;
-import frc.robot.util.hardware.LidarSensor;
 import frc.robot.util.hardware.Limelight;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -20,8 +19,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import static frc.robot.Constants.Turret.*;
-
-import static frc.robot.Constants.Lidar.*;
 
 public class Turret extends SubsystemBase{
 
@@ -31,7 +28,6 @@ public class Turret extends SubsystemBase{
     private WPI_TalonFX spinner = new WPI_TalonFX(TURRET_SPINNER);
     private Limelight limelight = new Limelight();
 
-    private LidarSensor lidar = new LidarSensor(MONITOR_PIN, TRIGGER_PIN);
     private HallEffectSensor centerHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
 
     private FakeGyro fakeGyro;
@@ -277,11 +273,6 @@ public class Turret extends SubsystemBase{
     }
 
     /* Other sensors */
-
-    public LidarSensor getLidar() {
-        return lidar;
-    }
-
     public boolean isHallEffectActivated() { return centerHallEffect.isActivated();}
 
 

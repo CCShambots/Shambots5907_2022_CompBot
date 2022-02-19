@@ -7,13 +7,13 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Conveyor;
-import frc.robot.subsystems.Intake;
 import frc.robot.util.hardware.PresenceSensor;
 import frc.robot.util.intake.Ball.BallPosition;
 import frc.robot.util.intake.Ball.Color;
 
 public class BallTracker implements Sendable{
     //TODO: Color sensor implementation
+    //TODO: Support for ejecting balls
 
     private PresenceSensor stage1Sensor;
     private PresenceSensor stage2Sensor;
@@ -50,7 +50,7 @@ public class BallTracker implements Sendable{
         boolean currStage2 = stage2Sensor.isActivated();
 
         //Only run the loop if the intake is moving
-        //TODO: Remove this always true once things are better defined
+        //TODO: Remove always true later
         if(conveyor.isRunning() || true) {
             //Create a new ball in the conveyor if the stage 1 sensor has just turned on
             if(currStage1 && currStage1 != prevStage1) {

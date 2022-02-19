@@ -1,7 +1,7 @@
 package frc.robot.util;
 
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -11,21 +11,18 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.subsystems.Climber.ClimberState;
-import frc.robot.util.hardware.HallEffectSensor;
 
 import static frc.robot.Constants.Drivetrain.*;
 import static frc.robot.Constants.Climber.*;
 import static frc.robot.Constants.*;
 
 public class ClimbingModule implements Sendable{
-
+    //TODO: write command for zeroing climber
     //Hardware
     private WPI_TalonFX motor; //Falcon that controls the height of the lift
     private DoubleSolenoid brake; //Solenoid that activates the brake on the lift
-    private HallEffectSensor limitSwitch; //Limit switch located at the bottom of the lift
 
     private ProfiledPIDController pidController;
     private SimpleMotorFeedforward ffController;
@@ -44,7 +41,7 @@ public class ClimbingModule implements Sendable{
     //This value is set to true if one of the conditions is fulfilled that must reset the motor to zero.  It's purpose is to reset the pidController to avoid weird super high voltage spikes
     private boolean forceStop = false; 
 
-    String name;
+    private String name;
 
     public ClimbingModule(int motorID, int brake1Port, int brake2Port, int limitSwitchPin, PIDandFFConstants controllerConstants, String name) {
         motor = new WPI_TalonFX(motorID);
@@ -58,7 +55,6 @@ public class ClimbingModule implements Sendable{
         new TrapezoidProfile.Constraints(controllerConstants.getMaxVel(), controllerConstants.getMaxAccel()));
         ffController = new SimpleMotorFeedforward(controllerConstants.getKS(), controllerConstants.getKV());
 
-        limitSwitch = new HallEffectSensor(limitSwitchPin);
 
         this.name = name;
     }
@@ -67,7 +63,7 @@ public class ClimbingModule implements Sendable{
      * Method used to invert the motor on the module if necessary
      * @param invertType
      */
-    public void setReversed(InvertType invertType) {
+    public void setInverted(TalonFXInvertType invertType) {
         motor.setInverted(invertType);
     }
 
@@ -99,7 +95,7 @@ public class ClimbingModule implements Sendable{
             inches              //The original 
             / Math.PI           //Number of revolutions (at output shaft)
             * (54.0 / 18.0)     //Number of revolutions (at intermediate shaft)
-            * (54.0 / 9.0)      //Number of revolutions (at motor shaft)
+            * (54.0 / 8.0)      //Number of revolutions (at motor shaft)
             * 2048              //Encoder counts
         ;
     }
@@ -115,30 +111,17 @@ public class ClimbingModule implements Sendable{
      * Method that should be periodically run in the Climber subsystem. It will also update the control loops of any followers
      */
     public void periodic() {
-
-        boolean pushingSwitch = pidOutput + ffOutput < 0 && limitSwitch.isActivated(); //Whether the motor is trying to move down while the limit switch is pressed
-        boolean motorOverExtended = motor.getSelectedSensorPosition() >= MID_HEIGHT && pidOutput + ffOutput > 0; //Whether to motor has reached the top and it's trying to move up
         
+        pidOutput = pidController.calculate(motor.getSelectedSensorPosition(), climberTarget);
+        ffOutput = ffController.calculate(pidController.getSetpoint().velocity);
+        double combinedOutput = pidOutput + ffOutput;
+        
+
+        
+
         //If any of these conditions are true, the motor should not be moving at all
-        if(pushingSwitch || motorOverExtended || isBraked()) {
-            motor.setVoltage(0);
-            brake();
-            forceStop = true;
-        } else {
-            //Reset the PID controller if the motor was just being forced to stop (as it can build up very high voltage setpoints when voltages are not actually applied)
-            if(forceStop) {
-                forceStop = false;
-                unBrake();
-                pidController.reset(motor.getSelectedSensorPosition());
-            }
-
-            pidOutput = pidController.calculate(motor.getSelectedSensorPosition(), climberTarget);
-            ffOutput = ffController.calculate(pidController.getGoal().velocity);
-
-            motor.setVoltage(pidOutput + ffOutput);
-        }
-
-
+        motor.setVoltage(combinedOutput);
+        
         if(follower != null) follower.periodic(); //Run the follower's control loop as well (if there is a follower set)
     }
 
@@ -183,12 +166,13 @@ public class ClimbingModule implements Sendable{
     public double getVoltage() {return pidOutput + ffOutput;}
     public String getName() {return name;}
     public void setLeader(ClimbingModule leader) {this.leader = leader;}
+    public boolean isForceStopped() { return motor.getSensorCollection().isRevLimitSwitchClosed() == 1;}
 
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Climbing Module");
         builder.addStringProperty("Module name", () -> getName(), null);
-        builder.addBooleanProperty("Limit switch activated", () -> limitSwitch.isActivated(), null);
+        builder.addDoubleProperty("Limit switch activated", () -> motor.getSensorCollection().isRevLimitSwitchClosed(), null);
         builder.addBooleanProperty("Force stopped", () -> forceStop, null);
         builder.addBooleanProperty("Braked", () -> brake.get().equals(Value.kForward), null);
         builder.addDoubleProperty("Module target", () -> climberTarget, null);
@@ -202,5 +186,7 @@ public class ClimbingModule implements Sendable{
         builder.addStringProperty("Name of leading module", () -> {
             return leader != null ? leader.getName() : "Not following another module";
         }, null);
+        builder.addStringProperty("Climber state", () -> this.getClimberState().name(), null);
+        builder.addDoubleProperty("PID target", () -> this.getPID().getSetpoint().position, null);
     }
 }

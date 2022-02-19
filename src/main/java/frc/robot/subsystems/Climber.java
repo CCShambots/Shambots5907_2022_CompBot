@@ -8,6 +8,8 @@ import frc.robot.util.PIDandFFConstants;
 
 import static frc.robot.Constants.Climber.*;
 
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+
 public class Climber extends SubsystemBase {
     //Important thing to remember when reading this: The right module follows the left module, meaning that any command sent through the left module also does that on the right module.
 
@@ -20,8 +22,8 @@ public class Climber extends SubsystemBase {
     public Climber(){
         leftModule.lead(rightModule); //Setup the right module to follow the left module
 
-        //TODO: Reverse one of the modules if necessary
-        // leftModule.setReversed(InvertType.OpposeMaster);
+        leftModule.setInverted(TalonFXInvertType.Clockwise);
+        rightModule.setInverted(TalonFXInvertType.CounterClockwise);
 
         leftModule.unBrake();
     }     
@@ -30,7 +32,7 @@ public class Climber extends SubsystemBase {
     public void unBrake(){leftModule.unBrake();}
     public void setClimberState(ClimberState state) {leftModule.setModuleState(state);}
     public boolean isBusy() { return leftModule.isBusy() || rightModule.isBusy();}
-
+    public boolean isForceStopped() {return leftModule.isForceStopped() || rightModule.isForceStopped();}
 
     public double getLeftPosition() {return leftModule.getPosition();}
     public double getRightPosition() {return rightModule.getPosition();}

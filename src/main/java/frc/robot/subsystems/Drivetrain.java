@@ -30,7 +30,7 @@ import frc.robot.util.TankDriveModule;
 import java.util.Map;
 
 public class Drivetrain extends SubsystemBase {
-  //TODO: Impelemtn amperage detectino and stuff
+  //TODO: Impelement amperage detection and stuff
   //Hardware declarations
   private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
   private PIDandFFConstants rightConstants= new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
@@ -46,7 +46,6 @@ public class Drivetrain extends SubsystemBase {
   private DriveModes driveMode = DriveModes.Tank;
   private DriveModes prevDriveMode = DriveModes.Tank;
   private boolean reversed = false;
-  
 
   //Speed controls
   private TeleopSpeeds speedMode = TeleopSpeeds.Normal;

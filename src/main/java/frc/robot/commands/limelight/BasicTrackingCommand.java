@@ -46,6 +46,14 @@ public abstract class BasicTrackingCommand extends CommandBase{
     public void initialize() {
         turret.setLimelightOn();
         startTimeMS = System.currentTimeMillis();
+        
+        //Reset values so the same command instance can be called again
+        filter.reset();
+        mode = Mode.Targeting;
+        limelightOffset = 0;
+        lowPassOutput = 0;
+        loopsSinceSample = 100000000;
+        targetAngle = 0;
 
         //Code that runs in specific implementations
         additionalCodeInInitialize();

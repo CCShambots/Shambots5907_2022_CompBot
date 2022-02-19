@@ -24,7 +24,7 @@ public class MoveClimberCommand extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return !climber.isBusy();
+        return !climber.isBusy() || climber.isForceStopped();
     }
 
     @Override

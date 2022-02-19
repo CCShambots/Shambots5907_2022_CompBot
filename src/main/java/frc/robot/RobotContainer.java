@@ -182,7 +182,7 @@ public class RobotContainer {
   private void toggleLimelightTargeting(BooleanSupplier shootingSupplier) {
     if(limeLightTurretCommand != null) {
       endLimelightTargeting();
-    } else {
+    } else if (conveyor.getNumberOfBalls() > 0){ //Only allow the command to begin if there are balls in the robot
       startLimelightTargeting(new TeleopTrackingCommand(turret, shootingSupplier));
     }
   }
