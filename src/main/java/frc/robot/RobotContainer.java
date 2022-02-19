@@ -152,6 +152,8 @@ public class RobotContainer {
     
     new JoystickButton(operatorController, 4)
       .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
+
+    //TODO: Soft estop
   }
 
   public void telemetry() {

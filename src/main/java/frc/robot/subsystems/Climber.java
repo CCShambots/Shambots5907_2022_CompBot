@@ -22,8 +22,8 @@ public class Climber extends SubsystemBase {
     public Climber(){
         leftModule.lead(rightModule); //Setup the right module to follow the left module
 
-        leftModule.setInverted(TalonFXInvertType.Clockwise);
-        rightModule.setInverted(TalonFXInvertType.CounterClockwise);
+        leftModule.setInverted(TalonFXInvertType.CounterClockwise);
+        rightModule.setInverted(TalonFXInvertType.Clockwise);
 
         leftModule.unBrake();
     }     

@@ -53,7 +53,7 @@ public class Intake extends SubsystemBase {
    */
   private void setIntakeState(IntakeState state) {
     intakeState = state;
-    Value value = state == IntakeState.Raised ? Value.kReverse : Value.kForward;
+    Value value = state == IntakeState.Raised ? Value.kForward : Value.kReverse;
 
     rotationalSolenoid1.set(value);
     rotationalSolenoid2.set(value);

@@ -115,12 +115,9 @@ public class ClimbingModule implements Sendable{
         pidOutput = pidController.calculate(motor.getSelectedSensorPosition(), climberTarget);
         ffOutput = ffController.calculate(pidController.getSetpoint().velocity);
         double combinedOutput = pidOutput + ffOutput;
-        
-
-        
 
         //If any of these conditions are true, the motor should not be moving at all
-        motor.setVoltage(combinedOutput);
+        if(!braked) motor.setVoltage(combinedOutput);
         
         if(follower != null) follower.periodic(); //Run the follower's control loop as well (if there is a follower set)
     }
