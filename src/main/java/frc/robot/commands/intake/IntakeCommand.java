@@ -38,6 +38,9 @@ public class IntakeCommand extends CommandBase{
 
     @Override
     public void initialize() {
+        state = State.Normal;
+        finished = false;
+
         intake.lowerIntake();
         conveyor.intakeStage1();
 

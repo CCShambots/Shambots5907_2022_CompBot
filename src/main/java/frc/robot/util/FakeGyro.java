@@ -30,9 +30,15 @@ public class FakeGyro implements Gyro, Sendable{
         
     }
 
+    /**
+     * Converts the angle of the turret (180 to -180) to the gyro coordinates
+     */
     @Override
     public double getAngle() {
-        return angleSupplier.getAsDouble();
+        double turretValue = angleSupplier.getAsDouble();
+        return turretValue > 0 ?
+            turretValue + 180 :
+            -turretValue;
     }
 
     @Override
@@ -43,7 +49,7 @@ public class FakeGyro implements Gyro, Sendable{
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("Fake Gyro");
+        builder.setSmartDashboardType("Gyro");
         builder.addDoubleProperty("Value", this::getAngle, null);
     }
     

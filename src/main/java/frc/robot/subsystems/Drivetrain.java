@@ -16,11 +16,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -80,17 +78,17 @@ public class Drivetrain extends SubsystemBase {
    */
   private void initShuffleboard(ShuffleboardTab driveTab){
 
-    smoothingSlider = driveTab.addPersistent("Smoothing", smoothing)
+    smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 2, "max", 15))
       .getEntry();
 
-    speedSlider = driveTab.addPersistent("Speed", maxSpeed)
+    speedSlider = driveTab.add("Speed", maxSpeed)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 1,"max", 4))
       .getEntry();
 
-    breakModeToggle = driveTab.addPersistent("BreakMode", false)
+    breakModeToggle = driveTab.add("BreakMode", false)
       .withWidget(BuiltInWidgets.kToggleButton)
       .getEntry();
 

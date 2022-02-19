@@ -132,9 +132,8 @@ public class RobotContainer {
     
     //Runs the intake command if the robot has fewer than two balls
     new JoystickButton(operatorController, 1)
-      .whenPressed(new ConditionalCommand(new InstantCommand(() -> {
-        new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(3)).schedule();;
-      }), new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
+      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(3)),
+      new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
     
 
     //Turret Controls

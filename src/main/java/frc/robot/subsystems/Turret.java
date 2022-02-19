@@ -85,14 +85,14 @@ public class Turret extends SubsystemBase{
 
         topFlywheel.setInverted(true);
 
-        fakeGyro = new FakeGyro(() -> 5);
+        fakeGyro = new FakeGyro(() -> getSpinnerAngle());
 
         initShuffleboard(driveTab);
 
     }
-
-    private void initShuffleboard(ShuffleboardTab driveTrab) {
-        //TODO: Figure out shuffleboard
+    
+    private void initShuffleboard(ShuffleboardTab driveTab) {
+        driveTab.add("Fake gyro", fakeGyro);
     }
 
     /* Flywheel methods */
