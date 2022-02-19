@@ -1,10 +1,11 @@
-package frc.robot.util;
+package frc.robot.util.auton;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.auton.CSGO1Route;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
@@ -13,22 +14,30 @@ import frc.robot.subsystems.Turret;
 
 public class AutonRoutes {
 
-    Map<Trajectories, Trajectory> trajectories;
+    Map<Trajectories, Trajectory> paths;
+    Map<AutoPaths, Command> autoRoutes;
     AllRobotSubsystems allRobotSubsystems;
 
     public AutonRoutes(Map<String, Trajectory> trajectories, Drivetrain drivetrain, Intake intake, Conveyor conveyor, Turret turret, Climber climber) {
         allRobotSubsystems = new AllRobotSubsystems(drivetrain, intake, conveyor, turret, climber);
 
-        this.trajectories = new HashMap<>();
+        paths = new HashMap<>();
 
         for(String s : trajectories.keySet()) {
-            this.trajectories.put(Trajectories.valueOf(s), trajectories.get(s)); 
+            paths.put(Trajectories.valueOf(s), trajectories.get(s)); 
         }
+
+        autoRoutes = new HashMap<>();
+        autoRoutes.put(AutoPaths.CSGO1, new CSGO1Route(allRobotSubsystems, paths));
     }
 
-    public Map<Trajectories, Trajectory> getRoutes() {
-        return trajectories;
+    public Map<Trajectories, Trajectory> getTrajectories() {
+        return paths;
     } 
+
+    public Map<AutoPaths, Command> getAutoRoutes() {
+        return autoRoutes;
+    }
 
 
     public static enum AutoPaths {

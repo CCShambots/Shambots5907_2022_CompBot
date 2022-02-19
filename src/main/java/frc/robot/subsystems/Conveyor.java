@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.hardware.PresenceSensor;
+import frc.robot.util.hardware.ProximitySensor;
 import frc.robot.util.intake.BallTracker;
 import frc.robot.util.intake.Ball.BallPosition;
 
@@ -18,8 +18,8 @@ public class Conveyor extends SubsystemBase{
     private WPI_TalonFX conveyorStage1 = new WPI_TalonFX(CONVEYOR_STAGE1_ID);
     private WPI_TalonFX conveyorStage2 = new WPI_TalonFX(CONVEYOR_STAGE2_ID);
 
-    private PresenceSensor proxStage1 = new PresenceSensor(PROX_STAGE1_ID);
-    private PresenceSensor proxStage2 = new PresenceSensor(PROX_STAGE2_ID);
+    private ProximitySensor proxStage1 = new ProximitySensor(PROX_STAGE1_ID);
+    private ProximitySensor proxStage2 = new ProximitySensor(PROX_STAGE2_ID);
 
     private BallTracker tracker = new BallTracker(proxStage1, proxStage2, this);
     

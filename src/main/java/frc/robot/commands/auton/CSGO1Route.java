@@ -1,5 +1,7 @@
 package frc.robot.commands.auton;
 
+import static frc.robot.util.auton.AutonRoutes.Trajectories.*;
+
 import java.util.Map;
 
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -13,10 +15,8 @@ import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpShooterCommand;
 import frc.robot.commands.turret.ZeroSpinnerCommand;
 import frc.robot.commands.turret.ShootCommand.Amount;
-import frc.robot.util.AllRobotSubsystems;
-import frc.robot.util.AutonRoutes.Trajectories;
-
-import static frc.robot.util.AutonRoutes.Trajectories.*;
+import frc.robot.util.auton.AllRobotSubsystems;
+import frc.robot.util.auton.AutonRoutes.Trajectories;
 
 public class CSGO1Route extends BaseRoute{
 

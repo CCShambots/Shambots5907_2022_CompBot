@@ -2,10 +2,10 @@ package frc.robot.util.hardware;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class PresenceSensor {
+public class ProximitySensor {
     private DigitalInput input;
 
-    public PresenceSensor(int pin) {
+    public ProximitySensor(int pin) {
         input = new DigitalInput(pin);
     }
 

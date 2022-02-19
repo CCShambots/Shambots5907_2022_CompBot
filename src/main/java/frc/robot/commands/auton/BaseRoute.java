@@ -14,8 +14,8 @@ import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
-import frc.robot.util.AllRobotSubsystems;
-import frc.robot.util.AutonRoutes.Trajectories;
+import frc.robot.util.auton.AllRobotSubsystems;
+import frc.robot.util.auton.AutonRoutes.Trajectories;
 
 public class BaseRoute extends SequentialCommandGroup{
     protected Drivetrain drivetrain;

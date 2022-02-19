@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot.util.auton;
 
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;

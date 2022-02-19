@@ -7,7 +7,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Conveyor;
-import frc.robot.util.hardware.PresenceSensor;
+import frc.robot.util.hardware.ProximitySensor;
 import frc.robot.util.intake.Ball.BallPosition;
 import frc.robot.util.intake.Ball.Color;
 
@@ -15,8 +15,8 @@ public class BallTracker implements Sendable{
     //TODO: Color sensor implementation
     //TODO: Support for ejecting balls
 
-    private PresenceSensor stage1Sensor;
-    private PresenceSensor stage2Sensor;
+    private ProximitySensor stage1Sensor;
+    private ProximitySensor stage2Sensor;
     private Conveyor conveyor;
 
     private boolean prevStage1;
@@ -25,7 +25,7 @@ public class BallTracker implements Sendable{
     //The balls that can exist that are currently in the robot
     List<Ball> balls = new ArrayList<>();
 
-    public BallTracker(PresenceSensor stage1, PresenceSensor stage2, Conveyor conveyor) {
+    public BallTracker(ProximitySensor stage1, ProximitySensor stage2, Conveyor conveyor) {
         stage1Sensor = stage1;
         stage2Sensor = stage2;
         this.conveyor = conveyor;
