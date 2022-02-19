@@ -1,21 +1,16 @@
 package frc.robot.commands.intake;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.util.sendable.SendableBuilder;
-// import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
-import frc.robot.util.intake.Ball.BallPosition;
+import frc.robot.util.Ball.BallPosition;
 
 public class IntakeCommand extends CommandBase{
     
     private Intake intake;
     private Conveyor conveyor;
-
-    private BooleanSupplier cancelSupplier;
 
     private State state = State.Normal;
     private boolean finished = false;
@@ -27,11 +22,10 @@ public class IntakeCommand extends CommandBase{
      * @param conveyor
      * @param cancelSupplier
      */
-    public IntakeCommand(Intake intake, Conveyor conveyor, BooleanSupplier cancelSupplier) {
+    public IntakeCommand(Intake intake, Conveyor conveyor) {
         this.intake = intake;
         this.conveyor = conveyor;
 
-        this.cancelSupplier = cancelSupplier;
 
         addRequirements(intake, conveyor);
     }
@@ -41,6 +35,7 @@ public class IntakeCommand extends CommandBase{
         state = State.Normal;
         finished = false;
 
+        intake.setShouldEnd(false);
         intake.lowerIntake();
         conveyor.intakeStage1();
 
@@ -70,7 +65,7 @@ public class IntakeCommand extends CommandBase{
 
         //If stopping is indicated by the drive team, the robot will immediately stop and raise the intake.
         //The command will finish once there is no ball between stages
-        if(state == State.Normal && cancelSupplier.getAsBoolean()) {
+        if(state == State.Normal && intake.getShouldEnd()) {
             intake.stop();
             intake.raiseIntake();
             state = State.Cancelling;

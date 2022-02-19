@@ -21,6 +21,8 @@ public class ZeroSpinnerCommand extends CommandBase{
     public ZeroSpinnerCommand(Turret turret, double approximateStartingAngle) {
         this.turret = turret;
         this.approximateStartingAngle = approximateStartingAngle;
+
+        addRequirements(turret);
     }
 
     @Override

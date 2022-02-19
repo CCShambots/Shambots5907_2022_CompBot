@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.util.Ball.Color;
 import frc.robot.util.Ball.BallPosition;
+import frc.robot.util.Ball.Color;
 import frc.robot.util.sensors.PresenceSensor;
 
 public class BallTracker{

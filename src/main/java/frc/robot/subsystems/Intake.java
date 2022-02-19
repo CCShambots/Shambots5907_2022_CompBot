@@ -30,6 +30,8 @@ public class Intake extends SubsystemBase {
   private IntakeDirection direction = IntakeDirection.Stopped;
   private IntakeState intakeState = IntakeState.Raised;
 
+  private boolean shouldEndCommand = false;
+
   /** Creates a new Intake. */
   public Intake(){
     setupMotor(roller1);
@@ -43,6 +45,9 @@ public class Intake extends SubsystemBase {
     motor.setNeutralMode(NeutralMode.Brake);
     motor.configSupplyCurrentLimit(CURRENT_LIMIT);
   }
+
+  public void setShouldEnd(boolean value) {shouldEndCommand = value;}
+  public boolean getShouldEnd() {return shouldEndCommand;}
 
 
   //Code for rotating the intake up and down

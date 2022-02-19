@@ -151,7 +151,10 @@ public class ClimbingModule implements Sendable{
 
     private void setFollowing(boolean following) {this.following = following;}
 
-    public void brake(){setSolenoids(true);;}
+    public void brake(){
+        setSolenoids(true);
+        motor.setVoltage(0);
+    }
     public void unBrake(){setSolenoids(false);}
 
     public boolean isFollowing() {return following;}

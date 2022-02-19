@@ -31,6 +31,7 @@ import frc.robot.commands.turret.SpinUpShooterCommand;
 import frc.robot.commands.turret.ZeroSpinnerCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.Direction;
+import frc.robot.util.AutonRoutes.AutoPaths;
 import frc.robot.subsystems.Climber.ClimberState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -76,36 +77,28 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
     
-    Map<String, Trajectory> paths = loadPaths(List.of("Example", "CSGO-1", "CSGO-2", "CSGO-3-1", "CSGO-3-2"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO3-2"));
 
+    // commands.put(AutoPaths.CSGO1, new SequentialCommandGroup(
+    //   setupAuto(paths.get("CSGO-1")),
+    //   new TrajectoryCommand(drivetrain, paths.get("CSGO-1"))
+    // ));
 
-    commands.put(AutoPaths.Example, new SequentialCommandGroup(
-      setupAuto(paths.get("Example")),
-      new TrajectoryCommand(drivetrain, paths.get("Example"))
+    // commands.put(AutoPaths.CSGO2, new SequentialCommandGroup(
+    //   setupAuto(paths.get("CSGO-2")),
+    //   new TrajectoryCommand(drivetrain, paths.get("CSGO-2"))
+    // ));
 
-    ));
-
-    commands.put(AutoPaths.CSGO1, new SequentialCommandGroup(
-      setupAuto(paths.get("CSGO-1")),
-      new TrajectoryCommand(drivetrain, paths.get("CSGO-1"))
-    ));
-
-    commands.put(AutoPaths.CSGO2, new SequentialCommandGroup(
-      setupAuto(paths.get("CSGO-2")),
-      new TrajectoryCommand(drivetrain, paths.get("CSGO-2"))
-    ));
-
-    commands.put(AutoPaths.CSGO3, new SequentialCommandGroup(
-      setupAuto(paths.get("CSGO-3-1")),
-      new TrajectoryCommand(drivetrain, paths.get("CSGO-3-1")),
-      new TrajectoryCommand(drivetrain, paths.get("CSGO-3-2"))
-    ));
+    // commands.put(AutoPaths.CSGO3, new SequentialCommandGroup(
+    //   setupAuto(paths.get("CSGO-3-1")),
+    //   new TrajectoryCommand(drivetrain, paths.get("CSGO-3-1")),
+    //   new TrajectoryCommand(drivetrain, paths.get("CSGO-3-2"))
+    // ));
 
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
-    autoChooser.setDefaultOption("example", AutoPaths.Example);
-    autoChooser.addOption("CSGO-1", AutoPaths.CSGO1);
+    autoChooser.setDefaultOption("CSGO-1", AutoPaths.CSGO1);
     autoChooser.addOption("CSGO-2", AutoPaths.CSGO2);
     autoChooser.addOption("CSGO-3", AutoPaths.CSGO3);
 
@@ -132,8 +125,11 @@ public class RobotContainer {
     
     //Runs the intake command if the robot has fewer than two balls
     new JoystickButton(operatorController, 1)
-      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor, () -> operatorController.getRawButton(3)),
+      .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor),
       new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
+    
+    new JoystickButton(operatorController, 3)
+      .whenPressed(new InstantCommand(() -> intake.setShouldEnd(true)));
     
 
     //Turret Controls
@@ -153,7 +149,18 @@ public class RobotContainer {
     new JoystickButton(operatorController, 4)
       .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
 
-    //TODO: Soft estop
+    //TODO: Test the soft estop (lest you die at kettering >:())
+    new JoystickButton(operatorController, 15)
+      .whenPressed(new InstantCommand(
+        () -> {
+          intake.stop();
+          conveyor.stopAll();
+          turret.setFlywheelTarget(0);
+          turret.setLimelightOff();
+          turret.setSpinnerTarget(turret.getSpinnerAngle());
+          climber.brake();
+        }
+      , intake, conveyor, turret, climber));
   }
 
   public void telemetry() {
@@ -233,18 +240,7 @@ public class RobotContainer {
   }
 
   
-  private SequentialCommandGroup setupAuto(Trajectory trajectory) {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> {
-        drivetrain.resetOdometry(trajectory.getInitialPose());
-        setAutonomous();
-      }),
-      new ParallelCommandGroup(
-        new ZeroSpinnerCommand(turret, 45),
-        new SpinUpShooterCommand(turret, 2000) //TODO: Get an actual target for this
-      )
-    );
-  }
+
 
   private String getRobotStatus() {
     return Constants.robotStatus.name();
@@ -281,11 +277,5 @@ public class RobotContainer {
     AUTO, TELEOP, DISABLED, TEST
   } 
 
-  public enum AutoPaths {
-    Example,
-    CSGO1,
-    CSGO2,
-    CSGO3
-  }
 
 }
