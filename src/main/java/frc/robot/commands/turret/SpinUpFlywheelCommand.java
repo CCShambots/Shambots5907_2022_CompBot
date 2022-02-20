@@ -6,11 +6,11 @@ import frc.robot.subsystems.Turret;
 /**
  * Simple command that will run until the flywheel is at the target velocity
 */
-public class SpinUpShooterCommand extends CommandBase{
+public class SpinUpFlywheelCommand extends CommandBase{
     private Turret turret;
     private double targetRPM ;
 
-    public SpinUpShooterCommand(Turret turret, double targetRPM) {
+    public SpinUpFlywheelCommand(Turret turret, double targetRPM) {
         this.turret = turret;
         this.targetRPM = targetRPM;
     }

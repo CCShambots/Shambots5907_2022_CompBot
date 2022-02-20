@@ -83,7 +83,6 @@ public abstract class BasicTrackingCommand extends CommandBase{
         limelightOffset = turret.correctLimelightAngle(turret.getLimelightOffset()); //Get the limelight offset from the network table
 
         //Deadband the limelightOffset if it's within 2 degrees (to avoid oscillations)
-        //TODO: tune this number for good deadzoning relative to accuracy
         if(Math.abs(limelightOffset) < 2) limelightOffset = 0;
 
         lowPassOutput = filter.calculate(limelightOffset);

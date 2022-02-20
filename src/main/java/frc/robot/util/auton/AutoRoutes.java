@@ -12,13 +12,13 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
 
-public class AutonRoutes {
+public class AutoRoutes {
 
     Map<Trajectories, Trajectory> paths;
-    Map<AutoPaths, Command> autoRoutes;
+    Map<Object, Command> autoRoutes;
     AllRobotSubsystems allRobotSubsystems;
 
-    public AutonRoutes(Map<String, Trajectory> trajectories, Drivetrain drivetrain, Intake intake, Conveyor conveyor, Turret turret, Climber climber) {
+    public AutoRoutes(Map<String, Trajectory> trajectories, Drivetrain drivetrain, Intake intake, Conveyor conveyor, Turret turret, Climber climber) {
         allRobotSubsystems = new AllRobotSubsystems(drivetrain, intake, conveyor, turret, climber);
 
         paths = new HashMap<>();
@@ -35,7 +35,7 @@ public class AutonRoutes {
         return paths;
     } 
 
-    public Map<AutoPaths, Command> getAutoRoutes() {
+    public Map<Object, Command> getAutoRoutes() {
         return autoRoutes;
     }
 

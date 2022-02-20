@@ -24,11 +24,13 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.limelight.BasicTrackingCommand;
 import frc.robot.commands.limelight.TeleopTrackingCommand;
+import frc.robot.commands.turret.ShootCommand;
+import frc.robot.commands.turret.ShootCommand.Amount;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.Direction;
-import frc.robot.util.auton.AutonRoutes.AutoPaths;
+import frc.robot.util.auton.AutoRoutes;
+import frc.robot.util.auton.AutoRoutes.AutoPaths;
 import frc.robot.subsystems.Climber.ClimberState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -41,7 +43,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -59,39 +60,26 @@ public class RobotContainer {
   private final Turret turret = new Turret(driveTab);
   private final Climber climber = new Climber();
   
-  BasicTrackingCommand limeLightTurretCommand = null;
+  TeleopTrackingCommand limeLightTeleopCommand = null;
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
 
   private SelectCommand autoCommands;
-  Map<Object, Command> commands = new HashMap<>();
+  Map<Object, Command> commands = new HashMap<>(); //The commands that will be chosen from in the sendable chooser
   SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
 
 
   public RobotContainer() {
     configureButtonBindings();
     
+    //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO3-2"));
 
-    
+    //This object uses the trajectories to initialize each autonomous route command
+    AutoRoutes autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret, climber);
 
-    // commands.put(AutoPaths.CSGO1, new SequentialCommandGroup(
-    //   setupAuto(paths.get("CSGO-1")),
-    //   new TrajectoryCommand(drivetrain, paths.get("CSGO-1"))
-    // ));
-
-    // commands.put(AutoPaths.CSGO2, new SequentialCommandGroup(
-    //   setupAuto(paths.get("CSGO-2")),
-    //   new TrajectoryCommand(drivetrain, paths.get("CSGO-2"))
-    // ));
-
-    // commands.put(AutoPaths.CSGO3, new SequentialCommandGroup(
-    //   setupAuto(paths.get("CSGO-3-1")),
-    //   new TrajectoryCommand(drivetrain, paths.get("CSGO-3-1")),
-    //   new TrajectoryCommand(drivetrain, paths.get("CSGO-3-2"))
-    // ));
-
+    commands = autoRoutes.getAutoRoutes();
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
@@ -99,9 +87,11 @@ public class RobotContainer {
     autoChooser.addOption("CSGO-2", AutoPaths.CSGO2);
     autoChooser.addOption("CSGO-3", AutoPaths.CSGO3);
 
+    //Put telemetry for choosing autonomous routes, displayign the field, and displaying the status of the robot
     driveTab.add(autoChooser);
     driveTab.add("field", field);
     driveTab.addString("Robot Status", () -> getRobotStatus());
+    //TODO: Telemetry for if the turret is allowed to shoot or not
 
     doDrivetrainSetup();
   }
@@ -125,13 +115,18 @@ public class RobotContainer {
       .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor),
       new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
     
+    //Indicates that the intake command should end prematurely
     new JoystickButton(operatorController, 3)
       .whenPressed(new InstantCommand(() -> intake.setShouldEnd(true)));
     
 
     //Turret Controls
+    new JoystickButton(driverController, Button.kB.value)
+      .whenPressed(new InstantCommand(() -> toggleLimelightTargeting()));
+    
+    //Only let the turret shoot  if the conveyor doesn't have a command
     new JoystickButton(driverController, Button.kA.value)
-        .whenPressed(new InstantCommand(() -> toggleLimelightTargeting(() -> driverController.getRawButton(Button.kLeftBumper.value))));
+      .whenPressed(new ConditionalCommand(new ShootCommand(conveyor, Amount.One), new InstantCommand(), this::isShootingAllowed));
       
     new JoystickButton(operatorController, 5).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
     new JoystickButton(operatorController, 9).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
@@ -185,24 +180,31 @@ public class RobotContainer {
     SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
   }
 
-  private void toggleLimelightTargeting(BooleanSupplier shootingSupplier) {
-    if(limeLightTurretCommand != null) {
+  private void toggleLimelightTargeting() {
+    if(limeLightTeleopCommand != null) {
       endLimelightTargeting();
     } else if (conveyor.getNumberOfBalls() > 0){ //Only allow the command to begin if there are balls in the robot
-      startLimelightTargeting(new TeleopTrackingCommand(turret, shootingSupplier));
+      startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor));
     }
   }
 
-  private void startLimelightTargeting(BasicTrackingCommand command) {
-    limeLightTurretCommand = command;
+  private boolean isShootingAllowed() {
+    if(limeLightTeleopCommand == null) return false;
+    if(intake.getCurrentCommand() != null) return false;
 
-    limeLightTurretCommand.schedule();
+    return limeLightTeleopCommand.isReady();
+  }
+
+  private void startLimelightTargeting(TeleopTrackingCommand command) {
+    limeLightTeleopCommand = command;
+
+    limeLightTeleopCommand.schedule();
   }
 
   private void endLimelightTargeting() {
-    limeLightTurretCommand.cancel();
+    limeLightTeleopCommand.cancel();
 
-    limeLightTurretCommand = null;  
+    limeLightTeleopCommand = null;  
   }
 
   public void doDrivetrainSetup() {

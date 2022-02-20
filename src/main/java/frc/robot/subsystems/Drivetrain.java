@@ -254,7 +254,7 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     //We have no use (yet) for odometry in teleop, so it will only update in autonomous
-    //TODO: Disable odometry running all the time; Just want to test it in teleop right now to see if it is any reliability
+    //TODO: Disable odometry running all the time; Just want to test it in teleop right now to see if it has any reliability
     if(Constants.robotStatus == RobotStatus.AUTO || true) {
       updateOdometry();
     }

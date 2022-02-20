@@ -1,26 +1,23 @@
 package frc.robot.commands.limelight;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import frc.robot.subsystems.Conveyor;
+import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Turret;
 
 public class TeleopTrackingCommand extends BasicTrackingCommand{
-    // private Conveyor conveyor;
-    private BooleanSupplier shootingSupplier;
+    private Conveyor conveyor;
 
-    //TODO: correct the shooting function to actually end once we can effectively track how many balls are in the bot
-    //TODO: Add the conveyor back to the teleop command
-    public TeleopTrackingCommand(Turret turret, BooleanSupplier shootingSupplier) {
-        super(turret);//conveyor);
-        // this.conveyor = conveyor;
-        this.shootingSupplier = shootingSupplier;
+    public TeleopTrackingCommand(Turret turret, Conveyor conveyor) {
+        super(turret);
+        this.conveyor = conveyor;
+
+        addRequirements(conveyor);
     }
 
     @Override
     public boolean isComplete() {
-        return false; //We want the function to end only when it's cancelled (it's entered and exited solely in teleop)
+        //This will often be cancelled by itself, but it can also be cancelled
+        return conveyor.getNumberOfBalls() == 0;
     }
 
     @Override
@@ -30,21 +27,23 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
     @Override
     public void additionalCodeInExecute() {
-        //TODO: Remove this telemetry later
-        SmartDashboard.putBoolean("Shooting indicated", shootingSupplier.getAsBoolean());
-        
-
-        //If the button to shoot has been pressed and the shooter is in a valid location, shoot
-        if(shootingSupplier.getAsBoolean() && turret.isShootingAllowed()) shoot();
+        //TODO: Remove this telemetry
+        SmartDashboard.putBoolean("Teleop Tracking command is ready to shoot", isReady());
     }
 
-    private void shoot() {
-        // conveyor.intakeAll(1);
+    /**
+     * 
+     * @return true if the turret is locked into the target and the flywheel is spun up
+     */
+    public boolean isReady() {
+        return 
+            !turret.isFlywheelBusy() &&
+            isLockedIn();
     }
 
     @Override
     public void additionalCodeInEnd() {
-        // conveyor.intakeAll(0);
+        turret.setFlywheelTarget(0);
         
     }
 }

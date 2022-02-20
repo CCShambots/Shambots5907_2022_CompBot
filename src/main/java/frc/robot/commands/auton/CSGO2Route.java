@@ -19,14 +19,14 @@ import frc.robot.commands.turret.ShootCommand.Amount;
 import frc.robot.util.auton.AllRobotSubsystems;
 import frc.robot.util.auton.AutoRoutes.Trajectories;
 
-public class CSGO1Route extends BaseRoute{
+public class CSGO2Route extends BaseRoute{
 
-    public CSGO1Route(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
+    public CSGO2Route(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
         super(subsystems, paths);
 
 
         addCommands(
-            setupAuto(paths.get(CSGO1)),
+            setupAuto(paths.get(CSGO2)),
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
                     new ZeroSpinnerCommand(turret, 45),
@@ -37,7 +37,7 @@ public class CSGO1Route extends BaseRoute{
                 new IntakeCommand(intake, conveyor),
 
                 new SequentialCommandGroup(                    
-                    new TrajectoryCommand(drivetrain, paths.get(CSGO1)),
+                    new TrajectoryCommand(drivetrain, paths.get(CSGO2)),
                     new InstantCommand(() -> intake.setShouldEnd(true))
                 )
             ),
