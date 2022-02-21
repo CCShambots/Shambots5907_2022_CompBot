@@ -77,7 +77,6 @@ public final class Constants {
     public static class Intake {
         //Hardware
         public static final int ROLLER_1_ID = 11;
-        public static final int ROLLER_2_ID = 12;
         
         public static final int SOLENOID_1_PORT_1 = 0;
         public static final int SOLENOID_1_PORT_2 = 1;

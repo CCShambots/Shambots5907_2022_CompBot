@@ -22,7 +22,6 @@ import static frc.robot.Constants.Drivetrain.*;
 
 public class Intake extends SubsystemBase {
   private WPI_TalonFX roller1 = new WPI_TalonFX(ROLLER_1_ID);
-  private WPI_TalonFX roller2 = new WPI_TalonFX(ROLLER_2_ID);
 
   private DoubleSolenoid rotationalSolenoid1 = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, SOLENOID_1_PORT_1, SOLENOID_1_PORT_2);
   private DoubleSolenoid rotationalSolenoid2 = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, SOLENOID_2_PORT_1, SOLENOID_2_PORT_2);
@@ -35,7 +34,6 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake(){
     setupMotor(roller1);
-    setupMotor(roller2);
 
     setIntakeState(IntakeState.Raised);
   }
@@ -101,7 +99,6 @@ public class Intake extends SubsystemBase {
 
   private void setMotors(double speed) {
     roller1.set(ControlMode.PercentOutput, speed);
-    roller2.set(ControlMode.PercentOutput, speed);
   } 
 
   public IntakeDirection getIntakeDirection() {
