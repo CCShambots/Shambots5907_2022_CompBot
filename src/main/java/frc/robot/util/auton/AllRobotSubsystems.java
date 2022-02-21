@@ -21,6 +21,17 @@ public class AllRobotSubsystems {
         this.climber = climber;
     }
 
+    /**
+     * Alternate constructor for when the climber does not being used.
+     * @param drivetrain
+     * @param intake
+     * @param conveyor
+     * @param turret
+     */
+    public AllRobotSubsystems(Drivetrain drivetrain, Intake intake, Conveyor conveyor, Turret turret) {
+        this(drivetrain, intake, conveyor, turret, null);
+    }
+
     public Drivetrain getDrivetrain() { return drivetrain;}
     public Intake getIntake() { return intake;}
     public Conveyor getConveyor() { return conveyor;}

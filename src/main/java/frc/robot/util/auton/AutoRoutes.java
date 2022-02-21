@@ -18,8 +18,8 @@ public class AutoRoutes {
     Map<Object, Command> autoRoutes;
     AllRobotSubsystems allRobotSubsystems;
 
-    public AutoRoutes(Map<String, Trajectory> trajectories, Drivetrain drivetrain, Intake intake, Conveyor conveyor, Turret turret, Climber climber) {
-        allRobotSubsystems = new AllRobotSubsystems(drivetrain, intake, conveyor, turret, climber);
+    public AutoRoutes(Map<String, Trajectory> trajectories, Drivetrain drivetrain, Intake intake, Conveyor conveyor, Turret turret) {
+        allRobotSubsystems = new AllRobotSubsystems(drivetrain, intake, conveyor, turret);
 
         paths = new HashMap<>();
 

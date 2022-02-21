@@ -58,8 +58,8 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
-  private final Climber climber = new Climber();
-  
+  // private final Climber climber = new Climber();
+
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
@@ -71,26 +71,28 @@ public class RobotContainer {
 
 
   public RobotContainer() {
+    //Put telemetry for choosing autonomous routes, displayign the field, and displaying the status of the robot
+    driveTab.add(autoChooser);
+    driveTab.add("field", field);
+    driveTab.addString("Robot Status", () -> getRobotStatus());
+
     configureButtonBindings();
     
     //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO3-2"));
 
     //This object uses the trajectories to initialize each autonomous route command
-    AutoRoutes autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret, climber);
+    AutoRoutes autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
 
     commands = autoRoutes.getAutoRoutes();
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
+    //Set up the sendable chooser for selecting different autonomous routes
     autoChooser.setDefaultOption("CSGO-1", AutoPaths.CSGO1);
     autoChooser.addOption("CSGO-2", AutoPaths.CSGO2);
     autoChooser.addOption("CSGO-3", AutoPaths.CSGO3);
 
-    //Put telemetry for choosing autonomous routes, displayign the field, and displaying the status of the robot
-    driveTab.add(autoChooser);
-    driveTab.add("field", field);
-    driveTab.addString("Robot Status", () -> getRobotStatus());
     //TODO: Telemetry for if the turret is allowed to shoot or not
 
     doDrivetrainSetup();
@@ -100,48 +102,59 @@ public class RobotContainer {
     //TODO: Disable Intake commands when the turret is shooting
 
     //Drivetrain controls
+
+    //Speed changing
     new JoystickButton(driverController, Button.kRightBumper.value)
       .whenPressed(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Turbo)))
       .whenReleased(new InstantCommand(() -> drivetrain.setSpeed(TeleopSpeeds.Normal)));
 
+    //Switch between tank and arcade drive
     new JoystickButton(driverController, Button.kLeftBumper.value)
       .whenPressed(new ConditionalCommand(new InstantCommand(drivetrain::toggleDriveMode), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
 
 
-    //Intake controls
+    //Intake/Conveyor controls
     
-    //Runs the intake command if the robot has fewer than two balls
+    //Runs the intake command if the robot has fewer than two balls and the turret is not trying to shoot
     new JoystickButton(operatorController, 1)
       .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor),
-      new InstantCommand(), () -> conveyor.getNumberOfBalls() < 2));
+      new InstantCommand(), () -> (conveyor.getNumberOfBalls() < 2) && (limeLightTeleopCommand == null)));
     
-    //Indicates that the intake command should end prematurely
+    //Indicates that the intake command should end prematurely 
+    //(balls will still be processed if they are still moving through the conveyor)
     new JoystickButton(operatorController, 3)
       .whenPressed(new InstantCommand(() -> intake.setShouldEnd(true)));
     
 
     //Turret Controls
+    
+    //Begin or cancel tracking the central target with the target
     new JoystickButton(driverController, Button.kB.value)
       .whenPressed(new InstantCommand(() -> toggleLimelightTargeting()));
     
     //Only let the turret shoot  if the conveyor doesn't have a command
     new JoystickButton(driverController, Button.kA.value)
       .whenPressed(new ConditionalCommand(new ShootCommand(conveyor, Amount.One), new InstantCommand(), this::isShootingAllowed));
-      
+    
+    //Switch the direction the turret will use to search for the target when it is not visible
     new JoystickButton(operatorController, 5).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
     new JoystickButton(operatorController, 9).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
     
     //TODO: Remove this
     new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> turret.setFlywheelTarget(2000))).whenReleased(new InstantCommand(() -> turret.setFlywheelTarget(0)));
+  
     
-    //Climber controls
-    new JoystickButton(operatorController, 2)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
+    //TODO: Add these back in later
+    // //Climber controls
+    // new JoystickButton(operatorController, 2)
+    //   .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
     
-    new JoystickButton(operatorController, 4)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
+    // new JoystickButton(operatorController, 4)
+    //   .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
 
     //TODO: Test the soft estop (lest you die at kettering >:())
+    //TODO: Add climber back to this
+    //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 15)
       .whenPressed(new InstantCommand(
         () -> {
@@ -150,9 +163,10 @@ public class RobotContainer {
           turret.setFlywheelTarget(0);
           turret.setLimelightOff();
           turret.setSpinnerTarget(turret.getSpinnerAngle());
-          climber.brake();
+          // climber.brake();
         }
-      , intake, conveyor, turret, climber));
+      , intake, conveyor, turret //, climber
+      ));
   }
 
   public void telemetry() {
@@ -188,42 +202,56 @@ public class RobotContainer {
     }
   }
 
-  private boolean isShootingAllowed() {
-    if(limeLightTeleopCommand == null) return false;
-    if(intake.getCurrentCommand() != null) return false;
-
-    return limeLightTeleopCommand.isReady();
-  }
-
   private void startLimelightTargeting(TeleopTrackingCommand command) {
     limeLightTeleopCommand = command;
-
+    
     limeLightTeleopCommand.schedule();
   }
-
+  
   private void endLimelightTargeting() {
     limeLightTeleopCommand.cancel();
-
+    
     limeLightTeleopCommand = null;  
+  }
+  
+  /**
+   * Function that evaluates if the robot is in a state where it is able to shoot
+   * Requirements:
+   *  - the limelight is tracking
+   *  - the conveyor does not have another command running
+   *  - the limelight is locked in (i.e. right on target)
+   *  - the flywheel is at the right speed
+   * @return
+   */
+  private boolean isShootingAllowed() {
+    if(limeLightTeleopCommand == null) return false;
+    if(conveyor.getCurrentCommand() != null) return false;
+
+    return limeLightTeleopCommand.isReady();
   }
 
   public void doDrivetrainSetup() {
     //Set the default command for easy driving
     drivetrain.setDefaultCommand(new DrivingCommand(drivetrain, () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS), 
     () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_Y_AXIS), () -> driverController.getRawAxis(DRIVER_RIGHT_JOYSTICK_Y_AXIS)));
-
+    
     //This updates variables from the dashbaord sliders
     drivetrain.setDriveTrainVariables();
-
+    
     setTeleop();
-
+    
     //TODO: Disable resetting odometry if (and when) we are no longer using it in teleop
     drivetrain.resetOdometry(new Pose2d(13.5, 27.0, new Rotation2d(0.0)));
   }
-
+  
+  /**
+   * Loads the different trajectories from built Pathweaver JSON files
+   * @param names A list of the different trajectories to load
+   * @return A map of the loaded trajectories
+   */
   public Map<String, Trajectory> loadPaths(List<String> names) {
     Map<String, Trajectory> trajectories = new HashMap<>();
-
+    
     for(String n : names) {
       String trajectoryJSON = "paths/" + n + ".wpilib.json";
       try {
@@ -231,8 +259,7 @@ public class RobotContainer {
         trajectories.put(n, TrajectoryUtil.fromPathweaverJson(trajectoryPath));
       } catch (IOException ex) {
         DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-      }
-      System.out.println("Loaded path: " + n);
+      }     
     }
 
     return trajectories;
@@ -240,18 +267,11 @@ public class RobotContainer {
 
   
 
+  private String getRobotStatus() {return Constants.robotStatus.name();}
 
-  private String getRobotStatus() {
-    return Constants.robotStatus.name();
-  }
+  public SelectCommand getAutoCommand() {return autoCommands;}
 
-  public SelectCommand getAutoCommand() {
-    return autoCommands;
-  }
-
-  public AutoPaths getAutoId() {
-    return autoChooser.getSelected();
-  }
+  public AutoPaths getAutoId() {return autoChooser.getSelected();}
 
   public void setAutonomous() {
     Constants.robotStatus = RobotStatus.AUTO;
@@ -275,6 +295,4 @@ public class RobotContainer {
   public static enum RobotStatus {
     AUTO, TELEOP, DISABLED, TEST
   } 
-
-
 }

@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -10,14 +6,6 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.Range;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
 
     //TODO: Tune left DT ff and PID
@@ -97,7 +85,7 @@ public final class Constants {
         public static final int SOLENOID_2_PORT_2 = 3;
 
         //Control variables
-        public static final double INTAKE_SPEED = 0.5;
+        public static final double INTAKE_SPEED = 0.25;
     }
 
     public static class Conveyor {
@@ -146,14 +134,14 @@ public final class Constants {
         public static final double SEARCH_VEL = 270; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
         
-        public static final double SPINNER_P = 0.14;
-        public static final double SPINNER_I = 0.05;
+        public static final double SPINNER_P = 0;
+        public static final double SPINNER_I = 0;
         public static final double SPINNER_D = 0;
         public static final double SPINNER_MAX_VEL = 360; //Deg/sec
         public static final double SPINNER_MAX_ACCEL = 720; //Deg/sec/sec
 
-        public static final double SPINNER_S = 1.1762;
-        public static final double SPINNER_V = 0.004;
+        public static final double SPINNER_S = 0;
+        public static final double SPINNER_V = 0;
         // public static final double SPINNER_KV = 0.065;
     
         public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
