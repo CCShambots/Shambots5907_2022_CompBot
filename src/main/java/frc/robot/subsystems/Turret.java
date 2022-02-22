@@ -72,14 +72,14 @@ public class Turret extends SubsystemBase{
         bottomFlywheel.configSupplyCurrentLimit(CURRENT_LIMIT);
         topFlywheel.configSupplyCurrentLimit(CURRENT_LIMIT);
         spinner.configSupplyCurrentLimit(CURRENT_LIMIT);
-
-        spinner.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         
         bottomFlywheel.setNeutralMode(NeutralMode.Coast);
         topFlywheel.setNeutralMode(NeutralMode.Coast);
         spinner.setNeutralMode(NeutralMode.Brake);
 
         topFlywheel.setInverted(true);
+
+        spinner.setInverted(true);
 
         fakeGyro = new FakeGyro(() -> getSpinnerAngle());
 

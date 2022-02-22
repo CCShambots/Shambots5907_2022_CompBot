@@ -22,7 +22,7 @@ public class ReleaseBallCommand extends CommandBase {
     
     @Override
     public void execute() {
-        if(!conveyor.hasBalls()){
+        if(conveyor.getNumberOfBalls() == 0) {
             end(false);
         }
     

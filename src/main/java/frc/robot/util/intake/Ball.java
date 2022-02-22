@@ -18,6 +18,7 @@ public class Ball implements Sendable{
     }
 
     public void advancePosition() {position = position.next();}
+    public void regressPosition() {position = position.previous();}
     public void setPosition(BallPosition pos) {position = pos;}
     public BallPosition getPosition() {return position;}
     public Color getColor() {return color;}
@@ -30,6 +31,8 @@ public class Ball implements Sendable{
 
         private static BallPosition[] vals = values();
         public BallPosition next() { return vals[(this.ordinal() +1) % vals.length];}
+        public BallPosition previous() { return vals[(this.ordinal() -1) % vals.length];}
+
     }
 
     public static enum Color {

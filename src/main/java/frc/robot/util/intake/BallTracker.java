@@ -7,6 +7,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Conveyor;
+import frc.robot.subsystems.Conveyor.Direction;
 import frc.robot.util.hardware.ProximitySensor;
 import frc.robot.util.intake.Ball.BallPosition;
 import frc.robot.util.intake.Ball.Color;
@@ -39,8 +40,6 @@ public class BallTracker implements Sendable{
 
     public void setCurrentState(List<Ball> balls) {
         this.balls = balls;
-
-
     }
 
     public void periodic() {
@@ -52,24 +51,42 @@ public class BallTracker implements Sendable{
         //Only run the loop if the intake is moving
         //TODO: Remove always true later
         if(conveyor.isRunning() || true) {
-            //Create a new ball in the conveyor if the stage 1 sensor has just turned on
-            if(currStage1 && currStage1 != prevStage1) {
-                balls.add(new Ball(Color.Ours));
-            }
+            if(conveyor.getDirection() == Direction.Intake) {
+                //Create a new ball in the conveyor if the stage 1 sensor has just turned on
+                if(currStage1 && currStage1 != prevStage1) {
+                    balls.add(new Ball(Color.Ours));
+                }
 
-            //Advance the ball if the stage 1 sensor just got deactivated
-            if(!currStage1 && currStage1 != prevStage1) {
-                balls.get(balls.size()-1).advancePosition();
-            }
+                //Advance the ball if the stage 1 sensor just got deactivated
+                if(!currStage1 && currStage1 != prevStage1) {
+                    balls.get(balls.size()-1).advancePosition();
+                }
 
-            //If the second stage sensor was just activated, advance that ball to being in the second stage
-            if(currStage2 && currStage2 != prevStage2) {
-                balls.get(0).advancePosition();
-            }
+                //If the second stage sensor was just activated, advance that ball to being in the second stage
+                if(currStage2 && currStage2 != prevStage2) {
+                    balls.get(0).advancePosition();
+                }
 
-            //If the second stage sensor was just deactivated, remove that ball from the list (it exited the bot)
-            if(!currStage2 && currStage2 != prevStage2) {
-                balls.remove(0);
+                //If the second stage sensor was just deactivated, remove that ball from the list (it exited the bot)
+                if(!currStage2 && currStage2 != prevStage2) {
+                    balls.remove(0);
+                }
+            } else if(conveyor.getDirection() == Direction.Exhaust) {
+                //If the second stage sensor deactivated, regress the ball once
+                if(!currStage2 && currStage2 != prevStage2) {
+                    balls.get(0).regressPosition();
+                }
+                
+                //If the first stage sensor deactivates, remove the ball (it's been ejected)
+                if(!currStage1 && currStage1 != prevStage1) {
+                    balls.remove(balls.size()-1);
+                }   
+                
+                //If the first stage sensor activates, regress, the first or second ball's position (depending on how many are in the bot)
+                if(currStage1 && currStage1 != prevStage1) {
+                    if(balls.get(0).getPosition() == BallPosition.BetweenStages) balls.get(0).regressPosition();
+                    else if(balls.size() > 1) balls.get(1).regressPosition();
+                }
             }
         }
 

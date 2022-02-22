@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.climber.MoveClimberCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.ReleaseBallCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
@@ -116,14 +117,19 @@ public class RobotContainer {
     //Intake/Conveyor controls
     
     //Runs the intake command if the robot has fewer than two balls and the turret is not trying to shoot
-    new JoystickButton(operatorController, 1)
+    new JoystickButton(operatorController, 4)
       .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor),
       new InstantCommand(), () -> (conveyor.getNumberOfBalls() < 2) && (limeLightTeleopCommand == null)));
     
     //Indicates that the intake command should end prematurely 
     //(balls will still be processed if they are still moving through the conveyor)
-    new JoystickButton(operatorController, 3)
+    new JoystickButton(operatorController, 1)
       .whenPressed(new InstantCommand(() -> intake.setShouldEnd(true)));
+
+    //Ejects balls from the conveyor
+    //TOOD: Fix buttons
+    new JoystickButton(operatorController, 2)
+      .whenPressed(new ReleaseBallCommand(intake, conveyor));
     
 
     //Turret Controls
@@ -137,8 +143,8 @@ public class RobotContainer {
       .whenPressed(new ConditionalCommand(new ShootCommand(conveyor, Amount.One), new InstantCommand(), this::isShootingAllowed));
     
     //Switch the direction the turret will use to search for the target when it is not visible
-    new JoystickButton(operatorController, 5).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
-    new JoystickButton(operatorController, 9).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
+    new JoystickButton(operatorController, 6).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
+    new JoystickButton(operatorController, 7).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
     
     //TODO: Remove this
     new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> turret.setFlywheelTarget(2000))).whenReleased(new InstantCommand(() -> turret.setFlywheelTarget(0)));
@@ -146,16 +152,16 @@ public class RobotContainer {
     
     //TODO: Add these back in later
     // //Climber controls
-    // new JoystickButton(operatorController, 2)
+    // new JoystickButton(operatorController, 3)
     //   .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
     
-    // new JoystickButton(operatorController, 4)
+    // new JoystickButton(operatorController, 5)
     //   .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
 
     //TODO: Test the soft estop (lest you die at kettering >:())
     //TODO: Add climber back to this
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
-    new JoystickButton(operatorController, 15)
+    new JoystickButton(operatorController, 8)
       .whenPressed(new InstantCommand(
         () -> {
           intake.stop();

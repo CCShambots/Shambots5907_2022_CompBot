@@ -24,6 +24,7 @@ public class Conveyor extends SubsystemBase{
     private BallTracker tracker = new BallTracker(proxStage1, proxStage2, this);
     
     boolean running = false;
+    Direction direction = Direction.Stopped;
     
     public Conveyor() {
         setupMotor(conveyorStage1);
@@ -34,6 +35,7 @@ public class Conveyor extends SubsystemBase{
         motor.configFactoryDefault();
         motor.configSupplyCurrentLimit(CURRENT_LIMIT);
         motor.setNeutralMode(NeutralMode.Brake);
+        motor.setInverted(true);
     }
 
     public void intakeAll() {setAll(DEFAULT_CONVEYOR_SPEED);}
@@ -60,17 +62,26 @@ public class Conveyor extends SubsystemBase{
     public BallPosition getBall2Pos() {return tracker.getBall2Pos();} 
 
     public boolean isRunning() {return running;}
+    public Direction getDirection() {return direction;}
 
     @Override
     public void periodic() {
         tracker.periodic();
 
         running = !(conveyorStage1.getMotorOutputPercent() == 0 && conveyorStage1.getMotorOutputPercent() == 0);
+        
+        if(!running) direction = Direction.Stopped;
+        else if(conveyorStage1.getMotorOutputPercent() > 0 || conveyorStage2.getMotorOutputPercent() > 0) direction = Direction.Intake;
+        else if(conveyorStage1.getMotorOutputPercent() < 0 || conveyorStage2.getMotorOutputPercent() < 0) direction = Direction.Exhaust;
 
         //TODO: Remove this telemetry later
         SmartDashboard.putData("Ball tracker", tracker);
         SmartDashboard.putNumber("Stage 1 speed", conveyorStage1.getMotorOutputPercent());
         SmartDashboard.putNumber("Stage 2 speed", conveyorStage2.getMotorOutputPercent());
+    }
+
+    public static enum Direction {
+        Intake, Exhaust, Stopped
     }
 
 }
