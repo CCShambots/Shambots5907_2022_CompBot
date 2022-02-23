@@ -80,12 +80,12 @@ public class RobotContainer {
     configureButtonBindings();
     
     //Load the different trajectories from their JSON files
-    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO3-2"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32"));
 
     //This object uses the trajectories to initialize each autonomous route command
-    AutoRoutes autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
+    // AutoRoutes autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
 
-    commands = autoRoutes.getAutoRoutes();
+    // commands = autoRoutes.getAutoRoutes();
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
