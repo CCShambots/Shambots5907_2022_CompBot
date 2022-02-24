@@ -14,6 +14,7 @@ public class IntakeCommand extends CommandBase{
 
     private State state = State.Normal;
     private boolean finished = false;
+    long startTime ;
     
     /**
      * Creates a new intake command and starts running it.
@@ -40,16 +41,19 @@ public class IntakeCommand extends CommandBase{
         conveyor.intakeStage1();
 
         if(conveyor.getNumberOfBalls() == 0) {conveyor.intakeStage2();}
+        startTime = System.currentTimeMillis();
     }
 
     @Override
     public void execute() {
+        if(System.currentTimeMillis() - startTime > 500) intake.intake(); 
+
         if(state == State.Normal) {
             //If the first ball (i.e. the one that entered the robot first) has reached Stage 2, we will stop the stage 2 conveyor
             if(conveyor.getBall1Pos() == BallPosition.Stage2) {conveyor.stopStage2();}
 
             //If the second ball has reached stage 1, we will end the command and stop and raise the intake/conveyor
-            if(conveyor.getBall2Pos() == BallPosition.BetweenStages) {
+            if(conveyor.getBall2Pos() == BallPosition.Stage1) {
                 conveyor.stopStage1();
                 intake.stop();
                 intake.raiseIntake();
@@ -61,12 +65,13 @@ public class IntakeCommand extends CommandBase{
                 conveyor.stopAll();
                 finished = true;
             }
+            
+            intake.stop();
         }
 
         //If stopping is indicated by the drive team, the robot will immediately stop and raise the intake.
         //The command will finish once there is no ball between stages
         if(state == State.Normal && intake.getShouldEnd()) {
-            intake.stop();
             intake.raiseIntake();
             state = State.Cancelling;
         }
@@ -90,6 +95,7 @@ public class IntakeCommand extends CommandBase{
             intake.raiseIntake();
             conveyor.stopAll();
         }
+        intake.stop();
     }
 
     private static enum State {

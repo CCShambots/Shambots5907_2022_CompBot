@@ -127,9 +127,9 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(() -> intake.setShouldEnd(true)));
 
     //Ejects balls from the conveyor
-    //TOOD: Fix buttons
+    //TOOD: Make this better
     new JoystickButton(operatorController, 2)
-      .whenPressed(new ReleaseBallCommand(intake, conveyor));
+      .whenPressed(new ReleaseBallCommand(intake, conveyor, 2));
     
 
     //Turret Controls

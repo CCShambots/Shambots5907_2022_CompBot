@@ -24,7 +24,6 @@ public class Intake extends SubsystemBase {
   private WPI_TalonFX roller1 = new WPI_TalonFX(ROLLER_1_ID);
 
   private DoubleSolenoid rotationalSolenoid1 = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, SOLENOID_1_PORT_1, SOLENOID_1_PORT_2);
-  private DoubleSolenoid rotationalSolenoid2 = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, SOLENOID_2_PORT_1, SOLENOID_2_PORT_2);
 
   private IntakeDirection direction = IntakeDirection.Stopped;
   private IntakeState intakeState = IntakeState.Raised;
@@ -59,10 +58,12 @@ public class Intake extends SubsystemBase {
     Value value = state == IntakeState.Raised ? Value.kForward : Value.kReverse;
 
     rotationalSolenoid1.set(value);
-    rotationalSolenoid2.set(value);
   }
 
-  public void raiseIntake() {setIntakeState(IntakeState.Raised);}
+  public void raiseIntake() {
+    setIntakeState(IntakeState.Raised);
+    stop();
+  }
   public void lowerIntake() {setIntakeState(IntakeState.Lowered);}
 
   public Value getRotationalPosition() {
@@ -112,7 +113,6 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     //TODO: Remove this telemetry after finished
     SmartDashboard.putData(rotationalSolenoid1);
-    SmartDashboard.putData(rotationalSolenoid2);
     
   }
 
