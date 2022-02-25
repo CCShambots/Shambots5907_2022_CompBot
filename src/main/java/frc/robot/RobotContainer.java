@@ -85,9 +85,9 @@ public class RobotContainer {
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32"));
 
     //This object uses the trajectories to initialize each autonomous route command
-    // AutoRoutes autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
+    AutoRoutes autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
 
-    // commands = autoRoutes.getAutoRoutes();
+    commands = autoRoutes.getAutoRoutes();
 
     autoCommands = new SelectCommand(commands, this::getAutoId);
 
@@ -197,25 +197,28 @@ public class RobotContainer {
     //TODO: Remove all this telemtry once we don't need it (other telemetry found in periodic() of subsystems)
 
     //Drivetrain telemetry
-    // SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
-    // SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
-    // SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());
-    // SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
-    // SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
-    // SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
-    // SmartDashboard.putNumber("Right velocity", drivetrain.getRightVelocity());
-    // SmartDashboard.putNumber("Left feed forward", drivetrain.getLeftModule().getFeedForwardOutput());
-    // SmartDashboard.putNumber("Right feed forward", drivetrain.getRightModule().getFeedForwardOutput());
-    // SmartDashboard.putNumber("Left PID", drivetrain.getLeftModule().getPIDOutput());
-    // SmartDashboard.putNumber("Right PID", drivetrain.getRightModule().getPIDOutput());
-    // SmartDashboard.putData("RightPID", drivetrain.getRightModule().getPIDController());
-    // SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
-    // SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
-    // SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
-    // field.setRobotPose(drivetrain.getOdometryPose());
-    // SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
-    // SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
-    // SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
+    SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
+    SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
+    SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());
+    SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
+    SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
+    SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
+    SmartDashboard.putNumber("Right velocity", drivetrain.getRightVelocity());
+    SmartDashboard.putNumber("Left feed forward", drivetrain.getLeftModule().getFeedForwardOutput());
+    SmartDashboard.putNumber("Right feed forward", drivetrain.getRightModule().getFeedForwardOutput());
+    SmartDashboard.putNumber("Left PID", drivetrain.getLeftModule().getPIDOutput());
+    SmartDashboard.putNumber("Right PID", drivetrain.getRightModule().getPIDOutput());
+    SmartDashboard.putData("RightPID", drivetrain.getRightModule().getPIDController());
+    SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
+    SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
+    SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
+
+
+    field.setRobotPose(drivetrain.getOdometryPose());
+    
+    SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
+    SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
+    SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
   }
 
   public void toggleLimelightTargeting() {

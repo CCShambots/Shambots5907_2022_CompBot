@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
-import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
 
@@ -253,11 +252,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //We have no use (yet) for odometry in teleop, so it will only update in autonomous
-    //TODO: Disable odometry running all the time; Just want to test it in teleop right now to see if it has any reliability
-    if(Constants.robotStatus == RobotStatus.AUTO || true) {
-      updateOdometry();
-    }
+    updateOdometry();
 
     leftModule.runControlLoop();
     rightModule.runControlLoop();

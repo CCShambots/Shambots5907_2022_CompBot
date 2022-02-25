@@ -37,7 +37,7 @@ public class FakeGyro implements Gyro, Sendable{
     public double getAngle() {
         double turretValue = angleSupplier.getAsDouble();
         return turretValue > 0 ?
-            turretValue + 180 :
+            360 - turretValue :
             -turretValue;
     }
 

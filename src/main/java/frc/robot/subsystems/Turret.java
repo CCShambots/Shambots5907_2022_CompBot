@@ -76,8 +76,6 @@ public class Turret extends SubsystemBase{
         // topFlywheel.setNeutralMode(NeutralMode.Coast);
         spinner.setNeutralMode(NeutralMode.Brake);
 
-        // topFlywheel.setInverted(true);
-
         spinner.setInverted(true);
 
         fakeGyro = new FakeGyro(() -> getSpinnerAngle());
@@ -87,7 +85,7 @@ public class Turret extends SubsystemBase{
     }
     
     private void initShuffleboard(ShuffleboardTab driveTab) {
-        // driveTab.add("Fake gyro", fakeGyro);
+        driveTab.add("Fake gyro", fakeGyro);
     }
 
     /* Flywheel methods */
