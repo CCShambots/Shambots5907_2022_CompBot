@@ -56,8 +56,8 @@ public final class Constants {
         public static double NORMAL_SPEED_MULT = 0.6;
 
         //Max velocity (in meters per second because that's what pathweaver does)
-        public static final double MAX_LINEAR_VELOCITY = 2;
-        public static final double MAX_LINEAR_ACCELERATION = 2;
+        public static final double MAX_LINEAR_VELOCITY = 4;
+        public static final double MAX_LINEAR_ACCELERATION = 4;
         //Max angular velocity (in degrees per second (because radians are cringe))
         public static final double MAX_ANGULAR_VELOCITY = Math.toDegrees(Math.PI);
 
