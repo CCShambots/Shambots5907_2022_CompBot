@@ -82,7 +82,7 @@ public final class Constants {
         public static final int SOLENOID_1_PORT_2 = 2;
 
         //Control variables
-        public static final double INTAKE_SPEED = 0.25;
+        public static final double INTAKE_SPEED = 0.4;
     }
 
     public static class Conveyor {
