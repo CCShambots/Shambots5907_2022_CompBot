@@ -11,7 +11,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
         super(turret);
         this.conveyor = conveyor;
 
-        addRequirements(conveyor);
+        addRequirements(turret);
     }
 
     @Override
@@ -22,7 +22,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
     @Override
     public void additionalCodeInInitialize() {
-        // turret.setFlywheelTarget(4300);
+        turret.setFlywheelTarget(3800);
     }
 
     @Override
@@ -44,6 +44,5 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
     @Override
     public void additionalCodeInEnd() {
         turret.setFlywheelTarget(0);
-        
     }
 }

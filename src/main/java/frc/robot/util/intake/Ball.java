@@ -27,6 +27,7 @@ public class Ball implements Sendable{
         Stage1, //The first sensor IS activated
         BetweenStages, //The first sensor WAS activated, but the second has not yet been
         Stage2, //The second presence sensor IS activated
+        PastStage2, //The second presence sensor WAS activated
         NotInBot; //The ball has left the robot
 
         private static BallPosition[] vals = values();

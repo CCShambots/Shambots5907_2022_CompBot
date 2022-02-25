@@ -23,6 +23,10 @@ public class BallTracker implements Sendable{
     private boolean prevStage1;
     private boolean prevStage2;
 
+    private boolean disabled = false;
+
+    private Ball emptyBall = new Ball(Color.Ours, BallPosition.NotInBot);
+
     //The balls that can exist that are currently in the robot
     List<Ball> balls = new ArrayList<>();
 
@@ -42,6 +46,15 @@ public class BallTracker implements Sendable{
         this.balls = balls;
     }
 
+    public void setDisabled(boolean value) { 
+        disabled = value;
+    }
+
+    public void setPrevSensorStates(boolean stage1, boolean stage2) {
+        prevStage1 = stage1;
+        prevStage2 = stage2;
+    }
+
     public void periodic() {
         SmartDashboard.putNumber("Number of balls tracking", balls.size());
 
@@ -50,7 +63,7 @@ public class BallTracker implements Sendable{
 
         //Only run the loop if the intake is moving
         //TODO: Remove always true later
-        if(conveyor.isRunning() || true) {
+        if(conveyor.isRunning() && !disabled) {
             if(conveyor.getDirection() == Direction.Intake) {
                 //Create a new ball in the conveyor if the stage 1 sensor has just turned on
                 if(currStage1 && currStage1 != prevStage1) {
@@ -69,7 +82,7 @@ public class BallTracker implements Sendable{
 
                 //If the second stage sensor was just deactivated, remove that ball from the list (it exited the bot)
                 if(!currStage2 && currStage2 != prevStage2) {
-                    balls.remove(0);
+                    balls.get(0).advancePosition();
                 }
             } else if(conveyor.getDirection() == Direction.Exhaust) {
                 //If the second stage sensor deactivated, regress the ball once
@@ -97,7 +110,7 @@ public class BallTracker implements Sendable{
             if(balls.size() > i) {
                 SmartDashboard.putData("Ball #" + i, balls.get(i));
             } else {
-                SmartDashboard.putData("Ball #" + i, new Ball(Color.Ours, BallPosition.NotInBot));
+                SmartDashboard.putData("Ball #" + i, emptyBall);
             }
         }
 
@@ -105,7 +118,7 @@ public class BallTracker implements Sendable{
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("Smart Dashboard");
+        builder.setSmartDashboardType("Ball Tracker");
 
         builder.addBooleanProperty("Stage one sensor", () -> stage1Sensor.isActivated(), null);
         builder.addBooleanProperty("Stage two sensor", () -> stage2Sensor.isActivated(), null);

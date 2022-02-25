@@ -40,7 +40,7 @@ public class Drivetrain extends SubsystemBase {
 
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
-  private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.CTREPCM);
+  private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.REVPH);
 
   //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
@@ -49,9 +49,9 @@ public class Drivetrain extends SubsystemBase {
 
   //Speed controls
   private TeleopSpeeds speedMode = TeleopSpeeds.Normal;
-  private double maxSpeed = MAX_LINEAR_VELOCITY; //TODO: If this should not be the same as the autonomous max speed, change it (should be the same tho)
+  private double maxSpeed = MAX_LINEAR_VELOCITY;
 
-  private double smoothing = 1;
+  private double smoothing = 15;
 
   //Autonomous objects (odometry, trajectory following, etc)
   RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7

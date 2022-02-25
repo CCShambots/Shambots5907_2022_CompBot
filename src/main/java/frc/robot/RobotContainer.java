@@ -25,6 +25,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.commands.limelight.BasicTrackingCommand;
 import frc.robot.commands.limelight.TeleopTrackingCommand;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.ShootCommand.Amount;
@@ -36,7 +37,10 @@ import frc.robot.subsystems.Climber.ClimberState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
@@ -129,7 +133,16 @@ public class RobotContainer {
     //Ejects balls from the conveyor
     //TOOD: Make this better
     new JoystickButton(operatorController, 2)
-      .whenPressed(new ReleaseBallCommand(intake, conveyor, 2));
+      .whenPressed(new SequentialCommandGroup(new InstantCommand(() -> {
+        conveyor.exhaustAll();
+        conveyor.setTrackerDisabled(true);
+      }, conveyor),
+      new WaitCommand(1),
+      new InstantCommand(() -> {
+        conveyor.stopAll();
+        conveyor.clearTracker();
+        conveyor.setTrackerDisabled(false);
+      }, conveyor)));
     
 
     //Turret Controls
@@ -140,15 +153,22 @@ public class RobotContainer {
     
     //Only let the turret shoot  if the conveyor doesn't have a command
     new JoystickButton(driverController, Button.kA.value)
-      .whenPressed(new ConditionalCommand(new ShootCommand(conveyor, Amount.One), new InstantCommand(), this::isShootingAllowed));
+      .whenPressed(new ConditionalCommand(new ShootCommand(conveyor, Amount.Two, this), new InstantCommand(), this::isShootingAllowed));
     
     //Switch the direction the turret will use to search for the target when it is not visible
     new JoystickButton(operatorController, 6).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
     new JoystickButton(operatorController, 7).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
     
     //TODO: Remove this
-    new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> turret.setFlywheelTarget(2000))).whenReleased(new InstantCommand(() -> turret.setFlywheelTarget(0)));
-  
+    new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> {
+        turret.setFlywheelTarget(4250);
+        conveyor.intakeAll();
+      })
+      ).whenReleased(new InstantCommand(() ->  {
+        turret.setFlywheelTarget(0);
+        conveyor.stopAll();
+      }));
+    new JoystickButton(driverController, Button.kX.value).whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(135))).whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
     
     //TODO: Add these back in later
     // //Climber controls
@@ -179,28 +199,28 @@ public class RobotContainer {
     //TODO: Remove all this telemtry once we don't need it (other telemetry found in periodic() of subsystems)
 
     //Drivetrain telemetry
-    SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
-    SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
-    SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());
-    SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
-    SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
-    SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
-    SmartDashboard.putNumber("Right velocity", drivetrain.getRightVelocity());
-    SmartDashboard.putNumber("Left feed forward", drivetrain.getLeftModule().getFeedForwardOutput());
-    SmartDashboard.putNumber("Right feed forward", drivetrain.getRightModule().getFeedForwardOutput());
-    SmartDashboard.putNumber("Left PID", drivetrain.getLeftModule().getPIDOutput());
-    SmartDashboard.putNumber("Right PID", drivetrain.getRightModule().getPIDOutput());
-    SmartDashboard.putData("RightPID", drivetrain.getRightModule().getPIDController());
-    SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
-    SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
-    SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
-    field.setRobotPose(drivetrain.getOdometryPose());
-    SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
-    SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
-    SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
+    // SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
+    // SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
+    // SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());
+    // SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
+    // SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
+    // SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
+    // SmartDashboard.putNumber("Right velocity", drivetrain.getRightVelocity());
+    // SmartDashboard.putNumber("Left feed forward", drivetrain.getLeftModule().getFeedForwardOutput());
+    // SmartDashboard.putNumber("Right feed forward", drivetrain.getRightModule().getFeedForwardOutput());
+    // SmartDashboard.putNumber("Left PID", drivetrain.getLeftModule().getPIDOutput());
+    // SmartDashboard.putNumber("Right PID", drivetrain.getRightModule().getPIDOutput());
+    // SmartDashboard.putData("RightPID", drivetrain.getRightModule().getPIDController());
+    // SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
+    // SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
+    // SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
+    // field.setRobotPose(drivetrain.getOdometryPose());
+    // SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
+    // SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
+    // SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
   }
 
-  private void toggleLimelightTargeting() {
+  public void toggleLimelightTargeting() {
     if(limeLightTeleopCommand != null) {
       endLimelightTargeting();
     } else if (conveyor.getNumberOfBalls() > 0){ //Only allow the command to begin if there are balls in the robot
@@ -230,6 +250,9 @@ public class RobotContainer {
    * @return
    */
   private boolean isShootingAllowed() {
+    System.out.println("limelight command: " + limeLightTeleopCommand == null);
+    System.out.println("conveyor command: " + limeLightTeleopCommand == null);
+
     if(limeLightTeleopCommand == null) return false;
     if(conveyor.getCurrentCommand() != null) return false;
 
@@ -270,8 +293,11 @@ public class RobotContainer {
 
     return trajectories;
   }
-
   
+  public void disableLimelight() { turret.setLimelightOff();}
+  public void enableLimelight() { turret.setLimelightOn();}
+
+  public void raiseIntake() {intake.raiseIntake();}
 
   private String getRobotStatus() {return Constants.robotStatus.name();}
 
@@ -282,11 +308,13 @@ public class RobotContainer {
   public void setAutonomous() {
     Constants.robotStatus = RobotStatus.AUTO;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
+    turret.setBrake(NeutralMode.Brake);
   }
 
   public void setTeleop() {
     Constants.robotStatus = RobotStatus.TELEOP;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
+    turret.setBrake(NeutralMode.Brake);
   }
 
   public void setDisabled() {
@@ -296,6 +324,7 @@ public class RobotContainer {
   public void setTest() {
     Constants.robotStatus = RobotStatus.TEST;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Coast);
+    turret.setBrake(NeutralMode.Coast);
   }
 
   public static enum RobotStatus {

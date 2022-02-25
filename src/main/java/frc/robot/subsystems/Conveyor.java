@@ -3,10 +3,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.hardware.ProximitySensor;
+import frc.robot.util.intake.Ball;
 import frc.robot.util.intake.BallTracker;
 import frc.robot.util.intake.Ball.BallPosition;
 
 import static frc.robot.Constants.Conveyor.*;
+
+import java.util.ArrayList;
+
 import static frc.robot.Constants.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -63,6 +67,15 @@ public class Conveyor extends SubsystemBase{
 
     public boolean isRunning() {return running;}
     public Direction getDirection() {return direction;}
+
+    public void clearTracker() {
+        tracker.setCurrentState(new ArrayList<Ball>());
+        tracker.setPrevSensorStates(false, false);
+    }
+
+    public void setTrackerDisabled(boolean value) {
+        tracker.setDisabled(value);
+    }
 
     @Override
     public void periodic() {

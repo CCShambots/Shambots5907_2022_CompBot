@@ -14,7 +14,6 @@ import frc.robot.util.FakeGyro;
 import frc.robot.util.hardware.HallEffectSensor;
 import frc.robot.util.hardware.Limelight;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -88,7 +87,7 @@ public class Turret extends SubsystemBase{
     }
     
     private void initShuffleboard(ShuffleboardTab driveTab) {
-        driveTab.add("Fake gyro", fakeGyro);
+        // driveTab.add("Fake gyro", fakeGyro);
     }
 
     /* Flywheel methods */
@@ -128,10 +127,10 @@ public class Turret extends SubsystemBase{
 
     /**
      * Gets whether the flywheel is still accelertaing towards it's target RPM
-     * @return true if the flywheel is within the allowed error (i.e. it's close the target RPM); false if still not in that range
+     * @return true if the flywheel is out of the allowed error (i.e. it's fat from the target RPM)
      */
     public boolean isFlywheelBusy() {
-        return Math.abs(getBottomFlyWheelRPM()- getFlywheelTarget()) > FLYWHEEL_ALLOWED_ERROR && Math.abs(getBottomFlyWheelRPM() - getFlywheelTarget()) > FLYWHEEL_ALLOWED_ERROR;
+        return Math.abs(getBottomFlyWheelRPM() - getFlywheelTarget()) > FLYWHEEL_ALLOWED_ERROR;
     }
 
     public double getBottomFlywheelVoltage() {return bottomFlywheel.getMotorOutputVoltage();}
@@ -170,6 +169,10 @@ public class Turret extends SubsystemBase{
     public void resetSpinnerPID() {
         spinnerPIDController.reset(getSpinnerAngle());
         spinnerSetpoint = getSpinnerAngle();
+    }
+
+    public void setBrake(NeutralMode mode) {
+        spinner.setNeutralMode(mode);
     }
 
     /**
@@ -214,10 +217,10 @@ public class Turret extends SubsystemBase{
     public double getSpinnerAngle() {
         return 
             spinner.getSelectedSensorPosition() // Counts
-            /Constants.Turret.COUNTS_SPINNER_ENCODER // Rotations
+            / Constants.Turret.COUNTS_SPINNER_ENCODER // Rotations
             * 360 //Degrees
             * Constants.Turret.TURRET_GEAR_RATIO //Degrees on the turret
-            * -1 //Convert to the right sign
+            // * -1 //Convert to the right sign
         ;
     }
 
@@ -234,7 +237,7 @@ public class Turret extends SubsystemBase{
     public void resetSpinnerAngle(double angle) {
         resetSpinnerEncoder(
             angle //degress
-            * -1 //Negate the encoder
+            // * -1 //Negate the encoder
             / Constants.Turret.TURRET_GEAR_RATIO //Degrees on the encoder
             / 360 //Rotations
             * Constants.Turret.COUNTS_SPINNER_ENCODER //Counts
@@ -261,7 +264,7 @@ public class Turret extends SubsystemBase{
             / COUNTS_SPINNER_ENCODER //Rotations per second
             * 360 //Degrees per second (at motor)
             * TURRET_GEAR_RATIO //Degrees per second (on turret)
-            * -1 //Get the ratio correct for the direction the turret is moving
+            // * -1 //Get the ratio correct for the direction the turret is moving
         ;
     }
 
@@ -297,8 +300,9 @@ public class Turret extends SubsystemBase{
         bottomFlywheelPIDOutput = bottomFlywheelPID.calculate(getBottomFlyWheelRPM());
         bottomFlywheelFFOutput = bottomFlywheelFeedforward.calculate(bottomFlywheelPID.getSetpoint());
 
-        bottomFlywheel.setVoltage(bottomFlywheelPIDOutput + bottomFlywheelFFOutput);
-
+        if(bottomFlywheelPID.getSetpoint() == 0) bottomFlywheel.setVoltage(0);
+        else bottomFlywheel.setVoltage(bottomFlywheelPIDOutput + bottomFlywheelFFOutput);
+        
         // topFlywheelPIDOutput = topFlywheelPID.calculate(getTopFlyWheelRPM());
         // topFlywheelFFOutput = topFlywheelFeedforward.calculate(topFlywheelPID.getSetpoint());
 

@@ -1552,6 +1552,17 @@
               "_source0": "network_table:///SmartDashboard/Spinner Measured velo",
               "_title": "SmartDashboard/Spinner Measured velo"
             }
+          },
+          "6,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Spinner Measured Angle",
+              "_title": "/SmartDashboard/Spinner Measured Angle"
+            }
           }
         }
       }
@@ -1760,7 +1771,7 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "5,0": {
+          "3,0": {
             "size": [
               3,
               2
@@ -1771,7 +1782,7 @@
               "_title": "SmartDashboard/Ball tracker"
             }
           },
-          "3,0": {
+          "1,0": {
             "size": [
               2,
               2
@@ -1782,7 +1793,7 @@
               "_title": "SmartDashboard/DoubleSolenoid[6,0]"
             }
           },
-          "3,2": {
+          "1,2": {
             "size": [
               2,
               2
@@ -1793,7 +1804,7 @@
               "_title": "SmartDashboard/DoubleSolenoid[6,2]"
             }
           },
-          "5,2": {
+          "3,2": {
             "size": [
               3,
               1
@@ -1804,7 +1815,7 @@
               "_title": "SmartDashboard/Number of balls tracking"
             }
           },
-          "8,0": {
+          "6,0": {
             "size": [
               2,
               2
@@ -1815,7 +1826,7 @@
               "_title": "SmartDashboard/Ball #0"
             }
           },
-          "8,2": {
+          "6,2": {
             "size": [
               2,
               2
@@ -1826,7 +1837,7 @@
               "_title": "SmartDashboard/Ball #1"
             }
           },
-          "5,3": {
+          "3,3": {
             "size": [
               1,
               1
@@ -1837,7 +1848,7 @@
               "_title": "SmartDashboard/Stage 1 speed"
             }
           },
-          "7,3": {
+          "5,3": {
             "size": [
               1,
               1
@@ -1848,7 +1859,7 @@
               "_title": "SmartDashboard/Stage 2 speed"
             }
           },
-          "6,3": {
+          "4,3": {
             "size": [
               1,
               1
@@ -1861,7 +1872,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "10,0": {
+          "8,0": {
             "size": [
               3,
               2
@@ -1910,12 +1921,114 @@
           }
         }
       }
+    },
+    {
+      "title": "Diagnostic",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Run conveyor 1 forward",
+              "_title": "/SmartDashboard/Run conveyor 1 forward"
+            }
+          },
+          "4,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Run conveyor 2 backward",
+              "_title": "/SmartDashboard/Run conveyor 2 backward"
+            }
+          },
+          "4,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Extend solenoids",
+              "_title": "SmartDashboard/Extend solenoids"
+            }
+          },
+          "5,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Retract solenoids",
+              "_title": "SmartDashboard/Retract solenoids"
+            }
+          },
+          "5,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Run conveyor 2 backward",
+              "_title": "SmartDashboard/Run conveyor 2 backward"
+            }
+          },
+          "6,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Run conveyor 2 forward",
+              "_title": "SmartDashboard/Run conveyor 2 forward"
+            }
+          },
+          "3,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Run intake forward",
+              "_title": "SmartDashboard/Run intake forward"
+            }
+          },
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Run conveyor 1 backward",
+              "_title": "SmartDashboard/Run conveyor 1 backward"
+            }
+          }
+        }
+      }
     }
   ],
   "windowGeometry": {
-    "x": -7.0,
-    "y": 4.0,
-    "width": 1925.0,
-    "height": 835.0
+    "x": -9.600000381469727,
+    "y": 0.0,
+    "width": 1553.5999755859375,
+    "height": 621.5999755859375
   }
 }
