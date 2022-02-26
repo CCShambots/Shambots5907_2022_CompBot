@@ -50,7 +50,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
+    //Update the robot's status so any subsystem that needs to know it's teleop can know
     m_robotContainer.setTeleop();
+    //Setup the joysticks and pull the config values from the drivetrain from Shuffleboard
     m_robotContainer.doDrivetrainSetup();
     m_robotContainer.raiseIntake();
   }

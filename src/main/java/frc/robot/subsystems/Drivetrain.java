@@ -32,7 +32,7 @@ public class Drivetrain extends SubsystemBase {
   //TODO: Impelement amperage detection and stuff
   //Hardware declarations
   private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
-  private PIDandFFConstants rightConstants= new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
+  private PIDandFFConstants rightConstants = new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
 
   private TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, leftConstants);
   private TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, rightConstants);
@@ -204,6 +204,7 @@ public class Drivetrain extends SubsystemBase {
 
   /**
    * Returns the pose of the robot in meters
+   * Pose starts at (0,0) in the bottom left corner. Angle of the robot is from -pi to pi
    * @return the pose of the bot
    */
   public Pose2d getOdometryPose() {

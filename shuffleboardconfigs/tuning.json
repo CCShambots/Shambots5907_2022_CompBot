@@ -1710,20 +1710,6 @@
               "_title": "SmartDashboard/right setpoint"
             }
           },
-          "4,0": {
-            "size": [
-              5,
-              4
-            ],
-            "content": {
-              "_type": "Field",
-              "_source0": "network_table:///Shuffleboard/Drive Team/field",
-              "_title": "Shuffleboard/Drive Team/field",
-              "Game/Game": "A2022_Rapid_React",
-              "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false
-            }
-          },
           "0,2": {
             "size": [
               2,
@@ -1755,6 +1741,20 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Left meters traveled",
               "_title": "SmartDashboard/Left meters traveled"
+            }
+          },
+          "4,0": {
+            "size": [
+              5,
+              4
+            ],
+            "content": {
+              "_type": "Field",
+              "_source0": "network_table:///SmartDashboard/Field",
+              "_title": "SmartDashboard/Field",
+              "Game/Game": "A2022_Rapid_React",
+              "Visuals/Robot Icon Size": 50.0,
+              "Visuals/Show Outside Circles": false
             }
           }
         }
@@ -2026,9 +2026,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -9.600000381469727,
+    "x": -10.0,
     "y": 0.0,
-    "width": 1553.5999755859375,
-    "height": 621.5999755859375
+    "width": 1935.0,
+    "height": 843.0
   }
 }

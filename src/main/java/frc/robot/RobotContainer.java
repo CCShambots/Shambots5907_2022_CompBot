@@ -27,6 +27,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.limelight.BasicTrackingCommand;
 import frc.robot.commands.limelight.TeleopTrackingCommand;
+import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.ShootCommand.Amount;
 import frc.robot.subsystems.Turret;
@@ -68,15 +69,13 @@ public class RobotContainer {
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
 
-  private SelectCommand autoCommands;
   Map<Object, Command> commands = new HashMap<>(); //The commands that will be chosen from in the sendable chooser
+  SelectCommand autoCommand;
   SendableChooser<AutoPaths> autoChooser = new SendableChooser<>();
-
 
   public RobotContainer() {
     //Put telemetry for choosing autonomous routes, displayign the field, and displaying the status of the robot
     driveTab.add(autoChooser);
-    driveTab.add("field", field);
     driveTab.addString("Robot Status", () -> getRobotStatus());
 
     configureButtonBindings();
@@ -89,7 +88,7 @@ public class RobotContainer {
 
     commands = autoRoutes.getAutoRoutes();
 
-    autoCommands = new SelectCommand(commands, this::getAutoId);
+    autoCommand = new SelectCommand(commands, this::getAutoId);
 
     //Set up the sendable chooser for selecting different autonomous routes
     autoChooser.setDefaultOption("CSGO-1", AutoPaths.CSGO1);
@@ -98,7 +97,8 @@ public class RobotContainer {
 
     //TODO: Telemetry for if the turret is allowed to shoot or not
 
-    doDrivetrainSetup();
+    //Set the default command for the drivetrain (joysticks)
+    doTurretSetup();
   }
 
   private void configureButtonBindings() {
@@ -216,6 +216,8 @@ public class RobotContainer {
 
     field.setRobotPose(drivetrain.getOdometryPose());
     
+    SmartDashboard.putData(field);
+
     SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
     SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
     SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
@@ -267,11 +269,10 @@ public class RobotContainer {
     
     //This updates variables from the dashbaord sliders
     drivetrain.setDriveTrainVariables();
-    
-    setTeleop();
-    
-    //TODO: Disable resetting odometry if (and when) we are no longer using it in teleop
-    drivetrain.resetOdometry(new Pose2d(13.5, 27.0, new Rotation2d(0.0)));
+  }
+
+  public void doTurretSetup() {
+    turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
   }
   
   /**
@@ -289,8 +290,10 @@ public class RobotContainer {
         trajectories.put(n, TrajectoryUtil.fromPathweaverJson(trajectoryPath));
       } catch (IOException ex) {
         DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-      }     
+      }    
     }
+
+
 
     return trajectories;
   }
@@ -302,9 +305,14 @@ public class RobotContainer {
 
   private String getRobotStatus() {return Constants.robotStatus.name();}
 
-  public SelectCommand getAutoCommand() {return autoCommands;}
+  public SelectCommand getAutoCommand() {
+    return autoCommand;
+  }
 
-  public AutoPaths getAutoId() {return autoChooser.getSelected();}
+  public AutoPaths getAutoId() {
+    System.out.println("Auto id" + autoChooser.getSelected());
+    return autoChooser.getSelected();
+  }
 
   public void setAutonomous() {
     Constants.robotStatus = RobotStatus.AUTO;

@@ -22,7 +22,7 @@ public final class Constants {
     //Robot mode (for odometry toggling)
     public static RobotStatus robotStatus = RobotStatus.AUTO;
 
-    public static Translation2d goalPos = new Translation2d(13.5, 27);
+    public static Translation2d goalPos = new Translation2d(27, 13.5);
 
     public static class Drivetrain {
         //Hardware ID's

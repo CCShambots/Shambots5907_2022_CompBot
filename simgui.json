@@ -70,6 +70,7 @@
       "/Shuffleboard/Drive Team/field": "Field2d",
       "/SmartDashboard/Bottom Flywheel PID": "PIDController",
       "/SmartDashboard/Fake gyro": "Gyro",
+      "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Intake command": "Command",
       "/SmartDashboard/RightPID": "PIDController",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",

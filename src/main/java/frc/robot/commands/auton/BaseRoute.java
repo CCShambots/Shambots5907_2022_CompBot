@@ -32,7 +32,9 @@ public class BaseRoute extends SequentialCommandGroup{
         this.paths = paths;
 
 
-        addRequirements(drivetrain, intake, conveyor, turret, climber);
+        addRequirements(drivetrain, intake, conveyor, turret);
+        //TODO: Add climber back once we add it
+        // addRequirements(drivetrain, intake, conveyor, turret, climber);
     }
 
     protected SequentialCommandGroup setupAuto(Trajectory trajectory) {

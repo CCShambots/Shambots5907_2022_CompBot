@@ -23,7 +23,12 @@ public class CSGO1Route extends BaseRoute{
 
     public CSGO1Route(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
         super(subsystems, paths);
+        
+        System.out.println("Paths size: " + paths.size());
 
+        for(Trajectories t : paths.keySet()) {
+            System.out.println("Found path: " + t.name());
+        }
 
         addCommands(
             setupAuto(paths.get(CSGO1)),
