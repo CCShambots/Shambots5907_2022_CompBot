@@ -166,7 +166,7 @@ public class RobotContainer {
         turret.setFlywheelTarget(0);
         conveyor.stopAll();
       }));
-    new JoystickButton(driverController, Button.kX.value).whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(135))).whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
+    // new JoystickButton(driverController, Button.kX.value).whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(5))).whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
     
     //TODO: Add these back in later
     // //Climber controls
@@ -229,7 +229,7 @@ public class RobotContainer {
   private void startLimelightTargeting(TeleopTrackingCommand command) {
     limeLightTeleopCommand = command;
     
-    limeLightTeleopCommand.schedule();
+    limeLightTeleopCommand.schedule(false);
   }
   
   private void endLimelightTargeting() {
@@ -242,17 +242,14 @@ public class RobotContainer {
    * Function that evaluates if the robot is in a state where it is able to shoot
    * Requirements:
    *  - the limelight is tracking
-   *  - the conveyor does not have another command running
+   *  - the intake does not have another command running
    *  - the limelight is locked in (i.e. right on target)
    *  - the flywheel is at the right speed
    * @return
    */
   private boolean isShootingAllowed() {
-    System.out.println("limelight command: " + limeLightTeleopCommand == null);
-    System.out.println("conveyor command: " + limeLightTeleopCommand == null);
-
     if(limeLightTeleopCommand == null) return false;
-    if(conveyor.getCurrentCommand() != null) return false;
+    if(intake.getCurrentCommand() != null) return false;
 
     return limeLightTeleopCommand.isReady();
   }

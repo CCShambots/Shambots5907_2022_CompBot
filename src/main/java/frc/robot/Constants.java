@@ -128,26 +128,18 @@ public final class Constants {
         public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 140; //Counter-clockwise turns are psotiive
         public static final double ACCEPTABLE_ERROR = 1; //How close the turret has to get to it's setpoint before isBusy() returns false
         public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
-        public static final double SEARCH_VEL = 180; //In deg/sec: The speed the spinner will search at when it doesn't have a target
+        public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
         
+        public static final double SPINNER_P = 0.015;
+        public static final double SPINNER_I = 0.0;
+        public static final double SPINNER_D = 0.0;
 
-        //TODO: Increase max vel and accel
-        public static final double SPINNER_P = 0.003;
-        // public static final double SPINNER_P = 0.;
+        public static final double SPINNER_MAX_VEL = 360; //Deg/sec
+        public static final double SPINNER_MAX_ACCEL = 720; //Deg/sec/sec
 
-        // public static final double SPINNER_I = 0.02;
-        public static final double SPINNER_I = 0.;
-
-        // public static final double SPINNER_D = 0.005;
-        public static final double SPINNER_D = 0.;
-
-        public static final double SPINNER_MAX_VEL = 90; //Deg/sec
-        public static final double SPINNER_MAX_ACCEL = 180; //Deg/sec/sec
-
-        public static final double SPINNER_S = 0.75;
-        public static final double SPINNER_V = 0.012;
-        // public static final double SPINNER_KV = 0.065;
+        public static final double SPINNER_S = 0.85;
+        public static final double SPINNER_V = 0.011;
     
         public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
