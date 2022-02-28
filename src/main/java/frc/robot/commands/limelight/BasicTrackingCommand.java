@@ -19,7 +19,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
     //Config values
     private LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
     private double loopsBetweenSample = 15; //TODO: Tune this to the minimum value (fastest response time) that doesn't oscillate
-    private double waitTime = 100; //Time (in ms) to wait before trusting the limelight value
+    private double waitTime = 250; //Time (in ms) to wait before trusting the limelight value
 
     //Control variables (control the state of the command)
     private Mode mode = Mode.Targeting;
@@ -75,6 +75,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
         //TODO: Remove telemetry when no longer debugging
         SmartDashboard.putBoolean("Turret overextended?", turret.isOverRotated());
         SmartDashboard.putNumber("Rolling Average", lowPassOutput);
+        SmartDashboard.putNumber("Limelight offset", limelightOffset);
         SmartDashboard.putString("Mode", mode.name());
     }
 
@@ -86,7 +87,6 @@ public abstract class BasicTrackingCommand extends CommandBase{
         if(Math.abs(limelightOffset) < 2) limelightOffset = 0;
 
         lowPassOutput = filter.calculate(limelightOffset);
-        SmartDashboard.putNumber("Low pass", lowPassOutput);
 
         //Set the limelight value if the limelight has a target and enough loops have passed since the last time the shooter's angle was commanded
         if(turret.doesLimelightHaveTarget() && loopsSinceSample >= loopsBetweenSample) { 

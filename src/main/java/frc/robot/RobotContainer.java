@@ -143,28 +143,30 @@ public class RobotContainer {
     //Turret Controls
     
     //Begin or cancel tracking the central target with the target
-    new JoystickButton(driverController, Button.kB.value)
-      .whenPressed(new InstantCommand(() -> toggleLimelightTargeting()));
+    new JoystickButton(operatorController, 7)
+      .whenPressed(new InstantCommand(() -> startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor))))
+      .whenReleased(new ConditionalCommand(new InstantCommand(() -> endLimelightTargeting()), new InstantCommand(), () -> conveyor.getNumberOfBalls() > 0));
     
     //Only let the turret shoot  if the conveyor doesn't have a command
-    new JoystickButton(driverController, Button.kA.value)
+    new JoystickButton(operatorController, 9)
       .whenPressed(new ConditionalCommand(new ShootCommand(conveyor, Amount.Two, this), new InstantCommand(), this::isShootingAllowed));
     
     //Switch the direction the turret will use to search for the target when it is not visible
     new JoystickButton(operatorController, 6).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
-    new JoystickButton(operatorController, 7).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
+    new JoystickButton(operatorController, 10).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
     
     //TODO: Remove this
-    new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> {
-        turret.setFlywheelTarget(4250);
-        conveyor.intakeAll();
-      })
-      ).whenReleased(new InstantCommand(() ->  {
-        turret.setFlywheelTarget(0);
-        conveyor.stopAll();
-      }));
-    new JoystickButton(driverController, Button.kX.value).whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(135))).whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
+    // new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> {
+    //     turret.setFlywheelTarget(4250);
+    //     conveyor.intakeAll();
+    //   })
+    //   ).whenReleased(new InstantCommand(() ->  {
+    //     turret.setFlywheelTarget(0);
+    //     conveyor.stopAll();
+    //   }));
+    // new JoystickButton(driverController, Button.kX.value).whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(5))).whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
     
+
     //TODO: Add these back in later
     // //Climber controls
     // new JoystickButton(operatorController, 3)
@@ -173,7 +175,7 @@ public class RobotContainer {
     // new JoystickButton(operatorController, 5)
     //   .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
 
-    //TODO: Test the soft estop (lest you die at kettering >:())
+
     //TODO: Add climber back to this
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
@@ -231,7 +233,7 @@ public class RobotContainer {
   private void startLimelightTargeting(TeleopTrackingCommand command) {
     limeLightTeleopCommand = command;
     
-    limeLightTeleopCommand.schedule();
+    limeLightTeleopCommand.schedule(false);
   }
   
   private void endLimelightTargeting() {
@@ -244,17 +246,14 @@ public class RobotContainer {
    * Function that evaluates if the robot is in a state where it is able to shoot
    * Requirements:
    *  - the limelight is tracking
-   *  - the conveyor does not have another command running
+   *  - the intake does not have another command running
    *  - the limelight is locked in (i.e. right on target)
    *  - the flywheel is at the right speed
    * @return
    */
   private boolean isShootingAllowed() {
-    System.out.println("limelight command: " + limeLightTeleopCommand == null);
-    System.out.println("conveyor command: " + limeLightTeleopCommand == null);
-
     if(limeLightTeleopCommand == null) return false;
-    if(conveyor.getCurrentCommand() != null) return false;
+    if(intake.getCurrentCommand() != null) return false;
 
     return limeLightTeleopCommand.isReady();
   }
@@ -269,7 +268,9 @@ public class RobotContainer {
   }
 
   public void doTurretSetup() {
-    turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
+    // turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
+    turret.setSpinnerTarget(turret.getSpinnerAngle());
+    turret.setFlywheelTarget(0);
   }
   
   /**

@@ -16,7 +16,7 @@ public class ShootCommand extends CommandBase{
 
     private boolean ballsShot = false;
     private long startTime = 0;
-    private long totalTime = 3000;
+    private long totalTime = 4000; //The total time the shooting command will run
 
     private RobotContainer robotContainer;
 

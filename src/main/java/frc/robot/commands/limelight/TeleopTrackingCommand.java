@@ -2,6 +2,7 @@ package frc.robot.commands.limelight;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Conveyor;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
 
 public class TeleopTrackingCommand extends BasicTrackingCommand{
@@ -11,7 +12,8 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
         super(turret);
         this.conveyor = conveyor;
 
-        addRequirements(turret);
+        //We include the intake so that an intake command can't be started while targeting (it should cancel the targeting)
+        addRequirements(turret, conveyor);
     }
 
     @Override
