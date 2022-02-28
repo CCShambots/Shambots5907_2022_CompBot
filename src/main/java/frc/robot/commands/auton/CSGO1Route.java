@@ -7,6 +7,7 @@ import java.util.Map;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.commands.intake.IntakeCommand;
@@ -27,16 +28,17 @@ public class CSGO1Route extends BaseRoute{
 
         addCommands(
             setupAuto(paths.get(CSGO1)),
+            new PrintCommand("Starting CSGO1 Route"),
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
-                    new ZeroSpinnerCommand(turret, 45),
+                    // new ZeroSpinnerCommand(turret, 45),
                     new MoveSpinnerCommand(turret, 0)
                 ),
-                new SpinUpFlywheelCommand(turret, 2000), //TODO: Get an actual target for this
+                new SpinUpFlywheelCommand(turret, 4250), //TODO: Get an actual target for this
           
                 new IntakeCommand(intake, conveyor),
 
-                new SequentialCommandGroup(                    
+                new SequentialCommandGroup(
                     new TrajectoryCommand(drivetrain, paths.get(CSGO1)),
                     new InstantCommand(() -> intake.setShouldEnd(true))
                 )

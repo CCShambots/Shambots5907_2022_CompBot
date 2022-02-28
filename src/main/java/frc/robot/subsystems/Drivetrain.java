@@ -51,7 +51,7 @@ public class Drivetrain extends SubsystemBase {
   private TeleopSpeeds speedMode = TeleopSpeeds.Normal;
   private double maxSpeed = MAX_LINEAR_VELOCITY;
 
-  private double smoothing = 15;
+  private double smoothing = 8;
 
   //Autonomous objects (odometry, trajectory following, etc)
   RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
@@ -79,7 +79,7 @@ public class Drivetrain extends SubsystemBase {
 
     smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 2, "max", 15))
+      .withProperties(Map.of("min", 2, "max", 12))
       .getEntry();
 
     speedSlider = driveTab.add("Speed", maxSpeed)

@@ -146,28 +146,30 @@ public class RobotContainer {
     //Turret Controls
     
     //Begin or cancel tracking the central target with the target
-    new JoystickButton(driverController, Button.kB.value)
-      .whenPressed(new InstantCommand(() -> toggleLimelightTargeting()));
+    new JoystickButton(operatorController, 7)
+      .whenPressed(new InstantCommand(() -> startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor))))
+      .whenReleased(new InstantCommand(() -> endLimelightTargeting()));
     
     //Only let the turret shoot  if the conveyor doesn't have a command
-    new JoystickButton(driverController, Button.kA.value)
+    new JoystickButton(operatorController, 8)
       .whenPressed(new ConditionalCommand(new ShootCommand(conveyor, Amount.Two, this), new InstantCommand(), this::isShootingAllowed));
     
     //Switch the direction the turret will use to search for the target when it is not visible
     new JoystickButton(operatorController, 6).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
-    new JoystickButton(operatorController, 7).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
+    new JoystickButton(operatorController, 10).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
     
     //TODO: Remove this
-    new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> {
-        turret.setFlywheelTarget(4250);
-        conveyor.intakeAll();
-      })
-      ).whenReleased(new InstantCommand(() ->  {
-        turret.setFlywheelTarget(0);
-        conveyor.stopAll();
-      }));
+    // new JoystickButton(driverController, Button.kY.value).whenPressed(new InstantCommand(() -> {
+    //     turret.setFlywheelTarget(4250);
+    //     conveyor.intakeAll();
+    //   })
+    //   ).whenReleased(new InstantCommand(() ->  {
+    //     turret.setFlywheelTarget(0);
+    //     conveyor.stopAll();
+    //   }));
     // new JoystickButton(driverController, Button.kX.value).whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(5))).whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
     
+
     //TODO: Add these back in later
     // //Climber controls
     // new JoystickButton(operatorController, 3)
@@ -176,7 +178,7 @@ public class RobotContainer {
     // new JoystickButton(operatorController, 5)
     //   .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
 
-    //TODO: Test the soft estop (lest you die at kettering >:())
+
     //TODO: Add climber back to this
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
@@ -197,25 +199,25 @@ public class RobotContainer {
     //TODO: Remove all this telemtry once we don't need it (other telemetry found in periodic() of subsystems)
 
     //Drivetrain telemetry
-    // SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
-    // SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
-    // SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());
-    // SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
-    // SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
-    // SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
-    // SmartDashboard.putNumber("Right velocity", drivetrain.getRightVelocity());
-    // SmartDashboard.putNumber("Left feed forward", drivetrain.getLeftModule().getFeedForwardOutput());
-    // SmartDashboard.putNumber("Right feed forward", drivetrain.getRightModule().getFeedForwardOutput());
-    // SmartDashboard.putNumber("Left PID", drivetrain.getLeftModule().getPIDOutput());
-    // SmartDashboard.putNumber("Right PID", drivetrain.getRightModule().getPIDOutput());
-    // SmartDashboard.putData("RightPID", drivetrain.getRightModule().getPIDController());
-    // SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
-    // SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
-    // SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
-    // field.setRobotPose(drivetrain.getOdometryPose());
-    // SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
-    // SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
-    // SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
+    SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
+    SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
+    SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());
+    SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
+    SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
+    SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
+    SmartDashboard.putNumber("Right velocity", drivetrain.getRightVelocity());
+    SmartDashboard.putNumber("Left feed forward", drivetrain.getLeftModule().getFeedForwardOutput());
+    SmartDashboard.putNumber("Right feed forward", drivetrain.getRightModule().getFeedForwardOutput());
+    SmartDashboard.putNumber("Left PID", drivetrain.getLeftModule().getPIDOutput());
+    SmartDashboard.putNumber("Right PID", drivetrain.getRightModule().getPIDOutput());
+    SmartDashboard.putData("RightPID", drivetrain.getRightModule().getPIDController());
+    SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
+    SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
+    SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
+    field.setRobotPose(drivetrain.getOdometryPose());
+    SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
+    SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
+    SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
   }
 
   public void toggleLimelightTargeting() {
@@ -296,7 +298,10 @@ public class RobotContainer {
 
   private String getRobotStatus() {return Constants.robotStatus.name();}
 
-  public SelectCommand getAutoCommand() {return autoCommands;}
+  public SelectCommand getAutoCommand() {
+    System.out.println("Returning auto commands");
+    return autoCommands;
+  }
 
   public AutoPaths getAutoId() {return autoChooser.getSelected();}
 
