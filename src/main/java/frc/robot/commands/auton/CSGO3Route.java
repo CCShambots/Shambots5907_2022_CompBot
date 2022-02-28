@@ -28,10 +28,10 @@ public class CSGO3Route extends BaseRoute{
         addCommands(
             setupAuto(paths.get(CSGO31)),
             new ParallelCommandGroup(
-                new SequentialCommandGroup(
-                    new ZeroSpinnerCommand(turret, 45),
-                    new MoveSpinnerCommand(turret, 0)
-                ),
+                // new SequentialCommandGroup(
+                //     new ZeroSpinnerCommand(turret, 45),
+                //     new MoveSpinnerCommand(turret, 0)
+                // ),
                 new SpinUpFlywheelCommand(turret, 2000), //TODO: Get an actual target for this
           
                 new IntakeCommand(intake, conveyor),

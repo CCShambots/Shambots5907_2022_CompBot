@@ -96,9 +96,6 @@ public class RobotContainer {
     autoChooser.addOption("CSGO-3", AutoPaths.CSGO3);
 
     //TODO: Telemetry for if the turret is allowed to shoot or not
-
-    //Set the default command for the drivetrain (joysticks)
-    doTurretSetup();
   }
 
   private void configureButtonBindings() {

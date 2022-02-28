@@ -1,7 +1,5 @@
 package frc.robot.commands.turret;
 
-import javax.sql.rowset.spi.TransactionalWriter;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -55,7 +53,7 @@ public class OdometryTurretTracking extends CommandBase{
         if(relAngle > PI) relAngle = relAngle - toRadians(360);
         else if(relAngle < -PI) relAngle = relAngle + toRadians(360);
 
-        return relAngle;
+        return toDegrees(relAngle);
 
     }
 

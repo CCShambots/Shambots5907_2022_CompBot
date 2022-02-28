@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
     //Setup the joysticks and pull the config values from the drivetrain from Shuffleboard
     m_robotContainer.doDrivetrainSetup();
     m_robotContainer.raiseIntake();
+    m_robotContainer.doTurretSetup();
   }
 
   @Override

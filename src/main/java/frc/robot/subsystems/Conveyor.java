@@ -6,10 +6,12 @@ import frc.robot.util.hardware.ProximitySensor;
 import frc.robot.util.intake.Ball;
 import frc.robot.util.intake.BallTracker;
 import frc.robot.util.intake.Ball.BallPosition;
+import frc.robot.util.intake.Ball.Color;
 
 import static frc.robot.Constants.Conveyor.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static frc.robot.Constants.*;
 
@@ -68,8 +70,21 @@ public class Conveyor extends SubsystemBase{
     public boolean isRunning() {return running;}
     public Direction getDirection() {return direction;}
 
+    /**
+     * Sets the state of the tracker to being completely empty (to be used after ejecting balls or shooting)
+     */
     public void clearTracker() {
         tracker.setCurrentState(new ArrayList<Ball>());
+        tracker.setPrevSensorStates(false, false);
+    }
+
+    /**
+     * Set there to be one ball in the tracker 
+     */
+    public void setupTrackerAuto() {
+        tracker.setCurrentState(List.of(
+            new Ball(Color.Ours, BallPosition.PastStage2)
+        ));
         tracker.setPrevSensorStates(false, false);
     }
 
