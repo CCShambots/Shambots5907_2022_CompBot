@@ -6,9 +6,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Turret.Direction;
 
 import static frc.robot.Constants.*;
 import static java.lang.Math.*;
+
+import javax.management.relation.Relation;
 
 /**
  * Command for tracking the goal roughly based on the robot's pose (as recorded by odometry)
@@ -53,8 +56,10 @@ public class OdometryTurretTracking extends CommandBase{
         if(relAngle > PI) relAngle = relAngle - toRadians(360);
         else if(relAngle < -PI) relAngle = relAngle + toRadians(360);
 
-        return toDegrees(relAngle);
+        if(relAngle > turret.getSpinnerAngle()) turret.setSearchDirection(Direction.Clockwise);
+        else turret.setSearchDirection(Direction.CounterClockwise);
 
+        return toDegrees(relAngle);
     }
 
     private Pose2d poseMetersToFeet(Pose2d initialPose) {

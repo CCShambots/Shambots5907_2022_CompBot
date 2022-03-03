@@ -174,10 +174,6 @@ public class Drivetrain extends SubsystemBase {
     driveMode = driveMode == DriveModes.Tank ? DriveModes.Curvature : DriveModes.Tank;
   }
 
-  //TODO: Update for setting drive mode with limelight (once we merge turret code)
-  public boolean isToggleDriveModeAllowed() {
-    return driveMode != DriveModes.Limelight;
-  }
 
   /**Change whether drivetrain is reversed or not */
   public void setReversed(boolean value) {
@@ -265,7 +261,7 @@ public class Drivetrain extends SubsystemBase {
   public TankDriveModule getRightModule() {return rightModule;}
 
   public static enum DriveModes {
-    Tank, Curvature, Limelight
+    Tank, Curvature
   }
 
   public static enum TeleopSpeeds {

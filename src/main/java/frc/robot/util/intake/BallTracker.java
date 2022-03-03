@@ -116,6 +116,11 @@ public class BallTracker implements Sendable{
 
     }
 
+    public void resetForAuto() {
+        balls.clear();
+        balls.add(new Ball(Color.Ours, BallPosition.PastStage2));
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("Ball Tracker");

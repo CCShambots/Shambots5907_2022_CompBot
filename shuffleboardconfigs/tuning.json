@@ -1563,6 +1563,30 @@
               "_source0": "network_table:///SmartDashboard/Spinner Measured Angle",
               "_title": "/SmartDashboard/Spinner Measured Angle"
             }
+          },
+          "6,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Is spinner busy",
+              "_title": "SmartDashboard/Is spinner busy",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///limelight/tv",
+              "_title": "limelight/tv"
+            }
           }
         }
       }
@@ -1882,6 +1906,32 @@
               "_source0": "network_table:///SmartDashboard/Intake command",
               "_title": "SmartDashboard/Intake command"
             }
+          },
+          "9,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Conveyor command equals null",
+              "_title": "SmartDashboard/Conveyor command equals null",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Intake command allowed",
+              "_title": "/SmartDashboard/Intake command allowed",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
           }
         }
       }
@@ -2026,9 +2076,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -10.0,
+    "x": -6.400000095367432,
     "y": 0.0,
-    "width": 1935.0,
-    "height": 843.0
+    "width": 1553.5999755859375,
+    "height": 644.0
   }
 }

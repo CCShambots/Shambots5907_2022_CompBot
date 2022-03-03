@@ -1,25 +1,24 @@
 package frc.robot.commands.intake;
 
-import java.util.concurrent.CountDownLatch;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
+
 
 public class ReleaseBallCommand extends CommandBase {
     private Intake intake;
     private Conveyor conveyor;
     private long endTime;
-    private int count;
     private boolean finished;
 
-    public ReleaseBallCommand(Intake i, Conveyor c, int count){
+    //Messed up :'( ;-;
+    @Deprecated
+    public ReleaseBallCommand(Intake i, Conveyor c){
         intake = i;
         conveyor = c;
 
         addRequirements(intake, conveyor);
 
         finished = false;
-        this.count = count;
     }
     
     @Override

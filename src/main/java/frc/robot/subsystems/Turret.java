@@ -195,10 +195,10 @@ public class Turret extends SubsystemBase{
     }
 
     /**
-     * @return true if the spinner is less than ACCEPTABLE_ERROR degrees off from the target
+     * @return true if the spinner is greater than ACCEPTABLE_ERROR degrees off from the target
      */
     public boolean isSpinnerBusy() {
-        return Math.abs(getSpinnerAngle() - getSpinnerTarget()) <= ACCEPTABLE_ERROR;
+        return Math.abs(getSpinnerAngle() - getSpinnerTarget()) >= ACCEPTABLE_ERROR;
     }  
 
     /**
@@ -337,6 +337,8 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("Spinner Target Angle", getSpinnerTarget());
         SmartDashboard.putNumber("Spinner Measured Angle", getSpinnerAngle());
         SmartDashboard.putNumber("Spinner Voltage", getSpinnerVoltage());
+
+        SmartDashboard.putBoolean("Is spinner busy", isSpinnerBusy());
 
     }
 

@@ -14,9 +14,7 @@ public class IntakeCommand extends CommandBase{
 
     private State state = State.Normal;
     private boolean finished = false;
-    long startTime ;
-    private long stageTwoStopTimer = 0;
-    private boolean stopStage2 = false;
+    long startTime;
     
     /**
      * Creates a new intake command and starts running it.
@@ -63,18 +61,12 @@ public class IntakeCommand extends CommandBase{
             }
         } else if(state == State.Cancelling) {
             //If the frist ball is not between two stages, we can safely end the command
-            if(!(conveyor.getBall1Pos() == BallPosition.BetweenStages) && !(conveyor.getBall1Pos() == BallPosition.Stage1)) {
+            if(!(conveyor.getBall1Pos() == BallPosition.BetweenStages || conveyor.getBall1Pos() == BallPosition.Stage2) && !(conveyor.getBall1Pos() == BallPosition.Stage1)) {
                 conveyor.stopAll();
                 finished = true;
             }
             
             intake.stop();
-        }
-
-        if(stopStage2) {
-            if(System.currentTimeMillis() - stageTwoStopTimer > 0) {
-                conveyor.stopStage2();
-            }
         }
 
         //If stopping is indicated by the drive team, the robot will immediately stop and raise the intake.

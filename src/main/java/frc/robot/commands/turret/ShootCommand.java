@@ -16,21 +16,12 @@ public class ShootCommand extends CommandBase{
 
     private boolean ballsShot = false;
     private long startTime = 0;
-    private long totalTime = 4000; //The total time the shooting command will run
+    private long totalTime = 3000; //The total time the shooting command will run
 
-    private RobotContainer robotContainer;
-
-    public ShootCommand(Conveyor conveyor, Amount amount, RobotContainer robotTracker) {
+    public ShootCommand(Conveyor conveyor) {
         this.conveyor = conveyor;
 
         // addRequirements(conveyor);
-
-        this.amount = amount;
-        this.robotContainer = robotTracker;
-    }
-
-    public ShootCommand(Conveyor conveyor, Amount amount) {
-        this(conveyor, amount, null);
     }
 
     @Override
@@ -53,9 +44,6 @@ public class ShootCommand extends CommandBase{
             ballsShot = true;
         }
 
-        // if(conveyor.getNumberOfBalls() == 1 && conveyor.getBall1Pos() == BallPosition.Stage2) {
-        //     ballAdvanced = true;
-        // }
     }
 
     @Override
@@ -67,7 +55,6 @@ public class ShootCommand extends CommandBase{
     public void end(boolean interrupted) {
         conveyor.stopAll();
         conveyor.clearTracker();
-        if(robotContainer != null) robotContainer.toggleLimelightTargeting();
     }
 
     public static enum Amount { One, Two}

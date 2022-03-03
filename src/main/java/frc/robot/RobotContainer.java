@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.climber.MoveClimberCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
+import frc.robot.commands.intake.EjectBallCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.ReleaseBallCommand;
 import frc.robot.subsystems.Climber;
@@ -36,6 +33,7 @@ import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -99,8 +97,6 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    //TODO: Disable Intake commands when the turret is shooting
-
     //Drivetrain controls
 
     //Speed changing
@@ -110,7 +106,7 @@ public class RobotContainer {
 
     //Switch between tank and arcade drive
     new JoystickButton(driverController, Button.kLeftBumper.value)
-      .whenPressed(new ConditionalCommand(new InstantCommand(drivetrain::toggleDriveMode), new InstantCommand(), drivetrain::isToggleDriveModeAllowed));
+      .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
 
 
     //Intake/Conveyor controls
@@ -118,7 +114,13 @@ public class RobotContainer {
     //Runs the intake command if the robot has fewer than two balls and the turret is not trying to shoot
     new JoystickButton(operatorController, 4)
       .whenPressed(new ConditionalCommand(new IntakeCommand(intake, conveyor),
-      new InstantCommand(), () -> (conveyor.getNumberOfBalls() < 2) && (limeLightTeleopCommand == null)));
+      new InstantCommand(), () ->  {
+        boolean allowed = (conveyor.getNumberOfBalls() < 2) && (limeLightTeleopCommand == null) && (!conveyor.isEjecting());
+        SmartDashboard.putBoolean("Intake command allowed", allowed);
+        System.out.println("conveyor command equals null " + (!conveyor.isEjecting()));
+        System.out.println("allowed: " + allowed);
+        return allowed;
+      }));
     
     //Indicates that the intake command should end prematurely 
     //(balls will still be processed if they are still moving through the conveyor)
@@ -128,28 +130,19 @@ public class RobotContainer {
     //Ejects balls from the conveyor
     //TOOD: Make this better
     new JoystickButton(operatorController, 2)
-      .whenPressed(new SequentialCommandGroup(new InstantCommand(() -> {
-        conveyor.exhaustAll();
-        conveyor.setTrackerDisabled(true);
-      }, conveyor),
-      new WaitCommand(1),
-      new InstantCommand(() -> {
-        conveyor.stopAll();
-        conveyor.clearTracker();
-        conveyor.setTrackerDisabled(false);
-      }, conveyor)));
+      .whenPressed(new EjectBallCommand(conveyor, intake, 1.5), false);
     
 
     //Turret Controls
     
     //Begin or cancel tracking the central target with the target
     new JoystickButton(operatorController, 7)
-      .whenPressed(new InstantCommand(() -> startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor))))
-      .whenReleased(new ConditionalCommand(new InstantCommand(() -> endLimelightTargeting()), new InstantCommand(), () -> conveyor.getNumberOfBalls() > 0));
+      .whenPressed(new ConditionalCommand(new InstantCommand(() -> startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor))), new InstantCommand(), () -> conveyor.getNumberOfBalls() > 0))
+      .whenReleased(new ConditionalCommand(new InstantCommand(() -> endLimelightTargeting()), new InstantCommand(), () -> limeLightTeleopCommand != null));
     
     //Only let the turret shoot  if the conveyor doesn't have a command
     new JoystickButton(operatorController, 9)
-      .whenPressed(new ConditionalCommand(new ShootCommand(conveyor, Amount.Two, this), new InstantCommand(), this::isShootingAllowed));
+      .whenPressed(new ConditionalCommand(new ShootCommand(conveyor), new InstantCommand(), this::isShootingAllowed));
     
     //Switch the direction the turret will use to search for the target when it is not visible
     new JoystickButton(operatorController, 6).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
@@ -181,14 +174,18 @@ public class RobotContainer {
     new JoystickButton(operatorController, 8)
       .whenPressed(new InstantCommand(
         () -> {
+          if(conveyor.getCurrentCommand() != null) conveyor.getCurrentCommand().cancel();
+
           intake.stop();
           conveyor.stopAll();
           turret.setFlywheelTarget(0);
           turret.setLimelightOff();
           turret.setSpinnerTarget(turret.getSpinnerAngle());
+
+          conveyor.setEjecting(false);
           // climber.brake();
         }
-      , intake, conveyor, turret //, climber
+      , intake, turret //, climber
       ));
   }
 
@@ -220,6 +217,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
     SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
     SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
+
+    SmartDashboard.putBoolean("Conveyor command equals null", conveyor.getCurrentCommand() == null);
   }
 
   public void toggleLimelightTargeting() {
@@ -230,13 +229,13 @@ public class RobotContainer {
     }
   }
 
-  private void startLimelightTargeting(TeleopTrackingCommand command) {
+  public void startLimelightTargeting(TeleopTrackingCommand command) {
     limeLightTeleopCommand = command;
     
     limeLightTeleopCommand.schedule(false);
   }
   
-  private void endLimelightTargeting() {
+  public void endLimelightTargeting() {
     limeLightTeleopCommand.cancel();
     
     limeLightTeleopCommand = null;  
@@ -306,6 +305,8 @@ public class RobotContainer {
   public SelectCommand getAutoCommand() {
     return autoCommand;
   }
+
+  public Command getLimelightCommand() {return limeLightTeleopCommand;}
 
   public AutoPaths getAutoId() {
     System.out.println("Auto id" + autoChooser.getSelected());

@@ -31,6 +31,8 @@ public class Conveyor extends SubsystemBase{
     
     boolean running = false;
     Direction direction = Direction.Stopped;
+
+    private boolean ejecting = false;
     
     public Conveyor() {
         setupMotor(conveyorStage1);
@@ -82,15 +84,16 @@ public class Conveyor extends SubsystemBase{
      * Set there to be one ball in the tracker 
      */
     public void setupTrackerAuto() {
-        tracker.setCurrentState(List.of(
-            new Ball(Color.Ours, BallPosition.PastStage2)
-        ));
+        tracker.resetForAuto();
         tracker.setPrevSensorStates(false, false);
     }
 
     public void setTrackerDisabled(boolean value) {
         tracker.setDisabled(value);
     }
+
+    public void setEjecting(boolean value) {ejecting = value;}
+    public boolean isEjecting() {return ejecting;}
 
     @Override
     public void periodic() {

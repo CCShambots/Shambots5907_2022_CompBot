@@ -2,8 +2,9 @@ package frc.robot.commands.limelight;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Conveyor;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
+
+import static frc.robot.Constants.Turret.*;
 
 public class TeleopTrackingCommand extends BasicTrackingCommand{
     private Conveyor conveyor;
@@ -24,7 +25,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
     @Override
     public void additionalCodeInInitialize() {
-        turret.setFlywheelTarget(3800);
+        turret.setFlywheelTarget(FLYWHEEL_TARGET_RPM);
     }
 
     @Override

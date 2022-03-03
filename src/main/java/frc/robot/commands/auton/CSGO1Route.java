@@ -20,6 +20,8 @@ import frc.robot.commands.turret.ShootCommand.Amount;
 import frc.robot.util.auton.AllRobotSubsystems;
 import frc.robot.util.auton.AutoRoutes.Trajectories;
 
+import static frc.robot.Constants.Turret.*;
+
 public class CSGO1Route extends BaseRoute{
 
     public CSGO1Route(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
@@ -33,13 +35,12 @@ public class CSGO1Route extends BaseRoute{
 
         addCommands(
             setupAuto(paths.get(CSGO1)),
-            new PrintCommand("Starting CSGO1 Route"),
             new ParallelCommandGroup(
                 new SequentialCommandGroup(
                     // new ZeroSpinnerCommand(turret, 45),
-                    new MoveSpinnerCommand(turret, 0)
+                    // new MoveSpinnerCommand(turret, 0)
                 ),
-                new SpinUpFlywheelCommand(turret, 4250), //TODO: Get an actual target for this
+                new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
           
                 new IntakeCommand(intake, conveyor),
 
@@ -49,7 +50,11 @@ public class CSGO1Route extends BaseRoute{
                 )
             ),
             new AutonomousTargetCommand(turret),
-            new ShootCommand(conveyor, Amount.Two)
+            new ShootCommand(conveyor),
+            new InstantCommand(() -> {
+                turret.setFlywheelTarget(0);
+                turret.setSpinnerTarget(0);
+            })
         );
     }
 

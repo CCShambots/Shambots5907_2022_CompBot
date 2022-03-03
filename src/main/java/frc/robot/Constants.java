@@ -61,7 +61,7 @@ public final class Constants {
         public static double NORMAL_SPEED_MULT = 0.6;
 
         //Max velocity (in meters per second because that's what pathweaver does)
-        public static final double MAX_LINEAR_VELOCITY = 4;
+        public static final double MAX_LINEAR_VELOCITY = 3;
         public static final double MAX_LINEAR_ACCELERATION = 2;
         //Max angular velocity (in degrees per second (because radians are cringe))
         public static final double MAX_ANGULAR_VELOCITY = Math.toDegrees(Math.PI);
@@ -124,6 +124,7 @@ public final class Constants {
 
         //TODO: Tune this value to attainable error
         public static final double FLYWHEEL_ALLOWED_ERROR = 100; //The allowed error for the flywheel setpoint (in RPM)
+        public static final double FLYWHEEL_TARGET_RPM = 3800; //The normal target rpm the turret will target
 
         //Spinner control
         public static final double COUNTS_SPINNER_ENCODER = 2048;
@@ -131,7 +132,7 @@ public final class Constants {
 
         public static final double SPINNER_CLOCKWISE_LIMIT = -150; //Clockwise turns are negative
         public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 140; //Counter-clockwise turns are psotiive
-        public static final double ACCEPTABLE_ERROR = 1; //How close the turret has to get to it's setpoint before isBusy() returns false
+        public static final double ACCEPTABLE_ERROR = 3; //How close the turret has to get to it's setpoint before isBusy() returns false
         public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
         public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match

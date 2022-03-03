@@ -163,12 +163,11 @@ public abstract class BasicTrackingCommand extends CommandBase{
     public void end(boolean interrupted) {
         turret.setLimelightOff();
         turret.setSpinnerTarget(turret.getSpinnerAngle());
-        turret.setFlywheelTarget(0);
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return isComplete();
     }
 
 
