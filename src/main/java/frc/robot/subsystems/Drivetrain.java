@@ -19,17 +19,18 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.Constants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
 
 import java.util.Map;
 
 public class Drivetrain extends SubsystemBase {
-  //TODO: Impelement amperage detection and stuff
   //Hardware declarations
   private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
   private PIDandFFConstants rightConstants = new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
@@ -39,7 +40,8 @@ public class Drivetrain extends SubsystemBase {
 
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
-  private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.REVPH);
+  private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
+  private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
 
   //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
@@ -253,6 +255,8 @@ public class Drivetrain extends SubsystemBase {
 
     leftModule.runControlLoop();
     rightModule.runControlLoop();
+
+    SmartDashboard.putNumber("Used Current", pdh.getTotalCurrent());
   }
 
   //TODO: Remove these after testing

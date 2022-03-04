@@ -1,7 +1,8 @@
-package frc.robot.commands.limelight;
+package frc.robot.commands.turret.limelight;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -18,12 +19,14 @@ public abstract class BasicTrackingCommand extends CommandBase{
 
     //Config values
     private LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
-    private double loopsBetweenSample = 15; //TODO: Tune this to the minimum value (fastest response time) that doesn't oscillate
-    private double waitTime = 250; //Time (in ms) to wait before trusting the limelight value
+    //How many loops between sending hardware values to the turret
+    private double loopsBetweenSample = 15; 
+    //Time (in seconds) to wait before trusting the limelight value
+    private double waitTime = .25; 
 
     //Control variables (control the state of the command)
     private Mode mode = Mode.Targeting;
-    private long startTimeMS = 0; //Time the command begins
+    private Timer timer;
     private double limelightOffset = 0; //The value of the target off on the limelight (x-axis)
     private double lowPassOutput = 0; //The current output of the SinglePoleIIR (basically low-pass) filter
     //Note: it starts at a ridiculously high value so the turret will immediately sample
@@ -45,8 +48,11 @@ public abstract class BasicTrackingCommand extends CommandBase{
     @Override
     public void initialize() {
         turret.setLimelightOn();
-        startTimeMS = System.currentTimeMillis();
+        timer = new Timer();
         
+        timer.start();
+
+
         //Reset values so the same command instance can be called again
         filter.reset();
         mode = Mode.Targeting;
@@ -65,7 +71,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
         updateLimelight();
         
         //This if statement executes if the command has been running long enough that the limelight can be trusted
-        if(System.currentTimeMillis() - startTimeMS >= waitTime) {
+        if(timer.get() >= waitTime) {
             if(mode == Mode.Targeting) targetingLoop();
             if(mode == Mode.Searching) searchingLoop();
         }
@@ -148,10 +154,11 @@ public abstract class BasicTrackingCommand extends CommandBase{
      */
     protected boolean isLockedIn() {
         return
-            !turret.isSpinnerBusy() &&
-            turret.doesLimelightHaveTarget() &&
-            System.currentTimeMillis() - startTimeMS > waitTime &&
-            mode == Mode.Targeting
+            !turret.isSpinnerBusy() &&                              //True if the turret IS close enough to the target
+            turret.doesLimelightHaveTarget() &&                     //True if the limelight currently is tracking the goal
+            lowPassOutput <= ACCEPTABLE_ERROR &&                    //True if the turret is close enough to the goal
+            timer.get() >= waitTime &&                              //True if the limelight can be trusted
+            mode == Mode.Targeting                                  //True if the turret is actively tracking a target (rather than searching)
         ;
     }
 
@@ -163,6 +170,8 @@ public abstract class BasicTrackingCommand extends CommandBase{
     public void end(boolean interrupted) {
         turret.setLimelightOff();
         turret.setSpinnerTarget(turret.getSpinnerAngle());
+
+        timer.stop();
     }
 
     @Override

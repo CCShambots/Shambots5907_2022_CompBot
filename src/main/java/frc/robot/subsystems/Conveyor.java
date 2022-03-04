@@ -6,12 +6,10 @@ import frc.robot.util.hardware.ProximitySensor;
 import frc.robot.util.intake.Ball;
 import frc.robot.util.intake.BallTracker;
 import frc.robot.util.intake.Ball.BallPosition;
-import frc.robot.util.intake.Ball.Color;
 
 import static frc.robot.Constants.Conveyor.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static frc.robot.Constants.*;
 

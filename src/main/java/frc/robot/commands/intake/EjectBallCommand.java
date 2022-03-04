@@ -13,6 +13,12 @@ public class EjectBallCommand extends CommandBase{
     Timer timer;
     double time;
 
+    /**
+     * 
+     * @param conveyor subsystem
+     * @param intake subsystem
+     * @param time time (in seconds) to exhaust the conveyor
+     */
     public EjectBallCommand(Conveyor conveyor, Intake intake, double time) {
         this.conveyor = conveyor;
         this.intake = intake;

@@ -66,6 +66,7 @@
       "/LiveWindow/Ungrouped/Talon FX [42]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [4]": "Motor Controller",
       "/Shuffleboard/Drive Team/Fake gyro": "Gyro",
+      "/Shuffleboard/Drive Team/Field": "Field2d",
       "/Shuffleboard/Drive Team/SendableChooser[0]": "String Chooser",
       "/Shuffleboard/Drive Team/field": "Field2d",
       "/SmartDashboard/Bottom Flywheel PID": "PIDController",

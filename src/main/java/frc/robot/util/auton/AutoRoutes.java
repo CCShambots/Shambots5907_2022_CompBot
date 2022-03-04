@@ -43,6 +43,16 @@ public class AutoRoutes {
         return autoRoutes;
     }
 
+    public Trajectory getFirstTrajectory(AutoPaths selectedPath) {
+        switch (selectedPath) {
+            case CSGO1: return paths.get(Trajectories.CSGO1);
+            case CSGO2: return paths.get(Trajectories.CSGO2);
+            case CSGO3: return paths.get(Trajectories.CSGO31);
+        }
+
+        return null;
+    }
+
 
     public static enum AutoPaths {
         CSGO1,

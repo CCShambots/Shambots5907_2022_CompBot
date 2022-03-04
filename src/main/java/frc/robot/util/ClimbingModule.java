@@ -19,7 +19,6 @@ import static frc.robot.Constants.Climber.*;
 import static frc.robot.Constants.*;
 
 public class ClimbingModule implements Sendable{
-    //TODO: write command for zeroing climber
     //Hardware
     private WPI_TalonFX motor; //Falcon that controls the height of the lift
     private DoubleSolenoid brake; //Solenoid that activates the brake on the lift

@@ -22,6 +22,7 @@ public class BaseRoute extends SequentialCommandGroup{
 
     protected Map<Trajectories, Trajectory> paths;
 
+    //TODO: Simple, delayed auto that shoots one ball
 
     public BaseRoute(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
         drivetrain = subsystems.getDrivetrain();

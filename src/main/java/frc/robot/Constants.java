@@ -8,14 +8,6 @@ import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.Range;
 
 public final class Constants {
-
-    //TODO: Tune left DT ff and PID
-    //TODO: Tune right DT ff and PID
-    //TODO: Tune Spinner ff and PID
-    //TODO: Tune bottom flywheel ff and PID
-    //TODO: Tune top flywheel ff and PID
-    //TODO: Tune left climber ff and PID
-
     //Current limit for stopping motors from exceeding max power draw
     public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 10, 10, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
@@ -34,6 +26,7 @@ public final class Constants {
         public static final int PIGEON_GYRO = 05;
         
         public static final int COMPRESSOR_ID = 06;
+        public static final int PDH_ID = 07;
 
         //Values for converting the motor counts to distance traveled
         public static final double COUNTS_PER_REV = 2048; //Drivetrain motors (falcon 500)
@@ -104,8 +97,7 @@ public final class Constants {
     
     public static final class Turret{ 
         //Hardware devices
-        public static final int FLYWHEEL1 = 31;
-        public static final int FLYWHEEL2 = 32;
+        public static final int BOTTOM_FLYWHEEL = 31;
         public static final int TURRET_SPINNER = 33;
         public static final int HALL_EFFECT_CENTER = 2; //DIO port
 
@@ -123,8 +115,9 @@ public final class Constants {
         public static final double TOP_FLYWHEEL_D = 0;
 
         //TODO: Tune this value to attainable error
-        public static final double FLYWHEEL_ALLOWED_ERROR = 100; //The allowed error for the flywheel setpoint (in RPM)
+        public static final double FLYWHEEL_ALLOWED_ERROR = 50; //The allowed error for the flywheel setpoint (in RPM)
         public static final double FLYWHEEL_TARGET_RPM = 3800; //The normal target rpm the turret will target
+        public static final double FLYWHEEL_LOW_RPM = 1500; //The normal target rpm the turret will target
 
         //Spinner control
         public static final double COUNTS_SPINNER_ENCODER = 2048;
@@ -147,7 +140,7 @@ public final class Constants {
         public static final double SPINNER_S = 0.85;
         public static final double SPINNER_V = 0.011;
     
-        public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
+        public static final SupplyCurrentLimitConfiguration FLYWHEEL_CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
     }
 

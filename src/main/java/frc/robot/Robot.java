@@ -15,6 +15,8 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.disableLimelight();
 
+    m_robotContainer.setDisabled();
+
     LiveWindow.disableAllTelemetry();
   }
 
@@ -23,7 +25,6 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     //Update dashboard telemetry
-    //TODO: Move this telemetry to the subsystems when I feel like it later
     m_robotContainer.telemetry();
   }
 

@@ -14,7 +14,6 @@ import frc.robot.util.intake.Ball.Color;
 
 public class BallTracker implements Sendable{
     //TODO: Color sensor implementation
-    //TODO: Support for ejecting balls
 
     private ProximitySensor stage1Sensor;
     private ProximitySensor stage2Sensor;
@@ -62,7 +61,6 @@ public class BallTracker implements Sendable{
         boolean currStage2 = stage2Sensor.isActivated();
 
         //Only run the loop if the intake is moving
-        //TODO: Remove always true later
         if(conveyor.isRunning() && !disabled) {
             if(conveyor.getDirection() == Direction.Intake) {
                 //Create a new ball in the conveyor if the stage 1 sensor has just turned on

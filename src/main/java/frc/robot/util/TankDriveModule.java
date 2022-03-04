@@ -82,12 +82,6 @@ public class TankDriveModule {
         leader.setVoltage(feedForwardOutput + pidOutput);
     }
 
-    //TODO: Remove this after tuning
-    public double getSetpoint() {
-        return pidController.getSetpoint();
-    }
-
-    public PIDController getPIDController() {
-        return pidController;
-    }
+    public double getSetpoint() {return pidController.getSetpoint();}
+    public PIDController getPIDController() {return pidController;}
 }
