@@ -52,7 +52,6 @@ public class ClimbingModule implements Sendable{
         new TrapezoidProfile.Constraints(controllerConstants.getMaxVel(), controllerConstants.getMaxAccel()));
         ffController = new SimpleMotorFeedforward(controllerConstants.getKS(), controllerConstants.getKV());
 
-
         this.name = name;
     }
 
