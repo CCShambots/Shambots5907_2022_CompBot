@@ -148,15 +148,9 @@ public final class Constants {
         //Hardware
         public static final int LEFT_CLIMBER_ID = 41;
         public static final int RIGHT_CLIMBER_ID = 42;
-        //TODO: Update these to actual values
-        public static final int LEFT_LIMIT_SWITCH = 5;
-        public static final int RIGHT_LIMIT_SWITCH = 6;
 
         //TODO: fix these 
-        public static final int BRAKE_1_PORT_1 = 4; //Pneumatics port
-        public static final int BRAKE_1_PORT_2 = 5; //Pneumatics port
-        public static final int BRAKE_2_PORT_1 = 6; //Pneumatics port
-        public static final int BRAKE_2_PORT_2 = 7; //Pneumatics port
+        public static final int BRAKE = 2; //Pneumatics port
 
         //TODO: Tune
         public static final double LEFT_P = 0;
