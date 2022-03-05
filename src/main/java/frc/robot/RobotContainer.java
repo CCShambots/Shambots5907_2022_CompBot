@@ -159,7 +159,8 @@ public class RobotContainer {
       new JoystickButton(operatorController, 12)
         .whenPressed(new ConditionalCommand(new SequentialCommandGroup(
           new SpinUpFlywheelCommand(turret, Constants.Turret.FLYWHEEL_LOW_RPM),
-          new ShootCommand(conveyor)
+          new ShootCommand(conveyor),
+          new InstantCommand(() -> turret.setFlywheelTarget(0))
         ), new InstantCommand(), () -> {
           return limeLightTeleopCommand == null && conveyor.getNumberOfBalls() > 0;
         }));

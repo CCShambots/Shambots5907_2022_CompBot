@@ -39,7 +39,11 @@ public class CSGO3Route extends BaseRoute{
                 )
             ),
             new AutonomousTargetCommand(turret),
-            new ShootCommand(conveyor)
+            new ShootCommand(conveyor),
+            new InstantCommand(() -> {
+                turret.setFlywheelTarget(0);
+                turret.setSpinnerTarget(0);
+            })
         );
     }
 

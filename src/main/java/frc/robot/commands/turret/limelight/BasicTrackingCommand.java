@@ -172,6 +172,8 @@ public abstract class BasicTrackingCommand extends CommandBase{
         turret.setSpinnerTarget(turret.getSpinnerAngle());
 
         timer.stop();
+
+        additionalCodeInEnd();
     }
 
     @Override
