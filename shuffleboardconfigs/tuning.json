@@ -1250,6 +1250,87 @@
                   "_title": "DigitalInput[6]/Value",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DigitalInput[4]/Value",
+                  "_title": "DigitalInput[4]/Value",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan0",
+                  "_title": "PowerDistribution[7]/Chan0"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan1",
+                  "_title": "PowerDistribution[7]/Chan1"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan2",
+                  "_title": "PowerDistribution[7]/Chan2"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan3",
+                  "_title": "PowerDistribution[7]/Chan3"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan4",
+                  "_title": "PowerDistribution[7]/Chan4"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan5",
+                  "_title": "PowerDistribution[7]/Chan5"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan6",
+                  "_title": "PowerDistribution[7]/Chan6"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan7",
+                  "_title": "PowerDistribution[7]/Chan7"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan8",
+                  "_title": "PowerDistribution[7]/Chan8"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan9",
+                  "_title": "PowerDistribution[7]/Chan9"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Voltage",
+                  "_title": "PowerDistribution[7]/Voltage"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/TotalCurrent",
+                  "_title": "PowerDistribution[7]/TotalCurrent"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/SwitchableChannel",
+                  "_title": "PowerDistribution[7]/SwitchableChannel",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Solenoid[6,4]/Value",
+                  "_title": "Solenoid[6,4]/Value",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
                 }
               ]
             }
@@ -1583,9 +1664,11 @@
               1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///limelight/tv",
-              "_title": "limelight/tv"
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Central hall effect",
+              "_title": "/SmartDashboard/Central hall effect",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -2076,9 +2159,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -6.0,
+    "x": -6.400000095367432,
     "y": 0.0,
-    "width": 1924.0,
-    "height": 839.0
+    "width": 1553.5999755859375,
+    "height": 644.0
   }
 }

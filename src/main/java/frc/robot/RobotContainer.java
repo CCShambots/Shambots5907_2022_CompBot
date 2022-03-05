@@ -327,8 +327,9 @@ public class RobotContainer {
     drivetrain.setDriveTrainVariables();
   }
 
+  
   public void doTurretSetup() {
-    // turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
+    turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
     turret.resetSpinnerPID();
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);

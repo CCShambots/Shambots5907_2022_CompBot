@@ -156,7 +156,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
         return
             !turret.isSpinnerBusy() &&                              //True if the turret IS close enough to the target
             turret.doesLimelightHaveTarget() &&                     //True if the limelight currently is tracking the goal
-            lowPassOutput <= ACCEPTABLE_ERROR &&                    //True if the turret is close enough to the goal
+            Math.abs(limelightOffset) <= ACCEPTABLE_ERROR &&                    //True if the turret is close enough to the goal
             timer.get() >= waitTime &&                              //True if the limelight can be trusted
             mode == Mode.Targeting                                  //True if the turret is actively tracking a target (rather than searching)
         ;
