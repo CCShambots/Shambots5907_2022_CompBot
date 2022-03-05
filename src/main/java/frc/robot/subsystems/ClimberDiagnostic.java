@@ -20,8 +20,8 @@ public class ClimberDiagnostic extends SubsystemBase{
 
     public ClimberDiagnostic() {
 
-        leftMotor.setInverted(TalonFXInvertType.CounterClockwise);
         leftMotor.setInverted(TalonFXInvertType.Clockwise);
+        rightMotor.setInverted(TalonFXInvertType.Clockwise);
     }
 
     public void setMotors(double power) {

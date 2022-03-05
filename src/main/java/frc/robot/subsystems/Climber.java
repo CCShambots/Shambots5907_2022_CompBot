@@ -36,13 +36,13 @@ public class Climber extends SubsystemBase {
      * @param braked
      */
     private void setSolenoids(boolean braked) {
-        brake.set(braked);
+        brake.set(!braked);
         leftModule.setBraked(braked);
         rightModule.setBraked(braked);
     }
 
-    public void brake(){setSolenoids(false);}
-    public void unBrake(){setSolenoids(true);}
+    public void brake(){setSolenoids(true);}
+    public void unBrake(){setSolenoids(false);}
     public void setClimberState(ClimberState state) {leftModule.setModuleState(state);}
     public boolean isBusy() { return leftModule.isBusy() || rightModule.isBusy();}
     public boolean isForceStopped() {return leftModule.isForceStopped() || rightModule.isForceStopped();}
@@ -55,6 +55,13 @@ public class Climber extends SubsystemBase {
     public ProfiledPIDController getRightPID() {return rightModule.getPID();}
     public double getLeftVoltage() {return leftModule.getVoltage();}
     public double getRightVoltage() {return rightModule.getVoltage();}
+
+    public void setMotors(double power) {leftModule.setMotors(power);}
+    public void setManual(boolean value) {leftModule.setManual(value);}
+
+    public void resetClimber() {
+        leftModule.reset();
+    }
 
     @Override
     public void periodic() {
