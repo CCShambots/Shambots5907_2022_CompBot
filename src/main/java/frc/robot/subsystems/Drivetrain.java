@@ -41,7 +41,7 @@ public class Drivetrain extends SubsystemBase {
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
   private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
-  private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
+  // private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
 
   //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
@@ -256,7 +256,7 @@ public class Drivetrain extends SubsystemBase {
     leftModule.runControlLoop();
     rightModule.runControlLoop();
 
-    SmartDashboard.putNumber("Used Current", pdh.getTotalCurrent());
+    // SmartDashboard.putNumber("Used Current", pdh.getTotalCurrent());
   }
 
   //TODO: Remove these after testing

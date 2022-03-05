@@ -30,14 +30,14 @@ public class ZeroSpinnerCommand extends CommandBase{
     @Override
     public void initialize() {
         turret.resetSpinnerAngle(approximateStartingAngle);
-        turret.setSpinnerConstraints(turret.getSlowSpinnerConstraints());
+        turret.setKnowsLocation(false);
         turret.setSpinnerTarget(-approximateStartingAngle);
     }
 
     @Override
     public void execute() {
         if(turret.isCentralHallEffectActivated()) {
-            turret.resetSpinnerAngle(0);
+            turret.resetSpinnerAngle(CENTRAL_SENSOR_ANGLE);
             turret.setSpinnerTarget(0);
             finished = true;
         }
@@ -51,7 +51,6 @@ public class ZeroSpinnerCommand extends CommandBase{
 
     @Override
     public void end(boolean interrupted) {
-        turret.setSpinnerConstraints(originalConstraints);
         turret.setKnowsLocation(true);
     }
 

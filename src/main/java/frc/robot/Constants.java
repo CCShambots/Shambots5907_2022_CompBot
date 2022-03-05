@@ -39,14 +39,14 @@ public final class Constants {
         public static double LEFT_I = 0;
         public static double LEFT_D = 0;
 
-        public static double LEFT_KS = 1.0052;
+        public static double LEFT_KS = 1.1;
         public static double LEFT_KV = 1.95;
 
         public static double RIGHT_P = 0.1;
         public static double RIGHT_I = 0;
         public static double RIGHT_D = 0;
 
-        public static double RIGHT_KS = 1.0052;
+        public static double RIGHT_KS = 1.1;
         public static double RIGHT_KV = 1.95;
 
 
@@ -104,16 +104,17 @@ public final class Constants {
         public static final int HALL_EFFECT_COUNTERCLOCKWISE = 4; //DIO port
 
         //TOOD: Get the actual values for this
-        public static final double CLOCKWISE_SENSOR_ANGLE = -130;
-        public static final double COUNTERCLOCKWISE_SENSOR_ANGLE = 130;
+        public static final double CENTRAL_SENSOR_ANGLE = -5;
+        public static final double CLOCKWISE_SENSOR_ANGLE = -175;
+        public static final double COUNTERCLOCKWISE_SENSOR_ANGLE = 175;
 
 
         //Flywheel control
         public static final double BOTTOM_FLYWHEEL_S = 0.75;
-        public static final double BOTTOM_FLYWHEEL_V = 0.00185;
-        public static final double BOTTOM_FLYWHEEL_P = 0.010;
+        public static final double BOTTOM_FLYWHEEL_V = 0.00180;
+        public static final double BOTTOM_FLYWHEEL_P = 0.009;
         public static final double BOTTOM_FLYWHEEL_I = 0;
-        public static final double BOTTOM_FLYWHEEL_D = 0.0003;
+        public static final double BOTTOM_FLYWHEEL_D = 0.0004;
 
         public static final double TOP_FLYWHEEL_S = 0.25;
         public static final double TOP_FLYWHEEL_V = 0.0017;
@@ -130,22 +131,26 @@ public final class Constants {
         public static final double COUNTS_SPINNER_ENCODER = 2048;
         public static final double TURRET_GEAR_RATIO = (1.0 / 3.0) * (10.0 / 140.0);
 
-        public static final double SPINNER_CLOCKWISE_LIMIT = -150; //Clockwise turns are negative
-        public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 140; //Counter-clockwise turns are psotiive
+        public static final double SPINNER_CLOCKWISE_LIMIT = -180; //Clockwise turns are negative
+        public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 180; //Counter-clockwise turns are psotiive
         public static final double ACCEPTABLE_ERROR = 3; //How close the turret has to get to it's setpoint before isBusy() returns false
         public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
         public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
         
-        public static final double SPINNER_P = 0.015;
-        public static final double SPINNER_I = 0.0;
+        public static final double SPINNER_P = 0.017;
+        // public static final double SPINNER_P = 0.0;
+        public static final double SPINNER_I = 0.00;
         public static final double SPINNER_D = 0.0;
 
         public static final double SPINNER_MAX_VEL = 360; //Deg/sec
         public static final double SPINNER_MAX_ACCEL = 720; //Deg/sec/sec
 
-        public static final double SPINNER_S = 0.85;
-        public static final double SPINNER_V = 0.011;
+        // public static final double SPINNER_S = 0.85;
+        public static final double SPINNER_S = 0.8;
+
+        public static final double SPINNER_V = 0.009;
+        // public static final double SPINNER_V = 0.0;
     
         public static final SupplyCurrentLimitConfiguration FLYWHEEL_CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 

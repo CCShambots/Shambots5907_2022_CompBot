@@ -28,8 +28,8 @@ public class Turret extends SubsystemBase{
     private Limelight limelight = new Limelight();
 
     private HallEffectSensor centerHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
-    private HallEffectSensor clockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
-    private HallEffectSensor counterClockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
+    private HallEffectSensor clockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_CLOCKWISE);
+    private HallEffectSensor counterClockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_COUNTERCLOCKWISE);
 
 
     private FakeGyro fakeGyro;
@@ -45,10 +45,14 @@ public class Turret extends SubsystemBase{
     private double topFlywheelFFOutput = 0;
 
     // Spinner controls
+
+    private boolean knowsLocation = false;
+    private Constraints originalSpinnerConstraints = new TrapezoidProfile.Constraints(SPINNER_MAX_VEL, SPINNER_MAX_ACCEL);
+    private Constraints slowSpinnerConstraints = new TrapezoidProfile.Constraints(SEARCH_VEL, SPINNER_MAX_ACCEL);
+
     private ProfiledPIDController spinnerPIDController = new ProfiledPIDController(
         SPINNER_P, SPINNER_I, SPINNER_D, 
-        new TrapezoidProfile.Constraints(
-            SPINNER_MAX_VEL, SPINNER_MAX_ACCEL));
+        slowSpinnerConstraints);
 
 
     private SimpleMotorFeedforward spinnerFeedForward = new SimpleMotorFeedforward(SPINNER_S, SPINNER_V);
@@ -63,10 +67,6 @@ public class Turret extends SubsystemBase{
 
     private Direction searchDirection = Direction.Clockwise; //The direction the turret will spin in if no targets are spotted
     private boolean shouldShoot = false; //Whether or not the turret should shoot if it is able (while tracking)
-
-    private boolean knowsLocation = false;
-    private Constraints originalSpinnerConstraints = new TrapezoidProfile.Constraints(SPINNER_MAX_VEL, SPINNER_MAX_ACCEL);
-    private Constraints slowSpinnerConstraints = new TrapezoidProfile.Constraints(SEARCH_VEL, SPINNER_MAX_ACCEL);
 
 
     public Turret(ShuffleboardTab driveTab) {
@@ -241,7 +241,11 @@ public class Turret extends SubsystemBase{
     public double getSpinnerTargetVelocity() {return spinnerPIDController.getSetpoint().velocity;}
 
     public boolean knowsLocation() {return knowsLocation;}
-    public void setKnowsLocation(boolean value) {knowsLocation = value;}
+    public void setKnowsLocation(boolean value) {
+        knowsLocation = value;
+        if(value == true) setSpinnerConstraints(getOriginalSpinnerConstraints());
+        else setSpinnerConstraints(getSlowSpinnerConstraints());
+    }
 
     public double getSpinnerVelocity() {
         return 
@@ -324,6 +328,7 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("Spinner Voltage", getSpinnerVoltage());
 
         SmartDashboard.putBoolean("Is spinner busy", isSpinnerBusy());
+        SmartDashboard.putBoolean("Central hall effect", centerHallEffect.isActivated());
 
     }
 

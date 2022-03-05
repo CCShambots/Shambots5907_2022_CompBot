@@ -52,7 +52,6 @@ public class ManualZeroCommand extends CommandBase{
     @Override
     public void end(boolean interrupted) {
         if(!interrupted) {
-            turret.setSpinnerConstraints(turret.getOriginalSpinnerConstraints());
             turret.setKnowsLocation(true);
         }
         turret.setSpinnerTarget(0);

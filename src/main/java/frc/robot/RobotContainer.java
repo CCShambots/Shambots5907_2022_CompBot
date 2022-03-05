@@ -185,15 +185,6 @@ public class RobotContainer {
         }), new InstantCommand(), () -> !turret.knowsLocation()));
 
 
-      //TODO: Delete this
-      new JoystickButton(driverController, Button.kA.value)
-        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)))
-        .whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
-
-      new JoystickButton(driverController, Button.kB.value)
-        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)))
-        .whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
-
     //TODO: Add these back in later
     // //Climber controls
     // new JoystickButton(operatorController, 3)
@@ -310,9 +301,9 @@ public class RobotContainer {
     // turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
-    
-    //Slow down the turret if it doesn't know it's location
-    slowTurretIfLocationUnknown();
+
+    //TODO: Remove
+    turret.setKnowsLocation(true);
   }
   
   /**
@@ -335,13 +326,6 @@ public class RobotContainer {
 
     return trajectories;
   }
-
-  public void slowTurretIfLocationUnknown() {
-    if(!turret.knowsLocation()) {
-      turret.setSpinnerConstraints(new TrapezoidProfile.Constraints(Constants.Turret.ZERO_VEL, Constants.Turret.SPINNER_MAX_ACCEL));
-    } 
-  }
-  
   public void disableLimelight() { turret.setLimelightOff();}
   public void enableLimelight() { turret.setLimelightOn();}
 
