@@ -100,6 +100,13 @@ public final class Constants {
         public static final int BOTTOM_FLYWHEEL = 31;
         public static final int TURRET_SPINNER = 33;
         public static final int HALL_EFFECT_CENTER = 2; //DIO port
+        public static final int HALL_EFFECT_CLOCKWISE = 3; //DIO port
+        public static final int HALL_EFFECT_COUNTERCLOCKWISE = 4; //DIO port
+
+        //TOOD: Get the actual values for this
+        public static final double CLOCKWISE_SENSOR_ANGLE = -130;
+        public static final double COUNTERCLOCKWISE_SENSOR_ANGLE = 130;
+
 
         //Flywheel control
         public static final double BOTTOM_FLYWHEEL_S = 0.75;

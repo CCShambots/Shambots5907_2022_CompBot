@@ -28,6 +28,9 @@ public class Turret extends SubsystemBase{
     private Limelight limelight = new Limelight();
 
     private HallEffectSensor centerHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
+    private HallEffectSensor clockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
+    private HallEffectSensor counterClockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
+
 
     private FakeGyro fakeGyro;
 
@@ -60,6 +63,11 @@ public class Turret extends SubsystemBase{
 
     private Direction searchDirection = Direction.Clockwise; //The direction the turret will spin in if no targets are spotted
     private boolean shouldShoot = false; //Whether or not the turret should shoot if it is able (while tracking)
+
+    private boolean knowsLocation = false;
+    private Constraints originalSpinnerConstraints = new TrapezoidProfile.Constraints(SPINNER_MAX_VEL, SPINNER_MAX_ACCEL);
+    private Constraints slowSpinnerConstraints = new TrapezoidProfile.Constraints(SEARCH_VEL, SPINNER_MAX_ACCEL);
+
 
     public Turret(ShuffleboardTab driveTab) {
         bottomFlywheel.configFactoryDefault();
@@ -232,6 +240,9 @@ public class Turret extends SubsystemBase{
     public double getSpinnerVoltage() {return spinner.getMotorOutputVoltage();}
     public double getSpinnerTargetVelocity() {return spinnerPIDController.getSetpoint().velocity;}
 
+    public boolean knowsLocation() {return knowsLocation;}
+    public void setKnowsLocation(boolean value) {knowsLocation = value;}
+
     public double getSpinnerVelocity() {
         return 
             spinner.getSelectedSensorVelocity() //Counts per 100 ms
@@ -250,9 +261,14 @@ public class Turret extends SubsystemBase{
         else setSearchDirection(Direction.Clockwise);
     }
 
-    /* Other sensors */
-    public boolean isHallEffectActivated() { return centerHallEffect.isActivated();}
+    public Constraints getOriginalSpinnerConstraints() {return originalSpinnerConstraints;}
+    public Constraints getSlowSpinnerConstraints() {return slowSpinnerConstraints;}
 
+
+    /* Other sensors */
+    public boolean isCentralHallEffectActivated() { return centerHallEffect.isActivated();}
+    public boolean isClockwiseHallEffectActivated() { return clockwiseHallEffect.isActivated();}
+    public boolean isCounterclockwiseHallEffectActivated() { return counterClockwiseHallEffect.isActivated();}
 
     //Limelight meothods (just exposes the functions in the util class)
     public void setLimelightOn() {limelight.setOn();}

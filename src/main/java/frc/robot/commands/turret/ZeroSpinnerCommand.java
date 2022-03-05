@@ -10,7 +10,7 @@ import static frc.robot.Constants.Turret.*;
 public class ZeroSpinnerCommand extends CommandBase{    
     Turret turret;
     private double approximateStartingAngle;
-    Constraints originalConstraints = new TrapezoidProfile.Constraints(SPINNER_MAX_VEL, SPINNER_MAX_ACCEL);
+    Constraints originalConstraints;
 
     boolean finished = false;
 
@@ -22,19 +22,21 @@ public class ZeroSpinnerCommand extends CommandBase{
         this.turret = turret;
         this.approximateStartingAngle = approximateStartingAngle;
 
+        originalConstraints = turret.getOriginalSpinnerConstraints();
+
         addRequirements(turret);
     }
 
     @Override
     public void initialize() {
         turret.resetSpinnerAngle(approximateStartingAngle);
-        turret.setSpinnerConstraints(new TrapezoidProfile.Constraints(ZERO_VEL, SPINNER_MAX_ACCEL));
+        turret.setSpinnerConstraints(turret.getSlowSpinnerConstraints());
         turret.setSpinnerTarget(-approximateStartingAngle);
     }
 
     @Override
     public void execute() {
-        if(turret.isHallEffectActivated()) {
+        if(turret.isCentralHallEffectActivated()) {
             turret.resetSpinnerAngle(0);
             turret.setSpinnerTarget(0);
             finished = true;
@@ -50,6 +52,7 @@ public class ZeroSpinnerCommand extends CommandBase{
     @Override
     public void end(boolean interrupted) {
         turret.setSpinnerConstraints(originalConstraints);
+        turret.setKnowsLocation(true);
     }
 
 }

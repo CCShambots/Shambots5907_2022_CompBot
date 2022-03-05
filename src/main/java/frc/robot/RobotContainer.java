@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -20,6 +21,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.commands.turret.ManualZeroCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpFlywheelCommand;
@@ -165,6 +167,33 @@ public class RobotContainer {
           return limeLightTeleopCommand == null && conveyor.getNumberOfBalls() > 0;
         }));
 
+      //Zero the turret in event of a crash
+      new JoystickButton(operatorController, 13)
+        .whenPressed(new ConditionalCommand(new ManualZeroCommand(turret, Direction.CounterClockwise), new InstantCommand(() -> {
+          if(turret.getCurrentCommand() != null) turret.getCurrentCommand().cancel();
+        }), () -> !turret.knowsLocation()))
+        .whenReleased(new ConditionalCommand(new InstantCommand(() ->  {
+          if(turret.getCurrentCommand() != null) turret.getCurrentCommand().cancel();
+        }), new InstantCommand(), () -> !turret.knowsLocation()));
+
+      new JoystickButton(operatorController, 14)
+        .whenPressed(new ConditionalCommand(new ManualZeroCommand(turret, Direction.Clockwise), new InstantCommand(() -> {
+          if(turret.getCurrentCommand() != null) turret.getCurrentCommand().cancel();
+        }), () -> !turret.knowsLocation()))
+        .whenReleased(new ConditionalCommand(new InstantCommand(() ->  {
+          if(turret.getCurrentCommand() != null) turret.getCurrentCommand().cancel();
+        }), new InstantCommand(), () -> !turret.knowsLocation()));
+
+
+      //TODO: Delete this
+      new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)))
+        .whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
+
+      new JoystickButton(driverController, Button.kB.value)
+        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)))
+        .whenReleased(new InstantCommand(() -> turret.setSpinnerTarget(0)));
+
     //TODO: Add these back in later
     // //Climber controls
     // new JoystickButton(operatorController, 3)
@@ -281,6 +310,9 @@ public class RobotContainer {
     // turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
+    
+    //Slow down the turret if it doesn't know it's location
+    slowTurretIfLocationUnknown();
   }
   
   /**
@@ -302,6 +334,12 @@ public class RobotContainer {
     }
 
     return trajectories;
+  }
+
+  public void slowTurretIfLocationUnknown() {
+    if(!turret.knowsLocation()) {
+      turret.setSpinnerConstraints(new TrapezoidProfile.Constraints(Constants.Turret.ZERO_VEL, Constants.Turret.SPINNER_MAX_ACCEL));
+    } 
   }
   
   public void disableLimelight() { turret.setLimelightOff();}
