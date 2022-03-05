@@ -57,6 +57,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.doDrivetrainSetup();
     m_robotContainer.raiseIntake();
     m_robotContainer.doTurretSetup();
+
+    m_robotContainer.resetClimber();
   }
 
   @Override

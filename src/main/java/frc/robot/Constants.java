@@ -160,37 +160,33 @@ public final class Constants {
         //Hardware
         public static final int LEFT_CLIMBER_ID = 41;
         public static final int RIGHT_CLIMBER_ID = 42;
-        //TODO: Update these to actual values
-        public static final int LEFT_LIMIT_SWITCH = 5;
-        public static final int RIGHT_LIMIT_SWITCH = 6;
 
         //TODO: fix these 
-        public static final int BRAKE_1_PORT_1 = 4; //Pneumatics port
-        public static final int BRAKE_1_PORT_2 = 5; //Pneumatics port
-        public static final int BRAKE_2_PORT_1 = 6; //Pneumatics port
-        public static final int BRAKE_2_PORT_2 = 7; //Pneumatics port
+        public static final int BRAKE = 4; //Pneumatics port
 
         //TODO: Tune
-        public static final double LEFT_P = 0;
+        public static final double LEFT_P = 0.0001;
         public static final double LEFT_I = 0;
         public static final double LEFT_D = 0;
         public static final double LEFT_KS = 1;
-        public static final double LEFT_KV = .000005;
+        public static final double LEFT_KV = .000035;
+        // public static final double LEFT_KV = .0000;
 
-        public static final double RIGHT_P = 0;
+        public static final double RIGHT_P = 0.0001;
         public static final double RIGHT_I = 0;
         public static final double RIGHT_D = 0;
         public static final double RIGHT_KS = 1;
-        public static final double RIGHT_KV = .000005;
+        public static final double RIGHT_KV = .000035;
+        // public static final double RIGHT_KV = .0000;
 
-        public static final double MAX_VEL = 15.4 * 2048; //Encoder counts per second
-        public static final double MAX_ACCEL = 5 * 2048; //Encoder counts per second per second
+        public static final double MAX_VEL = 50 * 2048; //Encoder counts per second
+        public static final double MAX_ACCEL = 100 * 2048; //Encoder counts per second per second
 
         //TODO: calculate these
 
-        public static final double MID_HEIGHT = 24; //The height (in inches) that the climber will move to for the mid level climb
+        public static final double MID_HEIGHT = 28; //The height (in inches) that the climber will move to for the mid level climb
         public static final double LOW_HEIGHT = 12; //Same as above (in inches) but for low goal
-        public static final double LOWERED_HEIGHT = 0; //The fully lowered position of the climber (also in inches)
+        public static final double LOWERED_HEIGHT = 9; //The fully lowered position of the climber (also in inches)
     }
 
     public static class Controller {

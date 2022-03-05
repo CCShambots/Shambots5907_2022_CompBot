@@ -5,6 +5,7 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -18,6 +19,7 @@ import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.EjectBallCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ClimberDiagnostic;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -27,7 +29,9 @@ import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpFlywheelCommand;
 import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Turret.Direction;
+import frc.robot.util.ClimbingModule;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,7 +63,8 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
-  // private final Climber climber = new Climber();
+  private final Climber climber = new Climber();
+  // private final ClimberDiagnostic cd = new ClimberDiagnostic();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -186,14 +191,39 @@ public class RobotContainer {
 
 
     //TODO: Add these back in later
-    // //Climber controls
-    // new JoystickButton(operatorController, 3)
-    //   .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
+    //Climber controls
+    new JoystickButton(operatorController, 3)
+      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
     
-    // new JoystickButton(operatorController, 5)
-    //   .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
+    new JoystickButton(operatorController, 5)
+      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
 
+    //TODO: Move to DS commands
+    new JoystickButton(driverController, Button.kA.value)
+      .whenPressed(new InstantCommand(() ->  {
+        climber.unBrake();
+        climber.setManual(true);
+        climber.setMotors(-0.25);
+      }))
+      .whenReleased(new InstantCommand(() ->  {
+        climber.setMotors(0);
+        climber.brake();
+        climber.setManual(false);
+        climber.resetClimber();
+      }));
 
+    new JoystickButton(driverController, Button.kY.value)
+    .whenPressed(new InstantCommand(() ->  {
+      climber.unBrake();
+      climber.setManual(true);
+      climber.setMotors(0.25);
+    }))
+    .whenReleased(new InstantCommand(() ->  {
+      climber.setMotors(0);
+      climber.brake();
+      climber.setManual(false);
+    }));
+    
     //TODO: Add climber back to this
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
@@ -208,9 +238,9 @@ public class RobotContainer {
           turret.setSpinnerTarget(turret.getSpinnerAngle());
 
           conveyor.setEjecting(false);
-          // climber.brake();
+          climber.brake();
         }
-      , intake, turret //, climber
+      , intake, turret, climber
       ));
   }
 
@@ -299,6 +329,7 @@ public class RobotContainer {
 
   public void doTurretSetup() {
     // turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
+    turret.resetSpinnerPID();
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
 
@@ -330,6 +361,8 @@ public class RobotContainer {
   public void enableLimelight() { turret.setLimelightOn();}
 
   public void raiseIntake() {intake.raiseIntake();}
+
+  public void resetClimber() {climber.resetClimber();}
 
   private String getRobotStatus() {return Constants.robotStatus.name();}
 
