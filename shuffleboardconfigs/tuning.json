@@ -1250,6 +1250,87 @@
                   "_title": "DigitalInput[6]/Value",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DigitalInput[4]/Value",
+                  "_title": "DigitalInput[4]/Value",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan0",
+                  "_title": "PowerDistribution[7]/Chan0"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan1",
+                  "_title": "PowerDistribution[7]/Chan1"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan2",
+                  "_title": "PowerDistribution[7]/Chan2"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan3",
+                  "_title": "PowerDistribution[7]/Chan3"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan4",
+                  "_title": "PowerDistribution[7]/Chan4"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan5",
+                  "_title": "PowerDistribution[7]/Chan5"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan6",
+                  "_title": "PowerDistribution[7]/Chan6"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan7",
+                  "_title": "PowerDistribution[7]/Chan7"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan8",
+                  "_title": "PowerDistribution[7]/Chan8"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Chan9",
+                  "_title": "PowerDistribution[7]/Chan9"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/Voltage",
+                  "_title": "PowerDistribution[7]/Voltage"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/TotalCurrent",
+                  "_title": "PowerDistribution[7]/TotalCurrent"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PowerDistribution[7]/SwitchableChannel",
+                  "_title": "PowerDistribution[7]/SwitchableChannel",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Solenoid[6,4]/Value",
+                  "_title": "Solenoid[6,4]/Value",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
                 }
               ]
             }
@@ -1563,6 +1644,32 @@
               "_source0": "network_table:///SmartDashboard/Spinner Measured Angle",
               "_title": "/SmartDashboard/Spinner Measured Angle"
             }
+          },
+          "6,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Is spinner busy",
+              "_title": "SmartDashboard/Is spinner busy",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Central hall effect",
+              "_title": "/SmartDashboard/Central hall effect",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
           }
         }
       }
@@ -1710,20 +1817,6 @@
               "_title": "SmartDashboard/right setpoint"
             }
           },
-          "4,0": {
-            "size": [
-              5,
-              4
-            ],
-            "content": {
-              "_type": "Field",
-              "_source0": "network_table:///Shuffleboard/Drive Team/field",
-              "_title": "Shuffleboard/Drive Team/field",
-              "Game/Game": "A2022_Rapid_React",
-              "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false
-            }
-          },
           "0,2": {
             "size": [
               2,
@@ -1755,6 +1848,20 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Left meters traveled",
               "_title": "SmartDashboard/Left meters traveled"
+            }
+          },
+          "4,0": {
+            "size": [
+              5,
+              4
+            ],
+            "content": {
+              "_type": "Field",
+              "_source0": "network_table:///SmartDashboard/Field",
+              "_title": "SmartDashboard/Field",
+              "Game/Game": "A2022_Rapid_React",
+              "Visuals/Robot Icon Size": 50.0,
+              "Visuals/Show Outside Circles": false
             }
           }
         }
@@ -1881,6 +1988,32 @@
               "_type": "Command",
               "_source0": "network_table:///SmartDashboard/Intake command",
               "_title": "SmartDashboard/Intake command"
+            }
+          },
+          "9,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Conveyor command equals null",
+              "_title": "SmartDashboard/Conveyor command equals null",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Intake command allowed",
+              "_title": "/SmartDashboard/Intake command allowed",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -2026,9 +2159,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -9.600000381469727,
+    "x": -6.400000095367432,
     "y": 0.0,
     "width": 1553.5999755859375,
-    "height": 621.5999755859375
+    "height": 644.0
   }
 }

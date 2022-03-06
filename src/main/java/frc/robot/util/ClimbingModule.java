@@ -19,16 +19,14 @@ import static frc.robot.Constants.Climber.*;
 import static frc.robot.Constants.*;
 
 public class ClimbingModule implements Sendable{
-    //TODO: write command for zeroing climber
     //Hardware
     private WPI_TalonFX motor; //Falcon that controls the height of the lift
-    private DoubleSolenoid brake; //Solenoid that activates the brake on the lift
 
     private ProfiledPIDController pidController;
     private SimpleMotorFeedforward ffController;
 
     private ClimberState climberState = ClimberState.Lowered;
-    private boolean braked = false;
+    private boolean braked = true;
 
     private ClimbingModule follower = null;
     private ClimbingModule leader = null;
@@ -43,9 +41,10 @@ public class ClimbingModule implements Sendable{
 
     private String name;
 
-    public ClimbingModule(int motorID, int brake1Port, int brake2Port, int limitSwitchPin, PIDandFFConstants controllerConstants, String name) {
+    private boolean manualMode = false;
+
+    public ClimbingModule(int motorID, PIDandFFConstants controllerConstants, String name) {
         motor = new WPI_TalonFX(motorID);
-        brake = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, brake1Port, brake2Port);
 
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Brake);
@@ -54,7 +53,6 @@ public class ClimbingModule implements Sendable{
         pidController = new ProfiledPIDController(controllerConstants.getP(), controllerConstants.getI(), controllerConstants.getD(), 
         new TrapezoidProfile.Constraints(controllerConstants.getMaxVel(), controllerConstants.getMaxAccel()));
         ffController = new SimpleMotorFeedforward(controllerConstants.getKS(), controllerConstants.getKV());
-
 
         this.name = name;
     }
@@ -104,7 +102,7 @@ public class ClimbingModule implements Sendable{
      * @return true if the climber is still outside of the acceptable error from the target (i.e. it's still moving.)
      */
     public boolean isBusy() {
-        return Math.abs(motor.getSelectedSensorPosition() - climberTarget) > 5;
+        return Math.abs(motor.getSelectedSensorPosition() - climberTarget) > 15000;
     }
 
     /**
@@ -117,22 +115,13 @@ public class ClimbingModule implements Sendable{
         double combinedOutput = pidOutput + ffOutput;
 
         //If any of these conditions are true, the motor should not be moving at all
-        if(!braked) motor.setVoltage(combinedOutput);
+        if(!braked && !(motor.getSelectedSensorPosition() < 0 && combinedOutput < 0) && !manualMode) motor.setVoltage(combinedOutput);
+
+        if(motor.getSelectedSensorPosition() <= 0 && combinedOutput < 0 && !manualMode) motor.setVoltage(0);
+        if(braked) motor.setVoltage(0);
+        
         
         if(follower != null) follower.periodic(); //Run the follower's control loop as well (if there is a follower set)
-    }
-
-
-    /**
-     * Changies the physical state of the brake solenoids
-     * @param braked
-     */
-    private void setSolenoids(boolean braked) {
-        this.braked = braked;
-        Value value = braked == true ? Value.kForward : Value.kReverse; 
-        brake.set(value);
-
-        if(follower != null) follower.setSolenoids(braked);
     }
 
     /**
@@ -149,13 +138,12 @@ public class ClimbingModule implements Sendable{
         } else {return false;}
     }
 
-    private void setFollowing(boolean following) {this.following = following;}
-
-    public void brake(){
-        setSolenoids(true);
-        motor.setVoltage(0);
+    public void reset() {
+        motor.setSelectedSensorPosition(0);
+        if(follower != null) follower.reset();
     }
-    public void unBrake(){setSolenoids(false);}
+
+    private void setFollowing(boolean following) {this.following = following;}
 
     public boolean isFollowing() {return following;}
     public boolean isBraked() {return braked;}
@@ -167,6 +155,19 @@ public class ClimbingModule implements Sendable{
     public String getName() {return name;}
     public void setLeader(ClimbingModule leader) {this.leader = leader;}
     public boolean isForceStopped() { return motor.getSensorCollection().isRevLimitSwitchClosed() == 1;}
+    public void setBraked(boolean value) {braked = value;}
+
+    public void setManual(boolean value) {
+        manualMode = value;
+
+        if(follower != null) follower.setManual(value);
+    }
+
+    public void setMotors(double power) {
+        motor.set(power);
+
+        if(follower != null) follower.setMotors(power);
+    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -174,7 +175,6 @@ public class ClimbingModule implements Sendable{
         builder.addStringProperty("Module name", () -> getName(), null);
         builder.addDoubleProperty("Limit switch activated", () -> motor.getSensorCollection().isRevLimitSwitchClosed(), null);
         builder.addBooleanProperty("Force stopped", () -> forceStop, null);
-        builder.addBooleanProperty("Braked", () -> brake.get().equals(Value.kForward), null);
         builder.addDoubleProperty("Module target", () -> climberTarget, null);
         builder.addDoubleProperty("Measured position", () -> getPosition(), null);
         builder.addDoubleProperty("Target velocity", () -> pidController.getSetpoint().velocity, null);
@@ -188,5 +188,7 @@ public class ClimbingModule implements Sendable{
         }, null);
         builder.addStringProperty("Climber state", () -> this.getClimberState().name(), null);
         builder.addDoubleProperty("PID target", () -> this.getPID().getSetpoint().position, null);
+        builder.addBooleanProperty("Braked", () -> braked, null);
+        builder.addBooleanProperty("Busy", ()-> isBusy(), null);
     }
 }

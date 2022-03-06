@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -27,9 +28,10 @@ public class TrajectoryCommand extends CommandBase{
     private DifferentialDriveKinematics kDriveKinematics;
 
     //Variables for controlling the command
-    private long startTimeMillis = 0;
-    private long runTime = 0;
     private States state = States.Following;
+    private Timer timer;
+
+    private double timeToReachEndpoint = .5; //Seconds allowed for the robot to reach the end of the trajectory
 
     private boolean finished = false;
 
@@ -78,18 +80,19 @@ public class TrajectoryCommand extends CommandBase{
     }
     @Override
     public void initialize() {
-        startTimeMillis = System.currentTimeMillis();
+        timer = new Timer();
+        timer.start();
     }
 
     @Override
     public void execute() {
         
-        runTime = System.currentTimeMillis() - startTimeMillis; //Update the amount of time the robot has been following the trajectory
+        double runTime = timer.get();
 
         //This loop is run while the robot is still following the trajectory
         if(state == States.Following) {
             //The time spent following has reached the time the trajectory should take
-            if(runTime >= trajectory.getTotalTimeSeconds() * 1000.0) {
+            if(runTime >= trajectory.getTotalTimeSeconds()) {
                 state = States.ReachEndpoint;
                 return;
             }
@@ -108,18 +111,18 @@ public class TrajectoryCommand extends CommandBase{
             //The command will also finish if the robot has been trying to get to the endpoint for too long
             if((robotTranslation.getDistance(goal) < PREFERRED_DISTANCE_ERROR 
                 && Math.abs(robotPose.getRotation().getRadians() - goalPose.getRotation().getRadians()) < PREFERRED_ANGLE_ERROR)
-                || runTime > trajectory.getTotalTimeSeconds() * 1000 + 500) {
+                || runTime > trajectory.getTotalTimeSeconds() + timeToReachEndpoint) {
                 
                 finished = true;
                 return;
             }
 
-            sendMotorPowers(trajectory.getTotalTimeSeconds() * 1000);
+            sendMotorPowers(trajectory.getTotalTimeSeconds());
         }
     }
 
-    private void sendMotorPowers(double timeIndexMillis) {
-        Trajectory.State goal = trajectory.sample(timeIndexMillis / 1000.0);
+    private void sendMotorPowers(double timeIndexSeonds) {
+        Trajectory.State goal = trajectory.sample(timeIndexSeonds);
 
         ChassisSpeeds adjustedSpeeds = controller.calculate(drivetrain.getOdometryPose(), goal);
         DifferentialDriveWheelSpeeds wheelSpeeds = kDriveKinematics.toWheelSpeeds(adjustedSpeeds);
@@ -134,7 +137,6 @@ public class TrajectoryCommand extends CommandBase{
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("Calling end");
         drivetrain.tankDrive(0, 0);
     }
 

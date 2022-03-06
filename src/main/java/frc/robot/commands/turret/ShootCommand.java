@@ -1,7 +1,7 @@
 package frc.robot.commands.turret;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.Conveyor;
 
 /**
@@ -15,22 +15,13 @@ public class ShootCommand extends CommandBase{
     private int startingAmount;
 
     private boolean ballsShot = false;
-    private long startTime = 0;
-    private long totalTime = 4000; //The total time the shooting command will run
+    private long totalTime = 3; //The total time (in seconds) the shooting command will run
+    private Timer timer;
 
-    private RobotContainer robotContainer;
-
-    public ShootCommand(Conveyor conveyor, Amount amount, RobotContainer robotTracker) {
+    public ShootCommand(Conveyor conveyor) {
         this.conveyor = conveyor;
 
         // addRequirements(conveyor);
-
-        this.amount = amount;
-        this.robotContainer = robotTracker;
-    }
-
-    public ShootCommand(Conveyor conveyor, Amount amount) {
-        this(conveyor, amount, null);
     }
 
     @Override
@@ -44,18 +35,17 @@ public class ShootCommand extends CommandBase{
         if(numberToShoot > startingAmount) numberToShoot = startingAmount;
 
         if(conveyor.getNumberOfBalls() > 1) conveyor.intakeStage1();
-        startTime = System.currentTimeMillis();
+        
+        timer = new Timer();
+        timer.start();
     }
 
     @Override
     public void execute() {
-        if(System.currentTimeMillis() - startTime >= totalTime) {
+        if(timer.get() >= totalTime) {
             ballsShot = true;
         }
 
-        // if(conveyor.getNumberOfBalls() == 1 && conveyor.getBall1Pos() == BallPosition.Stage2) {
-        //     ballAdvanced = true;
-        // }
     }
 
     @Override
@@ -67,7 +57,8 @@ public class ShootCommand extends CommandBase{
     public void end(boolean interrupted) {
         conveyor.stopAll();
         conveyor.clearTracker();
-        if(robotContainer != null) robotContainer.toggleLimelightTargeting();
+
+        timer.stop();
     }
 
     public static enum Amount { One, Two}

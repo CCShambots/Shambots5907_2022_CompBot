@@ -14,6 +14,11 @@ public class MoveSpinnerCommand extends CommandBase{
 
         addRequirements(turret);
     }
+    
+    @Override
+    public void execute() {
+        System.out.println("Moving spinner");
+    }
 
     @Override
     public void initialize() {

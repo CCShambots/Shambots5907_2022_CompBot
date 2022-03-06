@@ -18,25 +18,25 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import static frc.robot.Constants.Turret.*;
+import static frc.robot.Constants.*;
 
 public class Turret extends SubsystemBase{
 
     //Hardware devices
-    private WPI_TalonFX bottomFlywheel = new WPI_TalonFX(FLYWHEEL1);
-    // private WPI_TalonFX topFlywheel = new WPI_TalonFX(FLYWHEEL2);
+    private WPI_TalonFX bottomFlywheel = new WPI_TalonFX(BOTTOM_FLYWHEEL);
     private WPI_TalonFX spinner = new WPI_TalonFX(TURRET_SPINNER);
     private Limelight limelight = new Limelight();
 
     private HallEffectSensor centerHallEffect = new HallEffectSensor(HALL_EFFECT_CENTER);
+    private HallEffectSensor clockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_CLOCKWISE);
+    private HallEffectSensor counterClockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_COUNTERCLOCKWISE);
+
 
     private FakeGyro fakeGyro;
 
     // Flywheel controls
     private PIDController bottomFlywheelPID = new PIDController(BOTTOM_FLYWHEEL_P, BOTTOM_FLYWHEEL_I, BOTTOM_FLYWHEEL_D);
     private SimpleMotorFeedforward bottomFlywheelFeedforward = new SimpleMotorFeedforward(BOTTOM_FLYWHEEL_S, BOTTOM_FLYWHEEL_V);
-
-    // private PIDController topFlywheelPID = new PIDController(TOP_FLYWHEEL_P, TOP_FLYWHEEL_I, TOP_FLYWHEEL_D);
-    // private SimpleMotorFeedforward topFlywheelFeedforward = new SimpleMotorFeedforward(TOP_FLYWHEEL_S, TOP_FLYWHEEL_V);
 
     //Monitoring variables for telemetry
     private double bottomFlywheelPIDOutput = 0;
@@ -45,10 +45,14 @@ public class Turret extends SubsystemBase{
     private double topFlywheelFFOutput = 0;
 
     // Spinner controls
+
+    private boolean knowsLocation = false;
+    private Constraints originalSpinnerConstraints = new TrapezoidProfile.Constraints(SPINNER_MAX_VEL, SPINNER_MAX_ACCEL);
+    private Constraints slowSpinnerConstraints = new TrapezoidProfile.Constraints(SEARCH_VEL, SPINNER_MAX_ACCEL);
+
     private ProfiledPIDController spinnerPIDController = new ProfiledPIDController(
         SPINNER_P, SPINNER_I, SPINNER_D, 
-        new TrapezoidProfile.Constraints(
-            SPINNER_MAX_VEL, SPINNER_MAX_ACCEL));
+        slowSpinnerConstraints);
 
 
     private SimpleMotorFeedforward spinnerFeedForward = new SimpleMotorFeedforward(SPINNER_S, SPINNER_V);
@@ -62,21 +66,18 @@ public class Turret extends SubsystemBase{
     private double spinnerSetpoint = 0;
 
     private Direction searchDirection = Direction.Clockwise; //The direction the turret will spin in if no targets are spotted
+    private boolean shouldShoot = false; //Whether or not the turret should shoot if it is able (while tracking)
+
 
     public Turret(ShuffleboardTab driveTab) {
         bottomFlywheel.configFactoryDefault();
-        // topFlywheel.configFactoryDefault();
         spinner.configFactoryDefault();
 
-        bottomFlywheel.configSupplyCurrentLimit(CURRENT_LIMIT);
-        // topFlywheel.configSupplyCurrentLimit(CURRENT_LIMIT);
+        bottomFlywheel.configSupplyCurrentLimit(FLYWHEEL_CURRENT_LIMIT);
         spinner.configSupplyCurrentLimit(CURRENT_LIMIT);
         
         bottomFlywheel.setNeutralMode(NeutralMode.Coast);
-        // topFlywheel.setNeutralMode(NeutralMode.Coast);
         spinner.setNeutralMode(NeutralMode.Brake);
-
-        // topFlywheel.setInverted(true);
 
         spinner.setInverted(true);
 
@@ -87,26 +88,13 @@ public class Turret extends SubsystemBase{
     }
     
     private void initShuffleboard(ShuffleboardTab driveTab) {
-        // driveTab.add("Fake gyro", fakeGyro);
+        driveTab.add("Fake gyro", fakeGyro);
     }
 
     /* Flywheel methods */
-    
-    /**
-     * Given a distance, it sets the flywheel to the correct RPM
-     * @param distance The distance away from the target
-     */
-    public void spinUpFlywheel(double distance) {
-        //TODO: Calculate speed based on distance
-        double rpm = 6000;
-
-        setFlywheelTarget(rpm);
-    }
-
 
     public void setFlywheelTarget(double RPM) {
         bottomFlywheelPID.setSetpoint(RPM);
-        // topFlywheelPID.setSetpoint(RPM);
     }
 
     public double getFlywheelTarget() {
@@ -114,7 +102,6 @@ public class Turret extends SubsystemBase{
     }
 
     public double getBottomFlyWheelRPM() {return countsToRPM(bottomFlywheel.getSelectedSensorVelocity());}
-    // public double getTopFlyWheelRPM() {return countsToRPM(topFlywheel.getSelectedSensorVelocity());}
 
     /**
      * Converts a value, in encoder counts, to RPM
@@ -140,6 +127,9 @@ public class Turret extends SubsystemBase{
     public double getBottomFlywheelFFOutput() {return bottomFlywheelFFOutput;}
     public double getTopFlywheelPIDOutput() {return topFlywheelPIDOutput;}
     public double getTopFlywheelFFOutput() {return topFlywheelFFOutput;}
+
+    public boolean getShouldShoot() {return shouldShoot;}
+    public void setShouldShoot(boolean value) {shouldShoot = value;}
 
 
     /* Spinner methods */
@@ -171,23 +161,16 @@ public class Turret extends SubsystemBase{
         spinnerSetpoint = getSpinnerAngle();
     }
 
-    public void setBrake(NeutralMode mode) {
-        spinner.setNeutralMode(mode);
-    }
+    public void setSpinnerNeutralMode(NeutralMode mode) {spinner.setNeutralMode(mode);}
 
     /**
-     * @return The target angle of the spinner (in degrees)
+     * @return Spinner target (in degrees)
      */
     public double getSpinnerTarget() {
         return spinnerSetpoint;
     }
     
-    /**
-     * @return returns true if the turret was commanded to go farther than it can
-     */
-    public boolean isOverRotated() {
-        return spinnerOverRotated;
-    }
+    public boolean isOverRotated() {return spinnerOverRotated;}
 
     /**
      * @return returns the direction in which the turret has been over-extended (clockwise/counterclockwise)
@@ -197,10 +180,10 @@ public class Turret extends SubsystemBase{
     }
 
     /**
-     * @return true if the spinner is less than ACCEPTABLE_ERROR degrees off from the target
+     * @return true if the spinner is greater than ACCEPTABLE_ERROR degrees off from the target
      */
     public boolean isSpinnerBusy() {
-        return Math.abs(getSpinnerAngle() - getSpinnerTarget()) <= ACCEPTABLE_ERROR;
+        return Math.abs(getSpinnerAngle() - getSpinnerTarget()) >= ACCEPTABLE_ERROR;
     }  
 
     /**
@@ -257,6 +240,13 @@ public class Turret extends SubsystemBase{
     public double getSpinnerVoltage() {return spinner.getMotorOutputVoltage();}
     public double getSpinnerTargetVelocity() {return spinnerPIDController.getSetpoint().velocity;}
 
+    public boolean knowsLocation() {return knowsLocation;}
+    public void setKnowsLocation(boolean value) {
+        knowsLocation = value;
+        if(value == true) setSpinnerConstraints(getOriginalSpinnerConstraints());
+        else setSpinnerConstraints(getSlowSpinnerConstraints());
+    }
+
     public double getSpinnerVelocity() {
         return 
             spinner.getSelectedSensorVelocity() //Counts per 100 ms
@@ -275,9 +265,14 @@ public class Turret extends SubsystemBase{
         else setSearchDirection(Direction.Clockwise);
     }
 
-    /* Other sensors */
-    public boolean isHallEffectActivated() { return centerHallEffect.isActivated();}
+    public Constraints getOriginalSpinnerConstraints() {return originalSpinnerConstraints;}
+    public Constraints getSlowSpinnerConstraints() {return slowSpinnerConstraints;}
 
+
+    /* Other sensors */
+    public boolean isCentralHallEffectActivated() { return centerHallEffect.isActivated();}
+    public boolean isClockwiseHallEffectActivated() { return clockwiseHallEffect.isActivated();}
+    public boolean isCounterclockwiseHallEffectActivated() { return counterClockwiseHallEffect.isActivated();}
 
     //Limelight meothods (just exposes the functions in the util class)
     public void setLimelightOn() {limelight.setOn();}
@@ -302,11 +297,7 @@ public class Turret extends SubsystemBase{
 
         if(bottomFlywheelPID.getSetpoint() == 0) bottomFlywheel.setVoltage(0);
         else bottomFlywheel.setVoltage(bottomFlywheelPIDOutput + bottomFlywheelFFOutput);
-        
-        // topFlywheelPIDOutput = topFlywheelPID.calculate(getTopFlyWheelRPM());
-        // topFlywheelFFOutput = topFlywheelFeedforward.calculate(topFlywheelPID.getSetpoint());
-
-        // topFlywheel.setVoltage(topFlywheelPIDOutput + topFlywheelFFOutput);
+    
 
         spinnerPIDOutput = spinnerPIDController.calculate(getSpinnerAngle(), spinnerSetpoint);
         spinnerFFOutput = spinnerFeedForward.calculate(spinnerPIDController.getSetpoint().velocity);
@@ -317,17 +308,13 @@ public class Turret extends SubsystemBase{
         //TODO: Remove this telemetry when it's no longer used
         
         //Flywheel telemetry
-        // SmartDashboard.putData("Top Flywheel PID", topFlywheelPID);
         SmartDashboard.putData("Bottom Flywheel PID", bottomFlywheelPID);
         SmartDashboard.putNumber("Top Flywheel PID Output", topFlywheelPIDOutput);
         SmartDashboard.putNumber("Bottom Flywheel PID Output", bottomFlywheelPIDOutput);
         SmartDashboard.putNumber("Top Flywheel FF Output", bottomFlywheelFFOutput);
         SmartDashboard.putNumber("Bottom Flywheel FF Output", bottomFlywheelFFOutput);
-        // SmartDashboard.putNumber("Top Flywheel Target Velo", topFlywheelPID.getSetpoint());
         SmartDashboard.putNumber("Bottom Flywheel Target Velo", bottomFlywheelPID.getSetpoint());
-        // SmartDashboard.putNumber("Top Flywheel Measured Velo", getTopFlyWheelRPM());
         SmartDashboard.putNumber("Bottom Flywheel Measured Velo", getBottomFlyWheelRPM());
-        // SmartDashboard.putNumber("Top Flywheel Voltage", topFlywheel.getMotorOutputVoltage());
         SmartDashboard.putNumber("Bottom Flywheel Voltage", bottomFlywheel.getMotorOutputVoltage());
 
         //Spinner telemetry
@@ -339,6 +326,9 @@ public class Turret extends SubsystemBase{
         SmartDashboard.putNumber("Spinner Target Angle", getSpinnerTarget());
         SmartDashboard.putNumber("Spinner Measured Angle", getSpinnerAngle());
         SmartDashboard.putNumber("Spinner Voltage", getSpinnerVoltage());
+
+        SmartDashboard.putBoolean("Is spinner busy", isSpinnerBusy());
+        SmartDashboard.putBoolean("Central hall effect", centerHallEffect.isActivated());
 
     }
 

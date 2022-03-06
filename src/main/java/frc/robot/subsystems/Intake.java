@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Intake.*;
@@ -110,11 +109,7 @@ public class Intake extends SubsystemBase {
    * Periodic loop
    */
   @Override
-  public void periodic() {
-    //TODO: Remove this telemetry after finished
-    //SmartDashboard.putData(rotationalSolenoid1);
-    
-  }
+  public void periodic() {  }
 
   public static enum IntakeState {
     Raised, Lowered

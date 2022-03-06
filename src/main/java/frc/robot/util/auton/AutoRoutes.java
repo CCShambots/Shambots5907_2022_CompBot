@@ -6,6 +6,8 @@ import java.util.Map;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.auton.CSGO1Route;
+import frc.robot.commands.auton.CSGO2Route;
+import frc.robot.commands.auton.CSGO3Route;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -26,8 +28,11 @@ public class AutoRoutes {
             paths.put(Trajectories.valueOf(s), trajectories.get(s)); 
         }
 
+
         autoRoutes = new HashMap<>();
         autoRoutes.put(AutoPaths.CSGO1, new CSGO1Route(allRobotSubsystems, paths));
+        autoRoutes.put(AutoPaths.CSGO2, new CSGO2Route(allRobotSubsystems, paths));
+        autoRoutes.put(AutoPaths.CSGO3, new CSGO3Route(allRobotSubsystems, paths));
     }
 
     public Map<Trajectories, Trajectory> getTrajectories() {
@@ -36,6 +41,16 @@ public class AutoRoutes {
 
     public Map<Object, Command> getAutoRoutes() {
         return autoRoutes;
+    }
+
+    public Trajectory getFirstTrajectory(AutoPaths selectedPath) {
+        switch (selectedPath) {
+            case CSGO1: return paths.get(Trajectories.CSGO1);
+            case CSGO2: return paths.get(Trajectories.CSGO2);
+            case CSGO3: return paths.get(Trajectories.CSGO31);
+        }
+
+        return null;
     }
 
 

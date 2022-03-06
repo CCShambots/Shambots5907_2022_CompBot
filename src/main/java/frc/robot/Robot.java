@@ -15,6 +15,8 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.disableLimelight();
 
+    m_robotContainer.setDisabled();
+
     LiveWindow.disableAllTelemetry();
   }
 
@@ -23,7 +25,6 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     //Update dashboard telemetry
-    //TODO: Move this telemetry to the subsystems when I feel like it later
     m_robotContainer.telemetry();
   }
 
@@ -50,13 +51,20 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
+    //Update the robot's status so any subsystem that needs to know it's teleop can know
     m_robotContainer.setTeleop();
+    //Setup the joysticks and pull the config values from the drivetrain from Shuffleboard
     m_robotContainer.doDrivetrainSetup();
     m_robotContainer.raiseIntake();
+    m_robotContainer.doTurretSetup();
+
+    m_robotContainer.resetClimber();
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    
+  }
 
   @Override
   public void testInit() {

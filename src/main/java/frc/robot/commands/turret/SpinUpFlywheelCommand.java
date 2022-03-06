@@ -16,6 +16,11 @@ public class SpinUpFlywheelCommand extends CommandBase{
     }
 
     @Override
+    public void execute() {
+        System.out.println("Spinning Flywheel");
+    }
+
+    @Override
     public void initialize() {
         turret.setFlywheelTarget(targetRPM);
     }

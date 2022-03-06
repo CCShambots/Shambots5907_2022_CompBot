@@ -19,28 +19,29 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.Constants;
-import frc.robot.RobotContainer.RobotStatus;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
 
 import java.util.Map;
 
 public class Drivetrain extends SubsystemBase {
-  //TODO: Impelement amperage detection and stuff
   //Hardware declarations
   private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
-  private PIDandFFConstants rightConstants= new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
+  private PIDandFFConstants rightConstants = new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
 
   private TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, leftConstants);
   private TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, rightConstants);
 
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
-  private Compressor compressor = new Compressor(Constants.Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.REVPH);
+  private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
+  // private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
 
   //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
@@ -175,10 +176,6 @@ public class Drivetrain extends SubsystemBase {
     driveMode = driveMode == DriveModes.Tank ? DriveModes.Curvature : DriveModes.Tank;
   }
 
-  //TODO: Update for setting drive mode with limelight (once we merge turret code)
-  public boolean isToggleDriveModeAllowed() {
-    return driveMode != DriveModes.Limelight;
-  }
 
   /**Change whether drivetrain is reversed or not */
   public void setReversed(boolean value) {
@@ -205,6 +202,7 @@ public class Drivetrain extends SubsystemBase {
 
   /**
    * Returns the pose of the robot in meters
+   * Pose starts at (0,0) in the bottom left corner. Angle of the robot is from -pi to pi
    * @return the pose of the bot
    */
   public Pose2d getOdometryPose() {
@@ -253,14 +251,12 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //We have no use (yet) for odometry in teleop, so it will only update in autonomous
-    //TODO: Disable odometry running all the time; Just want to test it in teleop right now to see if it has any reliability
-    if(Constants.robotStatus == RobotStatus.AUTO || true) {
-      updateOdometry();
-    }
+    updateOdometry();
 
     leftModule.runControlLoop();
     rightModule.runControlLoop();
+
+    // SmartDashboard.putNumber("Used Current", pdh.getTotalCurrent());
   }
 
   //TODO: Remove these after testing
@@ -269,7 +265,7 @@ public class Drivetrain extends SubsystemBase {
   public TankDriveModule getRightModule() {return rightModule;}
 
   public static enum DriveModes {
-    Tank, Curvature, Limelight
+    Tank, Curvature
   }
 
   public static enum TeleopSpeeds {

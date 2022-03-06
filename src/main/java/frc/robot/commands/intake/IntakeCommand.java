@@ -1,7 +1,7 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
@@ -14,9 +14,9 @@ public class IntakeCommand extends CommandBase{
 
     private State state = State.Normal;
     private boolean finished = false;
-    long startTime ;
-    private long stageTwoStopTimer = 0;
-    private boolean stopStage2 = false;
+    private Timer timer;
+
+    private double startIntakeDelay = .5; //The time (in seconds) the intake should delay before starting
     
     /**
      * Creates a new intake command and starts running it.
@@ -43,12 +43,16 @@ public class IntakeCommand extends CommandBase{
         conveyor.intakeStage1();
 
         if(conveyor.getNumberOfBalls() == 0) {conveyor.intakeStage2();}
-        startTime = System.currentTimeMillis();
+        timer = new Timer();
+        timer.start();
     }
 
     @Override
     public void execute() {
-        if(System.currentTimeMillis() - startTime > 500) intake.intake(); 
+        if(timer.get() > startIntakeDelay)  {
+            timer.stop();
+            intake.intake(); 
+        }
 
         if(state == State.Normal) {
             //If the first ball (i.e. the one that entered the robot first) has reached Stage 2, we will stop the stage 2 conveyor
@@ -63,18 +67,12 @@ public class IntakeCommand extends CommandBase{
             }
         } else if(state == State.Cancelling) {
             //If the frist ball is not between two stages, we can safely end the command
-            if(!(conveyor.getBall1Pos() == BallPosition.BetweenStages) && !(conveyor.getBall1Pos() == BallPosition.Stage1)) {
+            if(!(conveyor.getBall1Pos() == BallPosition.BetweenStages || conveyor.getBall1Pos() == BallPosition.Stage2) && !(conveyor.getBall1Pos() == BallPosition.Stage1)) {
                 conveyor.stopAll();
                 finished = true;
             }
             
             intake.stop();
-        }
-
-        if(stopStage2) {
-            if(System.currentTimeMillis() - stageTwoStopTimer > 0) {
-                conveyor.stopStage2();
-            }
         }
 
         //If stopping is indicated by the drive team, the robot will immediately stop and raise the intake.
@@ -83,9 +81,6 @@ public class IntakeCommand extends CommandBase{
             intake.raiseIntake();
             state = State.Cancelling;
         }
-
-        //SmartDashboard.putData("Intake command", this);
-
     }
 
     @Override
@@ -104,6 +99,8 @@ public class IntakeCommand extends CommandBase{
             conveyor.stopAll();
         }
         intake.stop();
+        
+        timer.stop();
     }
 
     private static enum State {
