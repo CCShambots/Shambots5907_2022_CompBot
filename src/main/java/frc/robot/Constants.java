@@ -137,7 +137,8 @@ public final class Constants {
         public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
         public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
-        
+        public static final double MANUAL_SPEED = 0.05; //How fast the spinner can move manually (in the event of a crash)
+
         public static final double SPINNER_P = 0.017;
         // public static final double SPINNER_P = 0.0;
         public static final double SPINNER_I = 0.00;

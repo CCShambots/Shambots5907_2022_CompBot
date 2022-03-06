@@ -1,6 +1,5 @@
-package frc.robot.commands.turret;
+package frc.robot.commands.turret.zeroing;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;

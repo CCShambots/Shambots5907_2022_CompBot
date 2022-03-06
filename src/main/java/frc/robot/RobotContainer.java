@@ -2,16 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.climber.MoveClimberCommand;
@@ -19,11 +16,9 @@ import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.EjectBallCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.ClimberDiagnostic;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.turret.ManualZeroCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpFlywheelCommand;
@@ -31,7 +26,6 @@ import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Turret.Direction;
-import frc.robot.util.ClimbingModule;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
@@ -53,6 +46,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
+import static frc.robot.Constants.Turret.*;
 
 public class RobotContainer {
   ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
@@ -64,7 +58,6 @@ public class RobotContainer {
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
   private final Climber climber = new Climber();
-  // private final ClimberDiagnostic cd = new ClimberDiagnostic();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -172,22 +165,18 @@ public class RobotContainer {
           return limeLightTeleopCommand == null && conveyor.getNumberOfBalls() > 0;
         }));
 
-      //Zero the turret in event of a crash
+      //Allow for very slow, manual movement of the turret in the event of a crash
       new JoystickButton(operatorController, 13)
-        .whenPressed(new ConditionalCommand(new ManualZeroCommand(turret, Direction.CounterClockwise), new InstantCommand(() -> {
-          if(turret.getCurrentCommand() != null) turret.getCurrentCommand().cancel();
-        }), () -> !turret.knowsLocation()))
-        .whenReleased(new ConditionalCommand(new InstantCommand(() ->  {
-          if(turret.getCurrentCommand() != null) turret.getCurrentCommand().cancel();
-        }), new InstantCommand(), () -> !turret.knowsLocation()));
+        .whenPressed(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(MANUAL_SPEED)), new InstantCommand(), 
+          () -> !turret.knowsLocation()))
+        .whenReleased(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(0)), new InstantCommand(), 
+          () -> !turret.knowsLocation()));
 
       new JoystickButton(operatorController, 14)
-        .whenPressed(new ConditionalCommand(new ManualZeroCommand(turret, Direction.Clockwise), new InstantCommand(() -> {
-          if(turret.getCurrentCommand() != null) turret.getCurrentCommand().cancel();
-        }), () -> !turret.knowsLocation()))
-        .whenReleased(new ConditionalCommand(new InstantCommand(() ->  {
-          if(turret.getCurrentCommand() != null) turret.getCurrentCommand().cancel();
-        }), new InstantCommand(), () -> !turret.knowsLocation()));
+        .whenPressed(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(-MANUAL_SPEED)), new InstantCommand(),
+         () -> !turret.knowsLocation()))
+        .whenReleased(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(0)), new InstantCommand(), 
+          () -> !turret.knowsLocation()));
 
 
     //Climber controls
@@ -327,9 +316,6 @@ public class RobotContainer {
     turret.resetSpinnerPID();
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
-
-    //TODO: Remove
-    turret.setKnowsLocation(true);
   }
   
   /**

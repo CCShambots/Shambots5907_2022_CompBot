@@ -9,12 +9,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.subsystems.Climber.ClimberState;
 
-import static frc.robot.Constants.Drivetrain.*;
 import static frc.robot.Constants.Climber.*;
 import static frc.robot.Constants.*;
 

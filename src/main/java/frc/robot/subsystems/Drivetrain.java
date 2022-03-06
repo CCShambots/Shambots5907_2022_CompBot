@@ -19,12 +19,9 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
 
@@ -41,6 +38,7 @@ public class Drivetrain extends SubsystemBase {
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
   private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
+  //TODO: Make PDH power draw viewing visible at some point
   // private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
 
   //Drivetrain control

@@ -43,6 +43,8 @@ public class BaseRoute extends SequentialCommandGroup{
           new InstantCommand(() -> {
             drivetrain.resetOdometry(trajectory.getInitialPose());
             conveyor.setupTrackerAuto();
+            turret.resetSpinnerAngle(0);
+            turret.setKnowsLocation(true);
           })
         );
     }

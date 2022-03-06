@@ -290,6 +290,14 @@ public class Turret extends SubsystemBase{
         return -offset.getX();
     }
 
+    public boolean setManualPower(double power) {
+        if(!knowsLocation) {
+            spinner.set(power);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void periodic() {
         bottomFlywheelPIDOutput = bottomFlywheelPID.calculate(getBottomFlyWheelRPM());
@@ -302,7 +310,8 @@ public class Turret extends SubsystemBase{
         spinnerPIDOutput = spinnerPIDController.calculate(getSpinnerAngle(), spinnerSetpoint);
         spinnerFFOutput = spinnerFeedForward.calculate(spinnerPIDController.getSetpoint().velocity);
 
-        spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
+        //Only apply voltage to the spinner if we know where it is (otherwise there may only be very slow manual movements)
+        if(knowsLocation) spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
 
 
         //TODO: Remove this telemetry when it's no longer used
