@@ -190,7 +190,6 @@ public class RobotContainer {
         }), new InstantCommand(), () -> !turret.knowsLocation()));
 
 
-    //TODO: Add these back in later
     //Climber controls
     new JoystickButton(operatorController, 3)
       .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
@@ -198,33 +197,28 @@ public class RobotContainer {
     new JoystickButton(operatorController, 5)
       .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
 
-    //TODO: Move to DS commands
-    new JoystickButton(driverController, Button.kA.value)
-      .whenPressed(new InstantCommand(() ->  {
-        climber.unBrake();
-        climber.setManual(true);
-        climber.setMotors(-0.25);
-      }))
-      .whenReleased(new InstantCommand(() ->  {
-        climber.setMotors(0);
-        climber.brake();
-        climber.setManual(false);
-        climber.resetClimber();
-      }));
-
-    new JoystickButton(driverController, Button.kY.value)
-    .whenPressed(new InstantCommand(() ->  {
+    //Manual commands for moving the climber in for tim
+    driveTab.add("Raise Climber", new FunctionalCommand(() -> {
       climber.unBrake();
       climber.setManual(true);
       climber.setMotors(0.25);
-    }))
-    .whenReleased(new InstantCommand(() ->  {
+    }, () -> {}, (interrupted) -> {
       climber.setMotors(0);
       climber.brake();
       climber.setManual(false);
-    }));
+    }, () -> false, climber));
+
+    driveTab.add("Lower Climber", new FunctionalCommand(() -> {
+      climber.unBrake();
+      climber.setManual(true);
+      climber.setMotors(-0.25);
+    }, () -> {}, (interrupted) -> {
+      climber.setMotors(0);
+      climber.brake();
+      climber.setManual(false);
+      climber.resetClimber();
+    }, () -> false, climber));
     
-    //TODO: Add climber back to this
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
       .whenPressed(new InstantCommand(
