@@ -48,6 +48,8 @@ public class AutoRoutes {
             case CSGO1: return paths.get(Trajectories.CSGO1);
             case CSGO2: return paths.get(Trajectories.CSGO2);
             case CSGO3: return paths.get(Trajectories.CSGO31);
+            case BackUp1: return paths.get(Trajectories.BackUp1Route);
+            case BackUp2: return paths.get(Trajectories.BackUp2Route);
         }
 
         return null;
@@ -57,14 +59,18 @@ public class AutoRoutes {
     public static enum AutoPaths {
         CSGO1,
         CSGO2,
-        CSGO3
+        CSGO3,
+        BackUp1,
+        BackUp2
     }
 
     public static enum Trajectories {
         CSGO1,
         CSGO2,
         CSGO31,
-        CSGO32
+        CSGO32,
+        BackUp1Route,
+        BackUp2Route
     }
 
 }

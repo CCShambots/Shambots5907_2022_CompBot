@@ -78,7 +78,7 @@ public class RobotContainer {
     configureButtonBindings();
     
     //Load the different trajectories from their JSON files
-    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "Back-up1", "Back-up2"));
 
     //This object uses the trajectories to initialize each autonomous route command
     autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
@@ -88,9 +88,11 @@ public class RobotContainer {
     autoCommand = new SelectCommand(commands, this::getAutoId);
 
     //Set up the sendable chooser for selecting different autonomous routes
-    autoChooser.setDefaultOption("CSGO-1", AutoPaths.CSGO1);
-    autoChooser.addOption("CSGO-2", AutoPaths.CSGO2);
-    autoChooser.addOption("CSGO-3", AutoPaths.CSGO3);
+    autoChooser.setDefaultOption("CSGO Left", AutoPaths.CSGO1);
+    autoChooser.addOption("CSGO Mid", AutoPaths.CSGO2);
+    autoChooser.addOption("CSGO Right", AutoPaths.CSGO3);
+    autoChooser.addOption("Back up Left", AutoPaths.BackUp1);
+    autoChooser.addOption("Back up Right", AutoPaths.BackUp2);
 
     //TODO: Lights for if the turret is allowed to shoot or not
   }
