@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.turret.MoveSpinnerCommand;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpFlywheelCommand;
 import frc.robot.commands.turret.limelight.AutonomousTargetCommand;
@@ -32,6 +33,7 @@ public class CSGO1Route extends BaseRoute{
         addCommands(
             setupAuto(paths.get(CSGO1)),
             new ParallelCommandGroup(
+                new MoveSpinnerCommand(turret, -90),
                 new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
           
                 new IntakeCommand(intake, conveyor),
