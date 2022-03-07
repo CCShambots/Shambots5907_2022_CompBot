@@ -8,7 +8,7 @@ import frc.robot.subsystems.Turret;
 */
 public class SpinUpFlywheelCommand extends CommandBase{
     private Turret turret;
-    private double targetRPM ;
+    private double targetRPM;
 
     public SpinUpFlywheelCommand(Turret turret, double targetRPM) {
         this.turret = turret;

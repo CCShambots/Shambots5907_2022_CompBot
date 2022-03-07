@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import static frc.robot.Constants.Intake.*;
 
@@ -19,7 +19,7 @@ import static frc.robot.Constants.*;
 import static frc.robot.Constants.Drivetrain.*;
 
 
-public class Intake extends SubsystemBase {
+public class Intake extends PrioritizedSubsystem {
   private WPI_TalonFX roller1 = new WPI_TalonFX(ROLLER_1_ID);
 
   private DoubleSolenoid rotationalSolenoid1 = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, SOLENOID_1_PORT_1, SOLENOID_1_PORT_2);

@@ -8,11 +8,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.FakeGyro;
 import frc.robot.util.hardware.HallEffectSensor;
 import frc.robot.util.hardware.Limelight;
+import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -20,7 +20,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import static frc.robot.Constants.Turret.*;
 import static frc.robot.Constants.*;
 
-public class Turret extends SubsystemBase{
+public class Turret extends PrioritizedSubsystem{
 
     //Hardware devices
     private WPI_TalonFX bottomFlywheel = new WPI_TalonFX(BOTTOM_FLYWHEEL);
@@ -68,6 +68,7 @@ public class Turret extends SubsystemBase{
     private Direction searchDirection = Direction.Clockwise; //The direction the turret will spin in if no targets are spotted
     private boolean shouldShoot = false; //Whether or not the turret should shoot if it is able (while tracking)
 
+    private boolean shouldEndTargeting = false;
 
     public Turret(ShuffleboardTab driveTab) {
         bottomFlywheel.configFactoryDefault();
@@ -130,6 +131,9 @@ public class Turret extends SubsystemBase{
 
     public boolean getShouldShoot() {return shouldShoot;}
     public void setShouldShoot(boolean value) {shouldShoot = value;}
+
+    public boolean getShouldEndTargeting() {return shouldEndTargeting;}
+    public void setShouldEndTargeting(boolean value) { shouldEndTargeting = value;}
 
 
     /* Spinner methods */
