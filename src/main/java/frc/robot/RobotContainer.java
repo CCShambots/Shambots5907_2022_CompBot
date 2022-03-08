@@ -78,7 +78,7 @@ public class RobotContainer {
     configureButtonBindings();
     
     //Load the different trajectories from their JSON files
-    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "Back-up1", "Back-up2"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUp1Route", "BackUp2Route"));
 
     //This object uses the trajectories to initialize each autonomous route command
     autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
@@ -183,10 +183,10 @@ public class RobotContainer {
 
     //Climber controls
     new JoystickButton(operatorController, 3)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
+      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered, drivetrain));
     
     new JoystickButton(operatorController, 5)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
+      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
 
     //Manual commands for moving the climber in for tim
     driveTab.add("Raise Climber", new FunctionalCommand(() -> {

@@ -44,6 +44,7 @@ public class Climber extends SubsystemBase {
     public void brake(){setSolenoids(true);}
     public void unBrake(){setSolenoids(false);}
     public void setClimberState(ClimberState state) {leftModule.setModuleState(state);}
+    public boolean isUp() {return leftModule.getClimberState() != ClimberState.Lowered;} 
     public boolean isBusy() { return leftModule.isBusy() || rightModule.isBusy();}
     public boolean isForceStopped() {return leftModule.isForceStopped() || rightModule.isForceStopped();}
 

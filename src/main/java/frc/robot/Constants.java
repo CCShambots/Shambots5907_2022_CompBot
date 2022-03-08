@@ -52,6 +52,7 @@ public final class Constants {
 
         //The multiplier used by default when the robot is in normal mode (instead of turbo)
         public static double NORMAL_SPEED_MULT = 0.6;
+        public static double SLOW_SPEED_MULT = 0.1;
 
         //Max velocity (in meters per second because that's what pathweaver does)
         public static final double MAX_LINEAR_VELOCITY = 3;
@@ -80,7 +81,7 @@ public final class Constants {
         public static final int SOLENOID_1_PORT_2 = 2;
 
         //Control variables
-        public static final double INTAKE_SPEED = 0.4;
+        public static final double INTAKE_SPEED = 0.7;
     }
 
     public static class Conveyor {

@@ -87,9 +87,9 @@ public class Intake extends SubsystemBase {
   private void setIntakeDirection(IntakeDirection direction) {
     this.direction = direction;
     if(direction == IntakeDirection.Intaking) {
-      setMotors(INTAKE_SPEED);
-    }else if(direction == IntakeDirection.Exhausting) {
       setMotors(-INTAKE_SPEED);
+    }else if(direction == IntakeDirection.Exhausting) {
+      setMotors(INTAKE_SPEED);
     } else {
       setMotors(0);
     }

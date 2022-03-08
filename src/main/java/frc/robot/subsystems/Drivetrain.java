@@ -267,6 +267,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public static enum TeleopSpeeds {
-    Normal, Turbo
+    Normal, Turbo, Slow
   } 
 }
