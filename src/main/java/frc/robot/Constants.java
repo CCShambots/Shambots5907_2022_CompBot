@@ -39,14 +39,14 @@ public final class Constants {
         public static double LEFT_I = 0;
         public static double LEFT_D = 0;
 
-        public static double LEFT_KS = 1.1;
+        public static double LEFT_KS = 1.25;
         public static double LEFT_KV = 1.95;
 
         public static double RIGHT_P = 0.1;
         public static double RIGHT_I = 0;
         public static double RIGHT_D = 0;
 
-        public static double RIGHT_KS = 1.1;
+        public static double RIGHT_KS = 1.25;
         public static double RIGHT_KV = 1.95;
 
 
@@ -81,7 +81,7 @@ public final class Constants {
         public static final int SOLENOID_1_PORT_2 = 2;
 
         //Control variables
-        public static final double INTAKE_SPEED = 0.7;
+        public static final double INTAKE_SPEED = 0.9;
     }
 
     public static class Conveyor {
@@ -112,10 +112,10 @@ public final class Constants {
 
         //Flywheel control
         public static final double BOTTOM_FLYWHEEL_S = 0.75;
-        public static final double BOTTOM_FLYWHEEL_V = 0.00180;
-        public static final double BOTTOM_FLYWHEEL_P = 0.009;
+        public static final double BOTTOM_FLYWHEEL_V = 0.00175;
+        public static final double BOTTOM_FLYWHEEL_P = 0.001;
         public static final double BOTTOM_FLYWHEEL_I = 0;
-        public static final double BOTTOM_FLYWHEEL_D = 0.0004;
+        public static final double BOTTOM_FLYWHEEL_D = 0.0005;
 
         public static final double TOP_FLYWHEEL_S = 0.25;
         public static final double TOP_FLYWHEEL_V = 0.0017;
@@ -126,7 +126,7 @@ public final class Constants {
         //TODO: Tune this value to attainable error
         public static final double FLYWHEEL_ALLOWED_ERROR = 50; //The allowed error for the flywheel setpoint (in RPM)
         public static final double FLYWHEEL_TARGET_RPM = 3800; //The normal target rpm the turret will target
-        public static final double FLYWHEEL_LOW_RPM = 1500; //The normal target rpm the turret will target
+        public static final double FLYWHEEL_LOW_RPM = 1800; //The normal target rpm the turret will target
 
         //Spinner control
         public static final double COUNTS_SPINNER_ENCODER = 2048;
@@ -138,7 +138,7 @@ public final class Constants {
         public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
         public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
-        public static final double MANUAL_SPEED = 0.05; //How fast the spinner can move manually (in the event of a crash)
+        public static final double MANUAL_SPEED = 0.1; //How fast the spinner can move manually (in the event of a crash)
 
         public static final double SPINNER_P = 0.017;
         // public static final double SPINNER_P = 0.0;

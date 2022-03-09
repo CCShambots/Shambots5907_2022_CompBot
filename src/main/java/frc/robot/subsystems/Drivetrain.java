@@ -217,6 +217,11 @@ public class Drivetrain extends SubsystemBase {
     odometry.resetPosition(pose, getGyroHeadingOdometry());
   }
 
+  public void resetPID() {
+    leftModule.resetPID();
+    rightModule.resetPID();
+  }
+
   /**Returns the speeds of the wheel in meters per second */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(

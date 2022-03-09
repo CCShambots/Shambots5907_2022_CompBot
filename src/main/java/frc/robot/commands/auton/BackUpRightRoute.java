@@ -5,6 +5,7 @@ import java.util.Map;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.commands.turret.MoveSpinnerCommand;
@@ -17,19 +18,19 @@ import static frc.robot.util.auton.AutoRoutes.Trajectories;
 import static frc.robot.Constants.Turret.*;
 
 
-public class BackUp2Route extends BaseRoute{
+public class BackUpRightRoute extends BaseRoute{
 
-    public BackUp2Route(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
+    public BackUpRightRoute(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
         super(subsystems, paths);
 
         addCommands(
-            setupAuto(paths.get(Trajectories.BackUp2Route)),
+            setupAuto(paths.get(Trajectories.BackUpRightRoute)),
             new WaitCommand(8),
             new ParallelCommandGroup(
-                new MoveSpinnerCommand(turret, -90),
+                new MoveSpinnerCommand(turret, 0),
                 new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
-          
-                new TrajectoryCommand(drivetrain, paths.get(Trajectories.BackUp2Route))
+                new PrintCommand("Going onwards to the next thing"),
+                new TrajectoryCommand(drivetrain, paths.get(Trajectories.BackUpRightRoute))
             ),
             new AutonomousTargetCommand(turret),
             new ShootCommand(conveyor),

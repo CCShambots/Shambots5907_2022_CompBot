@@ -17,19 +17,19 @@ import static frc.robot.util.auton.AutoRoutes.Trajectories;
 import static frc.robot.Constants.Turret.*;
 
 
-public class BackUp1Route extends BaseRoute{
+public class BackUpLeftRoute extends BaseRoute{
 
-    public BackUp1Route(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
+    public BackUpLeftRoute(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
         super(subsystems, paths);
 
         addCommands(
-            setupAuto(paths.get(Trajectories.BackUp1Route)),
+            setupAuto(paths.get(Trajectories.BackUpLeftRoute)),
             new WaitCommand(8),
             new ParallelCommandGroup(
-                new MoveSpinnerCommand(turret, -90),
+                new MoveSpinnerCommand(turret, 0),
                 new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
           
-                new TrajectoryCommand(drivetrain, paths.get(Trajectories.BackUp1Route))
+                new TrajectoryCommand(drivetrain, paths.get(Trajectories.BackUpLeftRoute))
             ),
             new AutonomousTargetCommand(turret),
             new ShootCommand(conveyor),

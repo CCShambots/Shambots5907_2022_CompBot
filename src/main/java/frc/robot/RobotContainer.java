@@ -50,6 +50,7 @@ import static frc.robot.Constants.Turret.*;
 
 public class RobotContainer {
   ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
+  ShuffleboardTab configurationTab = Shuffleboard.getTab("Configuration");
 
   Field2d field = new Field2d();
   
@@ -78,7 +79,7 @@ public class RobotContainer {
     configureButtonBindings();
     
     //Load the different trajectories from their JSON files
-    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUp1Route", "BackUp2Route"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute"));
 
     //This object uses the trajectories to initialize each autonomous route command
     autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
@@ -90,9 +91,12 @@ public class RobotContainer {
     //Set up the sendable chooser for selecting different autonomous routes
     autoChooser.setDefaultOption("CSGO Left", AutoPaths.CSGO1);
     autoChooser.addOption("CSGO Mid", AutoPaths.CSGO2);
-    autoChooser.addOption("CSGO Right", AutoPaths.CSGO3);
-    autoChooser.addOption("Back up Left", AutoPaths.BackUp1);
-    autoChooser.addOption("Back up Right", AutoPaths.BackUp2);
+
+    //DO NOT UNCOMMENT!!!!!!!!
+    // autoChooser.addOption("CSGO Right", AutoPaths.CSGO3);
+    autoChooser.addOption("Back up Left", AutoPaths.BackUpLeft);
+    autoChooser.addOption("Back up Mid", AutoPaths.BackUpMid);
+    autoChooser.addOption("Back up Right", AutoPaths.BackUpRight);
 
     //TODO: Lights for if the turret is allowed to shoot or not
   }
@@ -137,7 +141,7 @@ public class RobotContainer {
     
       //Begin or cancel tracking the central target with the target
       new JoystickButton(operatorController, 7)
-        .whenPressed(new ConditionalCommand(new InstantCommand(() -> startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor, intake))), new InstantCommand(), () -> conveyor.getNumberOfBalls() > 0))
+        .whenPressed(new ConditionalCommand(new InstantCommand(() -> startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor, intake))), new InstantCommand(), () -> conveyor.getNumberOfBalls() > 0 && turret.knowsLocation()))
         .whenReleased(new ConditionalCommand(new InstantCommand(() -> endLimelightTargeting()), new InstantCommand(), () -> limeLightTeleopCommand != null));
       
       //Only let the turret shoot  if the conveyor doesn't have a command
@@ -169,16 +173,12 @@ public class RobotContainer {
 
       //Allow for very slow, manual movement of the turret in the event of a crash
       new JoystickButton(operatorController, 13)
-        .whenPressed(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(MANUAL_SPEED)), new InstantCommand(), 
-          () -> !turret.knowsLocation()))
-        .whenReleased(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(0)), new InstantCommand(), 
-          () -> !turret.knowsLocation()));
+        .whenPressed(new InstantCommand(() -> turret.setManualPower(MANUAL_SPEED)))
+        .whenReleased(new InstantCommand(() -> turret.setManualPower(0)));
 
       new JoystickButton(operatorController, 14)
-        .whenPressed(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(-MANUAL_SPEED)), new InstantCommand(),
-         () -> !turret.knowsLocation()))
-        .whenReleased(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(0)), new InstantCommand(), 
-          () -> !turret.knowsLocation()));
+        .whenPressed(new InstantCommand(() -> turret.setManualPower(-MANUAL_SPEED)))
+        .whenReleased(new InstantCommand(() -> turret.setManualPower(0)));
 
 
     //Climber controls
@@ -189,7 +189,7 @@ public class RobotContainer {
       .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
 
     //Manual commands for moving the climber in for tim
-    driveTab.add("Raise Climber", new FunctionalCommand(() -> {
+    configurationTab.add("Raise Climber", new FunctionalCommand(() -> {
       climber.unBrake();
       climber.setManual(true);
       climber.setMotors(0.25);
@@ -199,7 +199,7 @@ public class RobotContainer {
       climber.setManual(false);
     }, () -> false, climber));
 
-    driveTab.add("Lower Climber", new FunctionalCommand(() -> {
+    configurationTab.add("Lower Climber", new FunctionalCommand(() -> {
       climber.unBrake();
       climber.setManual(true);
       climber.setMotors(-0.25);
@@ -310,6 +310,10 @@ public class RobotContainer {
     
     //This updates variables from the dashbaord sliders
     drivetrain.setDriveTrainVariables();
+  }
+
+  public void resetDrivetrainPID() {
+    drivetrain.resetPID();
   }
 
   

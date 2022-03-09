@@ -75,6 +75,10 @@ public class TankDriveModule {
 
     public double getFeedForwardOutput() {return feedForwardOutput;}
 
+    public void resetPID() {
+        pidController.reset();
+    }
+
     public void runControlLoop() {
         pidOutput = pidController.calculate(getVelocity());
         feedForwardOutput = feedForwardController.calculate(pidController.getSetpoint());

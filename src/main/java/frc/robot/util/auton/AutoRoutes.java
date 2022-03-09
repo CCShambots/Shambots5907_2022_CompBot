@@ -5,6 +5,9 @@ import java.util.Map;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.auton.BackUpLeftRoute;
+import frc.robot.commands.auton.BackUpMidRoute;
+import frc.robot.commands.auton.BackUpRightRoute;
 import frc.robot.commands.auton.CSGO1Route;
 import frc.robot.commands.auton.CSGO2Route;
 import frc.robot.commands.auton.CSGO3Route;
@@ -33,6 +36,11 @@ public class AutoRoutes {
         autoRoutes.put(AutoPaths.CSGO1, new CSGO1Route(allRobotSubsystems, paths));
         autoRoutes.put(AutoPaths.CSGO2, new CSGO2Route(allRobotSubsystems, paths));
         autoRoutes.put(AutoPaths.CSGO3, new CSGO3Route(allRobotSubsystems, paths));
+        autoRoutes.put(AutoPaths.BackUpLeft, new BackUpLeftRoute(allRobotSubsystems, paths));
+        autoRoutes.put(AutoPaths.BackUpMid, new BackUpMidRoute(allRobotSubsystems, paths));
+        autoRoutes.put(AutoPaths.BackUpRight, new BackUpRightRoute(allRobotSubsystems
+        , paths));
+
     }
 
     public Map<Trajectories, Trajectory> getTrajectories() {
@@ -48,8 +56,9 @@ public class AutoRoutes {
             case CSGO1: return paths.get(Trajectories.CSGO1);
             case CSGO2: return paths.get(Trajectories.CSGO2);
             case CSGO3: return paths.get(Trajectories.CSGO31);
-            case BackUp1: return paths.get(Trajectories.BackUp1Route);
-            case BackUp2: return paths.get(Trajectories.BackUp2Route);
+            case BackUpLeft: return paths.get(Trajectories.BackUpLeftRoute);
+            case BackUpMid: return paths.get(Trajectories.BackUpMidRoute);
+            case BackUpRight: return paths.get(Trajectories.BackUpRightRoute);
         }
 
         return null;
@@ -60,8 +69,9 @@ public class AutoRoutes {
         CSGO1,
         CSGO2,
         CSGO3,
-        BackUp1,
-        BackUp2
+        BackUpLeft,
+        BackUpMid,
+        BackUpRight
     }
 
     public static enum Trajectories {
@@ -69,8 +79,9 @@ public class AutoRoutes {
         CSGO2,
         CSGO31,
         CSGO32,
-        BackUp1Route,
-        BackUp2Route
+        BackUpLeftRoute,
+        BackUpMidRoute,
+        BackUpRightRoute,
     }
 
 }
