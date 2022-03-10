@@ -136,7 +136,7 @@ public class ClimbingModule implements Sendable{
 
     public void reset() {
         motor.setSelectedSensorPosition(0);
-        if(follower != null) follower.reset();
+        // if(follower != null) follower.reset();
     }
 
     private void setFollowing(boolean following) {this.following = following;}
@@ -156,13 +156,13 @@ public class ClimbingModule implements Sendable{
     public void setManual(boolean value) {
         manualMode = value;
 
-        if(follower != null) follower.setManual(value);
+        // if(follower != null) follower.setManual(value);
     }
 
     public void setMotors(double power) {
         motor.set(power);
 
-        if(follower != null) follower.setMotors(power);
+        // if(follower != null) follower.setMotors(power);
     }
 
     @Override

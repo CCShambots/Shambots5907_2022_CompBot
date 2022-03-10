@@ -25,6 +25,7 @@ import frc.robot.commands.turret.SpinUpFlywheelCommand;
 import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climber.ClimberState;
+import frc.robot.subsystems.Climber.MotorSide;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
@@ -189,6 +190,11 @@ public class RobotContainer {
       .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
 
     //Manual commands for moving the climber in for tim
+    configurationTab.add("Raise Right Climber", climber.moveMotor(0.15, MotorSide.Right, false));
+    configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
+    configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
+    configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
+
     configurationTab.add("Raise Climber", new FunctionalCommand(() -> {
       climber.unBrake();
       climber.setManual(true);
@@ -209,6 +215,7 @@ public class RobotContainer {
       climber.setManual(false);
       climber.resetClimber();
     }, () -> false, climber));
+
     
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
