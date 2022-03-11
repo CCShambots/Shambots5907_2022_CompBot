@@ -195,27 +195,6 @@ public class RobotContainer {
     configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
     configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
 
-    configurationTab.add("Raise Climber", new FunctionalCommand(() -> {
-      climber.unBrake();
-      climber.setManual(true);
-      climber.setMotors(0.25);
-    }, () -> {}, (interrupted) -> {
-      climber.setMotors(0);
-      climber.brake();
-      climber.setManual(false);
-    }, () -> false, climber));
-
-    configurationTab.add("Lower Climber", new FunctionalCommand(() -> {
-      climber.unBrake();
-      climber.setManual(true);
-      climber.setMotors(-0.25);
-    }, () -> {}, (interrupted) -> {
-      climber.setMotors(0);
-      climber.brake();
-      climber.setManual(false);
-      climber.resetClimber();
-    }, () -> false, climber));
-
     
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)

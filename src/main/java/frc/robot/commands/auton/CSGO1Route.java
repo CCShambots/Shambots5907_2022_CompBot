@@ -14,6 +14,7 @@ import frc.robot.commands.turret.MoveSpinnerCommand;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpFlywheelCommand;
 import frc.robot.commands.turret.limelight.AutonomousTargetCommand;
+import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AllRobotSubsystems;
 import frc.robot.util.auton.AutoRoutes.Trajectories;
 
@@ -27,7 +28,11 @@ public class CSGO1Route extends BaseRoute{
         addCommands(
             setupAuto(paths.get(CSGO1)),
             new ParallelCommandGroup(
-                new MoveSpinnerCommand(turret, -90),
+                // new MoveSpinnerCommand(turret, -90),
+                new InstantCommand(() -> {
+                    turret.setSpinnerTarget(-90);
+                    turret.setSearchDirection(Direction.Clockwise);
+                }),
                 new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
           
                 new IntakeCommand(intake, conveyor),
