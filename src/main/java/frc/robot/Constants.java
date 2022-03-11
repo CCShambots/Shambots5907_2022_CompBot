@@ -188,7 +188,7 @@ public final class Constants {
 
         public static final double MID_HEIGHT = 28; //The height (in inches) that the climber will move to for the mid level climb
         public static final double LOW_HEIGHT = 12; //Same as above (in inches) but for low goal
-        public static final double LOWERED_HEIGHT = 0; //The fully lowered position of the climber (also in inches)
+        public static final double LOWERED_HEIGHT = -20; //The fully lowered position of the climber (also in inches)
     }
 
     public static class Controller {

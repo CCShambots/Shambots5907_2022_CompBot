@@ -113,7 +113,9 @@ public class ClimbingModule implements Sendable{
         //If any of these conditions are true, the motor should not be moving at all
         if(!braked && !(motor.getSelectedSensorPosition() < 0 && combinedOutput < 0) && !manualMode) motor.setVoltage(combinedOutput);
 
-        if(motor.getSelectedSensorPosition() <= 0 && combinedOutput < 0 && !manualMode) motor.setVoltage(0);
+        if(motor.getSelectedSensorPosition() <= 0 && combinedOutput < 0 && !manualMode) {
+            motor.setVoltage(0);
+        }
         if(braked) motor.setVoltage(0);
         
         
