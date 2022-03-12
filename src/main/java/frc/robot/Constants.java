@@ -134,7 +134,7 @@ public final class Constants {
 
         public static final double SPINNER_CLOCKWISE_LIMIT = -165; //Clockwise turns are negative
         public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 165; //Counter-clockwise turns are psotiive
-        public static final double ACCEPTABLE_ERROR = 3; //How close the turret has to get to it's setpoint before isBusy() returns false
+        public static final double ACCEPTABLE_ERROR = 4; //How close the turret has to get to it's setpoint before isBusy() returns false
         public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
         public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
@@ -181,14 +181,14 @@ public final class Constants {
         public static final double RIGHT_KV = .000035;
         // public static final double RIGHT_KV = .0000;
 
-        public static final double MAX_VEL = 150 * 2048; //Encoder counts per second
+        public static final double MAX_VEL = 200 * 2048; //Encoder counts per second
         public static final double MAX_ACCEL = 250 * 2048; //Encoder counts per second per second
 
         //TODO: calculate these
 
         public static final double MID_HEIGHT = 28; //The height (in inches) that the climber will move to for the mid level climb
         public static final double LOW_HEIGHT = 12; //Same as above (in inches) but for low goal
-        public static final double LOWERED_HEIGHT = -20; //The fully lowered position of the climber (also in inches)
+        public static final double LOWERED_HEIGHT = -40; //The fully lowered position of the climber (also in inches)
     }
 
     public static class Controller {
