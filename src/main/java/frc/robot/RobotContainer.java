@@ -195,6 +195,7 @@ public class RobotContainer {
     configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
     configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
 
+    driveTab.add("DISABLE TURRET TRACKING", new InstantCommand(() -> turret.setKnowsLocation(false)));
     
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
