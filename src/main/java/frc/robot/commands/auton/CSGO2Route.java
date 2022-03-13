@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.turret.ShootCommand;
@@ -32,7 +33,8 @@ public class CSGO2Route extends BaseRoute{
           
                 new IntakeCommand(intake, conveyor),
 
-                new SequentialCommandGroup(                    
+                new SequentialCommandGroup(
+                    new WaitCommand(2),                    
                     new TrajectoryCommand(drivetrain, paths.get(CSGO2)),
                     new InstantCommand(() -> intake.setShouldEnd(true))
                 )

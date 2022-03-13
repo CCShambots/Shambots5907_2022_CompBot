@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.Constants.Drivetrain;
 import frc.robot.util.ClimbingModule;
 import frc.robot.util.PIDandFFConstants;
@@ -44,6 +45,7 @@ public class Climber extends PrioritizedSubsystem {
     public void brake(){setSolenoids(true);}
     public void unBrake(){setSolenoids(false);}
     public void setClimberState(ClimberState state) {leftModule.setModuleState(state);}
+    public boolean isUp() {return leftModule.getClimberState() != ClimberState.Lowered;} 
     public boolean isBusy() { return leftModule.isBusy() || rightModule.isBusy();}
     public boolean isForceStopped() {return leftModule.isForceStopped() || rightModule.isForceStopped();}
 
@@ -56,11 +58,27 @@ public class Climber extends PrioritizedSubsystem {
     public double getLeftVoltage() {return leftModule.getVoltage();}
     public double getRightVoltage() {return rightModule.getVoltage();}
 
-    public void setMotors(double power) {leftModule.setMotors(power);}
-    public void setManual(boolean value) {leftModule.setManual(value);}
+    public void setMotors(double power) {leftModule.setMotors(power); rightModule.setMotors(power);}
+    public void setManual(boolean value) {leftModule.setManual(value); rightModule.setManual(value);}
 
     public void resetClimber() {
         leftModule.reset();
+    }
+
+    public FunctionalCommand moveMotor(double power, MotorSide side, boolean zero) {
+
+        ClimbingModule module = side == MotorSide.Right ? rightModule : leftModule;
+
+        return new FunctionalCommand(() -> {
+            unBrake();
+            setManual(true);
+            module.setMotors(power);
+          }, () -> {}, (interrupted) -> {
+            module.setMotors(0);
+            brake();
+            setManual(false);
+            module.reset();
+          }, () -> false, this);
     }
 
     @Override
@@ -73,4 +91,6 @@ public class Climber extends PrioritizedSubsystem {
     }
     
     public static enum ClimberState { Low, Mid, Lowered};
+
+    public static enum MotorSide { Left, Right};
 }

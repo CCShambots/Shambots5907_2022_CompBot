@@ -75,6 +75,7 @@ public class DrivingCommand extends CommandBase{
         output *= drivetrain.isReversed() ? -1 : 1;
 
         if(drivetrain.getSpeedMode() == TeleopSpeeds.Normal) output *= NORMAL_SPEED_MULT;
+        else if(drivetrain.getSpeedMode() == TeleopSpeeds.Slow) output *= SLOW_SPEED_MULT;
 
         return output;
     }

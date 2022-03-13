@@ -217,6 +217,11 @@ public class Drivetrain extends PrioritizedSubsystem {
     odometry.resetPosition(pose, getGyroHeadingOdometry());
   }
 
+  public void resetPID() {
+    leftModule.resetPID();
+    rightModule.resetPID();
+  }
+
   /**Returns the speeds of the wheel in meters per second */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
@@ -267,6 +272,6 @@ public class Drivetrain extends PrioritizedSubsystem {
   }
 
   public static enum TeleopSpeeds {
-    Normal, Turbo
+    Normal, Turbo, Slow
   } 
 }

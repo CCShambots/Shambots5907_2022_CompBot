@@ -39,19 +39,20 @@ public final class Constants {
         public static double LEFT_I = 0;
         public static double LEFT_D = 0;
 
-        public static double LEFT_KS = 1.1;
+        public static double LEFT_KS = 1.25;
         public static double LEFT_KV = 1.95;
 
         public static double RIGHT_P = 0.1;
         public static double RIGHT_I = 0;
         public static double RIGHT_D = 0;
 
-        public static double RIGHT_KS = 1.1;
+        public static double RIGHT_KS = 1.25;
         public static double RIGHT_KV = 1.95;
 
 
         //The multiplier used by default when the robot is in normal mode (instead of turbo)
         public static double NORMAL_SPEED_MULT = 0.6;
+        public static double SLOW_SPEED_MULT = 0.1;
 
         //Max velocity (in meters per second because that's what pathweaver does)
         public static final double MAX_LINEAR_VELOCITY = 3;
@@ -80,7 +81,7 @@ public final class Constants {
         public static final int SOLENOID_1_PORT_2 = 2;
 
         //Control variables
-        public static final double INTAKE_SPEED = 0.4;
+        public static final double INTAKE_SPEED = 0.8;
     }
 
     public static class Conveyor {
@@ -111,10 +112,10 @@ public final class Constants {
 
         //Flywheel control
         public static final double BOTTOM_FLYWHEEL_S = 0.75;
-        public static final double BOTTOM_FLYWHEEL_V = 0.00180;
-        public static final double BOTTOM_FLYWHEEL_P = 0.009;
+        public static final double BOTTOM_FLYWHEEL_V = 0.00175;
+        public static final double BOTTOM_FLYWHEEL_P = 0.001;
         public static final double BOTTOM_FLYWHEEL_I = 0;
-        public static final double BOTTOM_FLYWHEEL_D = 0.0004;
+        public static final double BOTTOM_FLYWHEEL_D = 0.0005;
 
         public static final double TOP_FLYWHEEL_S = 0.25;
         public static final double TOP_FLYWHEEL_V = 0.0017;
@@ -125,19 +126,19 @@ public final class Constants {
         //TODO: Tune this value to attainable error
         public static final double FLYWHEEL_ALLOWED_ERROR = 50; //The allowed error for the flywheel setpoint (in RPM)
         public static final double FLYWHEEL_TARGET_RPM = 3800; //The normal target rpm the turret will target
-        public static final double FLYWHEEL_LOW_RPM = 1500; //The normal target rpm the turret will target
+        public static final double FLYWHEEL_LOW_RPM = 1800; //The normal target rpm the turret will target
 
         //Spinner control
         public static final double COUNTS_SPINNER_ENCODER = 2048;
         public static final double TURRET_GEAR_RATIO = (1.0 / 3.0) * (10.0 / 140.0);
 
-        public static final double SPINNER_CLOCKWISE_LIMIT = -180; //Clockwise turns are negative
-        public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 180; //Counter-clockwise turns are psotiive
-        public static final double ACCEPTABLE_ERROR = 3; //How close the turret has to get to it's setpoint before isBusy() returns false
+        public static final double SPINNER_CLOCKWISE_LIMIT = -165; //Clockwise turns are negative
+        public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 165; //Counter-clockwise turns are psotiive
+        public static final double ACCEPTABLE_ERROR = 4; //How close the turret has to get to it's setpoint before isBusy() returns false
         public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
         public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
-        public static final double MANUAL_SPEED = 0.05; //How fast the spinner can move manually (in the event of a crash)
+        public static final double MANUAL_SPEED = 0.1; //How fast the spinner can move manually (in the event of a crash)
 
         public static final double SPINNER_P = 0.017;
         // public static final double SPINNER_P = 0.0;
@@ -145,7 +146,7 @@ public final class Constants {
         public static final double SPINNER_D = 0.0;
 
         public static final double SPINNER_MAX_VEL = 360; //Deg/sec
-        public static final double SPINNER_MAX_ACCEL = 720; //Deg/sec/sec
+        public static final double SPINNER_MAX_ACCEL = 480; //Deg/sec/sec
 
         // public static final double SPINNER_S = 0.85;
         public static final double SPINNER_S = 0.8;
@@ -180,14 +181,14 @@ public final class Constants {
         public static final double RIGHT_KV = .000035;
         // public static final double RIGHT_KV = .0000;
 
-        public static final double MAX_VEL = 50 * 2048; //Encoder counts per second
-        public static final double MAX_ACCEL = 100 * 2048; //Encoder counts per second per second
+        public static final double MAX_VEL = 200 * 2048; //Encoder counts per second
+        public static final double MAX_ACCEL = 250 * 2048; //Encoder counts per second per second
 
         //TODO: calculate these
 
         public static final double MID_HEIGHT = 28; //The height (in inches) that the climber will move to for the mid level climb
         public static final double LOW_HEIGHT = 12; //Same as above (in inches) but for low goal
-        public static final double LOWERED_HEIGHT = 9; //The fully lowered position of the climber (also in inches)
+        public static final double LOWERED_HEIGHT = -40; //The fully lowered position of the climber (also in inches)
     }
 
     public static class Controller {

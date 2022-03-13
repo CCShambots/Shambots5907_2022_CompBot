@@ -40,6 +40,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.setAutonomous();
+    m_robotContainer.resetDrivetrainPID();
 
     m_robotContainer.getAutoCommand().schedule();
   }
@@ -59,6 +60,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.doTurretSetup();
 
     m_robotContainer.resetClimber();
+
+    m_robotContainer.resetDrivetrainPID();
   }
 
   @Override

@@ -29,5 +29,10 @@ public class MoveSpinnerCommand extends CommandBase{
     public boolean isFinished() {
         return !turret.isSpinnerBusy();
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        System.out.println("Finished moving the spinner");
+    }
     
 }

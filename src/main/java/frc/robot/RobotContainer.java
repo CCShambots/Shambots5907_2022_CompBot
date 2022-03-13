@@ -25,13 +25,12 @@ import frc.robot.commands.turret.SpinUpFlywheelCommand;
 import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climber.ClimberState;
+import frc.robot.subsystems.Climber.MotorSide;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
 import frc.robot.util.priorityFramework.PriorityCommand;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -51,6 +50,7 @@ import static frc.robot.Constants.Turret.*;
 
 public class RobotContainer {
   ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
+  ShuffleboardTab configurationTab = Shuffleboard.getTab("Configuration");
 
   Field2d field = new Field2d();
   
@@ -79,7 +79,7 @@ public class RobotContainer {
     configureButtonBindings();
     
     //Load the different trajectories from their JSON files
-    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute"));
 
     //This object uses the trajectories to initialize each autonomous route command
     autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
@@ -89,9 +89,14 @@ public class RobotContainer {
     autoCommand = new SelectCommand(commands, this::getAutoId);
 
     //Set up the sendable chooser for selecting different autonomous routes
-    autoChooser.setDefaultOption("CSGO-1", AutoPaths.CSGO1);
-    autoChooser.addOption("CSGO-2", AutoPaths.CSGO2);
-    autoChooser.addOption("CSGO-3", AutoPaths.CSGO3);
+    autoChooser.setDefaultOption("CSGO Left", AutoPaths.CSGO1);
+    autoChooser.addOption("CSGO Mid", AutoPaths.CSGO2);
+
+    //DO NOT UNCOMMENT!!!!!!!!
+    // autoChooser.addOption("CSGO Right", AutoPaths.CSGO3);
+    autoChooser.addOption("Back up Left", AutoPaths.BackUpLeft);
+    autoChooser.addOption("Back up Mid", AutoPaths.BackUpMid);
+    autoChooser.addOption("Back up Right", AutoPaths.BackUpRight);
 
     //TODO: Lights for if the turret is allowed to shoot or not
   }
@@ -155,46 +160,28 @@ public class RobotContainer {
 
       //Allow for very slow, manual movement of the turret in the event of a crash
       new JoystickButton(operatorController, 13)
-        .whenPressed(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(MANUAL_SPEED)), new InstantCommand(), 
-          () -> !turret.knowsLocation()))
-        .whenReleased(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(0)), new InstantCommand(), 
-          () -> !turret.knowsLocation()));
+        .whenPressed(new InstantCommand(() -> turret.setManualPower(MANUAL_SPEED)))
+        .whenReleased(new InstantCommand(() -> turret.setManualPower(0)));
 
       new JoystickButton(operatorController, 14)
-        .whenPressed(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(-MANUAL_SPEED)), new InstantCommand(),
-         () -> !turret.knowsLocation()))
-        .whenReleased(new ConditionalCommand(new InstantCommand(() -> turret.setManualPower(0)), new InstantCommand(), 
-          () -> !turret.knowsLocation()));
+        .whenPressed(new InstantCommand(() -> turret.setManualPower(-MANUAL_SPEED)))
+        .whenReleased(new InstantCommand(() -> turret.setManualPower(0)));
 
 
     //Climber controls
     new JoystickButton(operatorController, 3)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered));
+      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered, drivetrain));
     
     new JoystickButton(operatorController, 5)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid));
+      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
 
     //Manual commands for moving the climber in for tim
-    driveTab.add("Raise Climber", new FunctionalCommand(() -> {
-      climber.unBrake();
-      climber.setManual(true);
-      climber.setMotors(0.25);
-    }, () -> {}, (interrupted) -> {
-      climber.setMotors(0);
-      climber.brake();
-      climber.setManual(false);
-    }, () -> false, climber));
+    configurationTab.add("Raise Right Climber", climber.moveMotor(0.15, MotorSide.Right, false));
+    configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
+    configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
+    configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
 
-    driveTab.add("Lower Climber", new FunctionalCommand(() -> {
-      climber.unBrake();
-      climber.setManual(true);
-      climber.setMotors(-0.25);
-    }, () -> {}, (interrupted) -> {
-      climber.setMotors(0);
-      climber.brake();
-      climber.setManual(false);
-      climber.resetClimber();
-    }, () -> false, climber));
+    driveTab.add("DISABLE TURRET TRACKING", new InstantCommand(() -> turret.setKnowsLocation(false)));
     
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
@@ -273,6 +260,10 @@ public class RobotContainer {
     
     //This updates variables from the dashbaord sliders
     drivetrain.setDriveTrainVariables();
+  }
+
+  public void resetDrivetrainPID() {
+    drivetrain.resetPID();
   }
 
   
