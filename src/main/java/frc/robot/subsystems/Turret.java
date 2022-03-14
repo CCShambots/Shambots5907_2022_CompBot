@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.FakeGyro;
+import frc.robot.util.Range;
 import frc.robot.util.hardware.HallEffectSensor;
 import frc.robot.util.hardware.Limelight;
 import frc.robot.util.priorityFramework.PrioritizedSubsystem;
@@ -186,15 +187,24 @@ public class Turret extends PrioritizedSubsystem{
     /**
      * @return true if the spinner is greater than ACCEPTABLE_ERROR degrees off from the target
      */
-    public boolean isSpinnerBusy() {
-        return Math.abs(getSpinnerAngle() - getSpinnerTarget()) >= ACCEPTABLE_ERROR;
+    public boolean isSpinnerBusy(double allowedError) {
+        return Math.abs(getSpinnerAngle() - getSpinnerTarget()) >= allowedError;
     }  
+
+    public boolean isSpinnerBusy() {
+        return isSpinnerBusy(ACCEPTABLE_ERROR);
+    }
 
     /**
      * @return true if the spinner is not in the range where it is unable to shoot
      */
     public boolean isShootingAllowed() {
-        return !INVALID_SHOOTING_RANGE.inRange(getSpinnerAngle()) && !isFlywheelBusy();
+        if (isFlywheelBusy()) return false;
+
+        for(Range r : INVALID_SHOOTING_RANGES) {
+            if(r.inRange(getSpinnerAngle())) return false;
+        }
+        return true;
     }
 
     /**

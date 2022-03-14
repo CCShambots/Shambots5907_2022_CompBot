@@ -73,6 +73,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
         //This if statement executes if the command has been running long enough that the limelight can be trusted
         if(timer.get() >= waitTime) {
             if(mode == Mode.Targeting) targetingLoop();
+            if(mode == Mode.WrapAround) {if(!turret.isSpinnerBusy(WRAPAROUND_ERROR)) mode = Mode.Targeting;}
             if(mode == Mode.Searching) searchingLoop();
         }
 
@@ -85,7 +86,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
         SmartDashboard.putString("Mode", mode.name());
     }
 
-
+    //Update the value we can trust from the limelight
     private void updateLimelight() {
         limelightOffset = turret.correctLimelightAngle(turret.getLimelightOffset()); //Get the limelight offset from the network table
 
@@ -103,10 +104,13 @@ public abstract class BasicTrackingCommand extends CommandBase{
         }
     }
 
+    //The loop that runs as the turret is actively targeting 
     private void targetingLoop() {
         if(turret.doesLimelightHaveTarget()) {
             //Set the spinner to the target angle
             turret.setSpinnerTarget(targetAngle);
+
+            overRotatedCheck();
         } else {
             //Searching for target
             mode = Mode.Searching;
@@ -119,6 +123,17 @@ public abstract class BasicTrackingCommand extends CommandBase{
         }
     }
 
+    private void overRotatedCheck() {
+        if(turret.isOverRotated()) {
+            //Set the wrap-around point to the opposite side of the direction the spinner is over-extended
+            double wrapAroundPoint = turret.getOverRotatedDirection() == Direction.Clockwise ? SPINNER_COUNTERCLOCKWISE_LIMIT : SPINNER_CLOCKWISE_LIMIT;
+
+            turret.setSpinnerTarget(wrapAroundPoint);
+            mode = Mode.WrapAround;
+        }
+    }
+
+    //The loop that runs as the turret is searching for a new target in a direction
     private void searchingLoop() {
 
         //Update the direction the turret is moving if that has been indicated by the turret
@@ -134,6 +149,11 @@ public abstract class BasicTrackingCommand extends CommandBase{
             //Return the spinner to the original velocity constraints for live targeting of the limelight
             turret.setSpinnerConstraints(new TrapezoidProfile.Constraints(SPINNER_MAX_VEL, SPINNER_MAX_ACCEL));
             turret.setSpinnerTarget(turret.getSpinnerAngle());
+        }
+
+        //If the spinner has reached the limit of it's movement and still doesn't have a target, we will switch the tageting direction
+        if(!turret.isSpinnerBusy() && !turret.doesLimelightHaveTarget()) {
+            turret.toggleSearchDirection();
         }
     }
 
@@ -204,6 +224,6 @@ public abstract class BasicTrackingCommand extends CommandBase{
     public abstract void additionalCodeInEnd();
     
     public static enum Mode {
-        Targeting, Searching
+        Targeting, WrapAround, Searching
     } 
 }  

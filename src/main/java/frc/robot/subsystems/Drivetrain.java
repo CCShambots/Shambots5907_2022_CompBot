@@ -11,11 +11,11 @@ import static frc.robot.Constants.Drivetrain.*;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -53,9 +53,11 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   private double smoothing = 8;
 
-  //Autonomous objects (odometry, trajectory following, etc)
-  RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
-  DifferentialDriveOdometry odometry;
+  //Odometry object for tracking robot pose
+  private DifferentialDriveOdometry odometry;
+
+  //Value that determines whether odometry should be used or not
+  private boolean useOdometry = true;
 
   private NetworkTableEntry smoothingSlider;
   private NetworkTableEntry speedSlider;
@@ -204,8 +206,14 @@ public class Drivetrain extends PrioritizedSubsystem {
    * Pose starts at (0,0) in the bottom left corner. Angle of the robot is from -pi to pi
    * @return the pose of the bot
    */
-  public Pose2d getOdometryPose() {
-    return odometry.getPoseMeters();
+  public Pose2d getOdometryPose() {return odometry.getPoseMeters();}
+
+  /**
+   * @return pose of the bot in feet instead of meters
+   */
+  public Pose2d getOdometryPoseFeet() {
+    Pose2d initialPose = getOdometryPose();
+    return new Pose2d(Units.metersToFeet(initialPose.getX()), Units.metersToFeet(initialPose.getY()), initialPose.getRotation());
   }
 
   /**
@@ -217,6 +225,9 @@ public class Drivetrain extends PrioritizedSubsystem {
 
     odometry.resetPosition(pose, getGyroHeadingOdometry());
   }
+
+  public void toggleUseOdometry() {useOdometry = !useOdometry;}
+  public boolean shouldUseOdometry() {return useOdometry;}
 
   public void resetPID() {
     leftModule.resetPID();

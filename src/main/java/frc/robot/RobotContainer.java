@@ -216,22 +216,6 @@ public class RobotContainer {
 
     SmartDashboard.putBoolean("Conveyor command equals null", conveyor.getCurrentCommand() == null);
   }
-  
-  /**
-   * Function that evaluates if the robot is in a state where it is able to shoot
-   * Requirements:
-   *  - the limelight is tracking
-   *  - the intake does not have another command running
-   *  - the limelight is locked in (i.e. right on target)
-   *  - the flywheel is at the right speed
-   * @return
-   */
-  public boolean isShootingAllowed() {
-    if(limeLightTeleopCommand == null) return false;
-    if(intake.getCurrentCommand() != null) return false;
-
-    return limeLightTeleopCommand.isReady();
-  }
 
   public void doDrivetrainSetup() {
     //Set the default command for easy driving

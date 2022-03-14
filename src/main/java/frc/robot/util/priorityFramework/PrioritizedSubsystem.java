@@ -48,9 +48,7 @@ public class PrioritizedSubsystem extends SubsystemBase{
      * @return true if the subsystem is running an instance of the command passed as parameter
      * @throws NotACommandException
      */
-    public boolean isRunning(Class<?> cls) throws NotACommandException{
-        if(!Command.class.isAssignableFrom(cls)) throw new NotACommandException("isRunning()");
-
+    public boolean isRunning(Class<?> cls) {
         if(getCurrentCommand() == null) return false;
         return cls.isInstance(getCurrentCommand());
     }
