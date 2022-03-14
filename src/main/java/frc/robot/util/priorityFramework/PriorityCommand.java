@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import static frc.robot.util.priorityFramework.PriorityRegistry.*;
+
 public class PriorityCommand extends CommandBase{
     private Command command;
     private Set<PrioritizedSubsystem> requirements;
@@ -24,34 +26,44 @@ public class PriorityCommand extends CommandBase{
         this.condition = condition;
     }
 
-    public PriorityCommand(Command command, int priority) {
-        this(command, priority, () -> false);
-    }
+    public PriorityCommand(Command command, int priority) {this(command, priority, () -> true);}
+    public PriorityCommand(Command command, int priority, PrioritizedSubsystem... requirements) {this(command, priority, () -> true, requirements);}
 
     public PriorityCommand(Command command, int priority, BooleanSupplier condition, PrioritizedSubsystem... requirements) {
         this(command, priority, condition);
         Collections.addAll(this.requirements, requirements);
     }
 
-    public PriorityCommand(Command command, int priority, PrioritizedSubsystem... requirements) {
-        this(command, priority, () -> false, requirements);
-    }
+    public PriorityCommand(Command command, BooleanSupplier condition) {this(command, lookUpCommand(command), condition);}
+    public PriorityCommand(Command command) {this(command, lookUpCommand(command));}
+    public PriorityCommand(Command command, PrioritizedSubsystem... requirements) {this(command, lookUpCommand(command), requirements);}
+    public PriorityCommand(Command command, BooleanSupplier condition, PrioritizedSubsystem... requirements) {this(command, lookUpCommand(command), condition, requirements);}
 
     /**
-     * Attempts
+     * Attempt to schedule the command
      */
     @Override
     public void initialize() {
-        //Attempt to shchedule the command
 
+        //Only proceed if the boolean supplier is true
         if(!condition.getAsBoolean()) return;
 
+        //Only proceed if every subsytem required has a priority lower than this command's priority
         for(PrioritizedSubsystem s : requirements) {
             if(! (this.priority > s.getPriority())) return;
         }
 
+        //Set the priority of each subsystem
+        for(PrioritizedSubsystem s : requirements) {
+            try {
+                s.setPriority(priority);
+            } catch (InvalidPriorityException e) {
+                e.printStackTrace();
+            }
+        }
+
         //Add a decorator to the command that wil reset the subsystems to -1 priority after the command finishes
-        command.andThen(new ResetSubsystemsCommand(requirements));
+        command.andThen(new ResetSubsystemsCommand(requirements, priority));
         command.schedule();
     }
 

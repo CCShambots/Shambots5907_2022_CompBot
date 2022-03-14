@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.SoftStop;
 import frc.robot.commands.climber.MoveClimberCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.EjectBallCommand;
@@ -19,6 +20,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.commands.turret.LowGoalShootCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpFlywheelCommand;
@@ -29,10 +31,11 @@ import frc.robot.subsystems.Climber.MotorSide;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
+import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PriorityCommand;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -47,6 +50,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
 import static frc.robot.Constants.Turret.*;
+import static frc.robot.util.priorityFramework.PriorityRegistry.*;
 
 public class RobotContainer {
   ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
@@ -99,6 +103,17 @@ public class RobotContainer {
     autoChooser.addOption("Back up Right", AutoPaths.BackUpRight);
 
     //TODO: Lights for if the turret is allowed to shoot or not
+
+    //Register priority comnmads
+    try {
+      registerCommand(LowGoalShootCommand.class, 1);
+      registerCommand(IntakeCommand.class, 2);
+      registerCommand(TeleopTrackingCommand.class, 2);
+      registerCommand(EjectBallCommand.class, 3);
+      registerCommand(SoftStop.class, 5);
+    } catch (NotACommandException e) {
+      e.printStackTrace();
+    }
   }
 
   private void configureButtonBindings() {
@@ -118,7 +133,7 @@ public class RobotContainer {
     
       //Runs the intake command if the robot has fewer than two balls and the turret is not trying to shoot
       new JoystickButton(operatorController, 4)
-        .whenPressed(new PriorityCommand(new IntakeCommand(intake, conveyor), 2, () -> conveyor.getNumberOfBalls() < 2));
+        .whenPressed(new PriorityCommand(new IntakeCommand(intake, conveyor), () -> conveyor.getNumberOfBalls() < 2));
       
       //Indicates that the intake command should end prematurely 
       //(balls will still be processed if they are still moving through the conveyor)
@@ -127,14 +142,14 @@ public class RobotContainer {
 
       //Ejects balls from the conveyor
       new JoystickButton(operatorController, 2)
-        .whenPressed(new PriorityCommand(new EjectBallCommand(conveyor, intake, 1.5), 3));
+        .whenPressed(new PriorityCommand(new EjectBallCommand(conveyor, intake, 1.5)));
       
 
     //Turret Controls
     
       //Begin or cancel tracking the central target with the target
       new JoystickButton(operatorController, 7)
-        .whenPressed(new PriorityCommand(new TeleopTrackingCommand(turret, conveyor), 2, () -> conveyor.getNumberOfBalls() > 0))
+        .whenPressed(new PriorityCommand(new TeleopTrackingCommand(turret, conveyor), () -> conveyor.getNumberOfBalls() > 0))
         .whenReleased(new InstantCommand(() -> turret.setShouldEndTargeting(true)));
       
       //Only let the turret shoot  if the conveyor doesn't have a command
@@ -145,18 +160,14 @@ public class RobotContainer {
       //Switch the direction the turret will use to search for the target when it is not visible
       new JoystickButton(operatorController, 6).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.CounterClockwise)));
       new JoystickButton(operatorController, 10).whenPressed(new InstantCommand(() -> turret.setSearchDirection(Direction.Clockwise)));
-        
+      
       //Moves the turret to facing directly forward
       new JoystickButton(operatorController, 11)
         .whenPressed(new PriorityCommand(new InstantCommand(() -> turret.setSpinnerTarget(0)), 1));
         
       //Spin up the flywheel and shoot into the low goal
       new JoystickButton(operatorController, 12)
-        .whenPressed(new PriorityCommand(new SequentialCommandGroup(
-          new SpinUpFlywheelCommand(turret, Constants.Turret.FLYWHEEL_LOW_RPM),
-          new ShootCommand(conveyor),
-          new InstantCommand(() -> turret.setFlywheelTarget(0))
-        ), 1, () -> conveyor.getNumberOfBalls() > 0, turret));
+        .whenPressed(new PriorityCommand(new LowGoalShootCommand(conveyor, turret), () -> conveyor.getNumberOfBalls() > 0, turret));
 
       //Allow for very slow, manual movement of the turret in the event of a crash
       new JoystickButton(operatorController, 13)
@@ -185,40 +196,10 @@ public class RobotContainer {
     
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
-      .whenPressed(new PriorityCommand(new InstantCommand(
-        () -> {
-          intake.stop();
-          conveyor.stopAll();
-          turret.setFlywheelTarget(0);
-          turret.setLimelightOff();
-          turret.setSpinnerTarget(turret.getSpinnerAngle());
-
-          conveyor.setEjecting(false);
-          climber.brake();
-        }
-      ), 10, intake, conveyor, turret, climber));
+      .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, climber)));
   }
 
   public void telemetry() {
-    //TODO: Remove all this telemtry once we don't need it (other telemetry found in periodic() of subsystems)
-
-    //Drivetrain telemetry
-    SmartDashboard.putNumber("Gyro value", drivetrain.getGyroHeading());
-    SmartDashboard.putNumber("Left meters traveled", drivetrain.getLeftMeters());
-    SmartDashboard.putNumber("Right meters traveled", drivetrain.getRightMeters());
-    SmartDashboard.putNumber("Left voltage", drivetrain.getLeftVoltage());
-    SmartDashboard.putNumber("Right voltage", drivetrain.getRightVoltage());
-    SmartDashboard.putNumber("Left velocity", drivetrain.getLeftVelocity());
-    SmartDashboard.putNumber("Right velocity", drivetrain.getRightVelocity());
-    SmartDashboard.putNumber("Left feed forward", drivetrain.getLeftModule().getFeedForwardOutput());
-    SmartDashboard.putNumber("Right feed forward", drivetrain.getRightModule().getFeedForwardOutput());
-    SmartDashboard.putNumber("Left PID", drivetrain.getLeftModule().getPIDOutput());
-    SmartDashboard.putNumber("Right PID", drivetrain.getRightModule().getPIDOutput());
-    SmartDashboard.putData("RightPID", drivetrain.getRightModule().getPIDController());
-    SmartDashboard.putData("leftPID", drivetrain.getLeftModule().getPIDController());
-    SmartDashboard.putNumber("left setpoint", drivetrain.getLeftModule().getSetpoint());
-    SmartDashboard.putNumber("right setpoint", drivetrain.getRightModule().getSetpoint());
-
     if(Constants.robotStatus != RobotStatus.DISABLED) {
       field.setRobotPose(drivetrain.getOdometryPose());
       

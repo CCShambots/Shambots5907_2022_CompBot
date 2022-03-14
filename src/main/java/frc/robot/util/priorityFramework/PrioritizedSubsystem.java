@@ -64,6 +64,4 @@ public class PrioritizedSubsystem extends SubsystemBase{
         if(getCurrentCommand() == null) return false; 
         return getCurrentCommand().equals(command);
     }
-
-
 }
