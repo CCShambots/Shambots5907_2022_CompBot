@@ -77,6 +77,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
     @Override
     public void additionalCodeInEnd() {
         turret.setFlywheelTarget(0);
-        turret.setShouldEndTargeting(false);
+
+        if(conveyor.getNumberOfBalls() == 0) turret.setShouldEndTargeting(false);
     }
 }

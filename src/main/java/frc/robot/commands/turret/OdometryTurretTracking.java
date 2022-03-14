@@ -10,7 +10,9 @@ import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.priorityFramework.PriorityCommand;
 
 import static frc.robot.Constants.*;
+import static frc.robot.Constants.Turret.*;
 import static java.lang.Math.*;
+
 
 /**
  * Command for tracking the goal roughly based on the robot's pose (as recorded by odometry)
@@ -19,8 +21,6 @@ public class OdometryTurretTracking extends CommandBase{
     private Drivetrain drivetrain;
     private Conveyor conveyor;
     private Turret turret;
-
-    private double distanceToGoalToTrigger = 5;
 
 
     public OdometryTurretTracking(Drivetrain drivetrain, Conveyor conveyor, Turret turret) {
@@ -46,10 +46,15 @@ public class OdometryTurretTracking extends CommandBase{
             turret.setSpinnerTarget(targetAngle);
 
             //Switch to tracking with
-            if(poseFeet.getTranslation().getDistance(goalPos) <= distanceToGoalToTrigger) {
+            double distanceToGoal = poseFeet.getTranslation().getDistance(goalPos);
+
+            if(distanceToGoal <= AUTOMATIC_START_DISTANCE && !turret.getShouldEndTargeting()) {
                 //Begin teleop tracking command
                 new PriorityCommand(new TeleopTrackingCommand(drivetrain, turret, conveyor, true), () -> turret.knowsLocation()).schedule();
             } 
+
+            //If the turret was told that it should end, turn that falg off if the robot leaves the allowed starting area
+            if(turret.getShouldEndTargeting()) turret.setShouldEndTargeting(!(distanceToGoal > AUTOMATIC_START_DISTANCE));
         }
     }
 
