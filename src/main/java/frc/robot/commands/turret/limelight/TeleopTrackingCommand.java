@@ -3,7 +3,6 @@ package frc.robot.commands.turret.limelight;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.subsystems.Conveyor;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
 
 import static frc.robot.Constants.Turret.*;
@@ -11,25 +10,23 @@ import static frc.robot.Constants.Turret.*;
 public class TeleopTrackingCommand extends BasicTrackingCommand{
     private Conveyor conveyor;
     private ShootCommand shootCommand = null;
-    private Intake intake;
 
-    public TeleopTrackingCommand(Turret turret, Conveyor conveyor, Intake intake) {
+    public TeleopTrackingCommand(Turret turret, Conveyor conveyor) {
         super(turret);
         this.conveyor = conveyor;
-        this.intake = intake;
 
-        //We include the intake so that an intake command can't be started while targeting (it should cancel the targeting)
         addRequirements(turret, conveyor);
     }
 
     @Override
     public boolean isComplete() {
         //This will often be cancelled by itself, but it can also be cancelled
-        return conveyor.getNumberOfBalls() == 0;
+        return conveyor.getNumberOfBalls() == 0 || turret.getShouldEndTargeting();
     }
 
     @Override
     public void additionalCodeInInitialize() {
+        turret.setShouldEndTargeting(false);
         turret.setFlywheelTarget(FLYWHEEL_TARGET_RPM);
 
         shootCommand = null;
@@ -41,8 +38,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
         SmartDashboard.putBoolean("Teleop Tracking command is ready to shoot", isReady());
 
         if(turret.getShouldShoot() 
-            && shootCommand == null 
-            && intake.getCurrentCommand() == null 
+            && shootCommand == null
             && isReady()) 
         {
             shootCommand = new ShootCommand(conveyor);
@@ -63,5 +59,6 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
     @Override
     public void additionalCodeInEnd() {
         turret.setFlywheelTarget(0);
+        turret.setShouldEndTargeting(false);
     }
 }

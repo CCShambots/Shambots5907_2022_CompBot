@@ -1,11 +1,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.hardware.ProximitySensor;
 import frc.robot.util.intake.Ball;
 import frc.robot.util.intake.BallTracker;
 import frc.robot.util.intake.Ball.BallPosition;
+import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import static frc.robot.Constants.Conveyor.*;
 
@@ -18,7 +18,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 
-public class Conveyor extends SubsystemBase{
+public class Conveyor extends PrioritizedSubsystem{
     private WPI_TalonFX conveyorStage1 = new WPI_TalonFX(CONVEYOR_STAGE1_ID);
     private WPI_TalonFX conveyorStage2 = new WPI_TalonFX(CONVEYOR_STAGE2_ID);
 
