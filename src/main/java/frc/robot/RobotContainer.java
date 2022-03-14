@@ -142,7 +142,7 @@ public class RobotContainer {
     
       //Begin or cancel tracking the central target with the target
       new JoystickButton(operatorController, 7)
-        .whenPressed(new ConditionalCommand(new InstantCommand(() -> startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor, intake))), new InstantCommand(), () -> conveyor.getNumberOfBalls() > 0 && turret.knowsLocation()))
+        .whenPressed(new ConditionalCommand(new InstantCommand(() -> startLimelightTargeting(new TeleopTrackingCommand(turret, conveyor, intake))), new InstantCommand(), () -> conveyor.getNumberOfBalls() > 0 && turret.knowsLocation() && turret.getCurrentCommand().getClass() != TeleopTrackingCommand.class))
         .whenReleased(new ConditionalCommand(new InstantCommand(() -> endLimelightTargeting()), new InstantCommand(), () -> limeLightTeleopCommand != null));
       
       //Only let the turret shoot  if the conveyor doesn't have a command
@@ -305,7 +305,7 @@ public class RobotContainer {
 
   
   public void doTurretSetup() {
-    turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, conveyor, turret));
+    turret.setDefaultCommand(new OdometryTurretTracking(drivetrain, intake, conveyor, turret));
     turret.resetSpinnerPID();
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);

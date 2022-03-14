@@ -3,8 +3,12 @@ package frc.robot.commands.turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.Direction;
 
@@ -19,25 +23,37 @@ public class OdometryTurretTracking extends CommandBase{
     private Conveyor conveyor;
     private Turret turret;
 
-    public OdometryTurretTracking(Drivetrain drivetrain, Conveyor conveyor, Turret turret) {
+    private double distanceToGoalToTrigger = 5;
+    private Intake intake;
+
+    public OdometryTurretTracking(Drivetrain drivetrain, Intake intake, Conveyor conveyor, Turret turret) {
         this.drivetrain = drivetrain;
         this.conveyor = conveyor;
         this.turret = turret;
+        this.intake = intake;
 
         addRequirements(turret);
     }
 
     @Override
     public void initialize() {
-
     }
 
     @Override
     public void execute() {
-        if(conveyor.getNumberOfBalls() == 2) {
+        if(conveyor.getNumberOfBalls() > 0) {
+
+            //Tracking with odometry
             Pose2d poseFeet = poseMetersToFeet(drivetrain.getOdometryPose());
             double targetAngle = getTurretAngleFromPose(poseFeet);
             turret.setSpinnerTarget(targetAngle);
+
+            //Switch to tracking with
+            if(poseFeet.getTranslation().getDistance(goalPos) <= distanceToGoalToTrigger) {
+                //Begin teleop tracking command
+                //TODO: Make priority command
+                new ConditionalCommand(new TeleopTrackingCommand(turret, conveyor, intake), new InstantCommand(), () -> turret.knowsLocation()).schedule();
+            } 
         }
     }
 
