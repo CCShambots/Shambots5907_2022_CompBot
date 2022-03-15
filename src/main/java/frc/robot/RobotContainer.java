@@ -146,9 +146,7 @@ public class RobotContainer {
     
       //Begin or cancel tracking the central target with the target
       new JoystickButton(operatorController, 7)
-        .whenPressed(new PriorityCommand(new TeleopTrackingCommand(drivetrain, turret, conveyor), () -> 
-        conveyor.getNumberOfBalls() > 0 && !turret.isRunning(TeleopTrackingCommand.class)
-        ))
+        .whenPressed(new PriorityCommand(new TeleopTrackingCommand(drivetrain, turret, conveyor), () -> conveyor.getNumberOfBalls() > 0))
         .whenReleased(new InstantCommand(() -> turret.setShouldEndTargeting(true)));
       
       //Only let the turret shoot  if the conveyor doesn't have a command
