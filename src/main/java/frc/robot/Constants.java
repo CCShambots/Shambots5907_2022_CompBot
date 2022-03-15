@@ -191,6 +191,10 @@ public final class Constants {
         public static final double LOWERED_HEIGHT = -40; //The fully lowered position of the climber (also in inches)
     }
 
+    public static class Lights {
+        public static final int CONTROLLER_ID = 51;
+    }
+
     public static class Controller {
         //Driver Controller
         public static final int DRIVER_CONTROLLER_PORT = 0;
@@ -201,5 +205,4 @@ public final class Constants {
         //Operator Controller
         public static final int OPERATOR_CONTROLLER_PORT = 1;
     }
-    
 }
