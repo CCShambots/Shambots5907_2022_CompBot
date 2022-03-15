@@ -15,7 +15,7 @@ public class ShootCommand extends CommandBase{
     private int startingAmount;
 
     private boolean ballsShot = false;
-    private long totalTime = 3; //The total time (in seconds) the shooting command will run
+    private double totalTime = 1.7; //The total time (in seconds) the shooting command will run
     private Timer timer;
 
     public ShootCommand(Conveyor conveyor) {

@@ -1,5 +1,6 @@
 package frc.robot.util.priorityFramework;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -29,7 +30,7 @@ public class PrioritizedSubsystem extends SubsystemBase{
     /**
      * Resets the subsystem to have a priority of -1 (a command is no longer running)
      */
-    void resetPriority() {
+    public void resetPriority() {
         this.priority = -1;
     }
 
@@ -63,5 +64,11 @@ public class PrioritizedSubsystem extends SubsystemBase{
     public boolean isRunning(Command command) {
         if(getCurrentCommand() == null) return false; 
         return getCurrentCommand().equals(command);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+        builder.addDoubleProperty("Priority", this::getPriority, null);
     }
 }

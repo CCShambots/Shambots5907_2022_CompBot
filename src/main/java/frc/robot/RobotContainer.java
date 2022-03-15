@@ -80,7 +80,6 @@ public class RobotContainer {
     driveTab.addString("Robot Status", () -> getRobotStatus());
     driveTab.add(field);
 
-    configureButtonBindings();
     
     //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute"));
@@ -114,6 +113,8 @@ public class RobotContainer {
     } catch (NotACommandException e) {
       e.printStackTrace();
     }
+
+    configureButtonBindings();
   }
 
   private void configureButtonBindings() {
@@ -216,6 +217,12 @@ public class RobotContainer {
     SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
 
     SmartDashboard.putBoolean("Conveyor command equals null", conveyor.getCurrentCommand() == null);
+  
+    SmartDashboard.putData("subsystems/Drivetrain", drivetrain);
+    SmartDashboard.putData("subsystems/Intake", intake);
+    SmartDashboard.putData("subsystems/Conveyor", conveyor);
+    SmartDashboard.putData("subsystems/Turret", turret);
+    SmartDashboard.putData("subsystems/Climber", climber);
   }
   
   /**
@@ -253,6 +260,9 @@ public class RobotContainer {
     turret.resetSpinnerPID();
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
+
+    //TODO: Remove this
+    turret.setKnowsLocation(true);
   }
   
   /**
@@ -281,6 +291,14 @@ public class RobotContainer {
   public void raiseIntake() {intake.raiseIntake();}
 
   public void resetClimber() {climber.resetClimber();}
+
+  public void resetSubsystems() {
+    drivetrain.resetPriority();
+    intake.resetPriority();
+    conveyor.resetPriority();
+    turret.resetPriority();
+    climber.resetPriority();
+  }
 
   private String getRobotStatus() {return Constants.robotStatus.name();}
 

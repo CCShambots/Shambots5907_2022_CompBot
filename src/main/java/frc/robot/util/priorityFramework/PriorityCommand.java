@@ -16,6 +16,7 @@ public class PriorityCommand extends CommandBase{
     private Set<PrioritizedSubsystem> requirements;
     private int priority;
     private BooleanSupplier condition;
+    private boolean madeGroup = false;
 
     public PriorityCommand(Command command, int priority, BooleanSupplier condition) {
         this.command = command;
@@ -44,7 +45,13 @@ public class PriorityCommand extends CommandBase{
      */
     @Override
     public void initialize() {
-
+        
+        //Add a decorator to the command that wil reset the subsystems to -1 priority after the command finishes
+        if(!madeGroup) {
+            command =command.andThen(new ResetSubsystemsCommand(requirements, priority));
+            madeGroup = true;
+        }
+        
         //Only proceed if the boolean supplier is true
         if(!condition.getAsBoolean()) return;
 
@@ -62,8 +69,6 @@ public class PriorityCommand extends CommandBase{
             }
         }
 
-        //Add a decorator to the command that wil reset the subsystems to -1 priority after the command finishes
-        command.andThen(new ResetSubsystemsCommand(requirements, priority));
         command.schedule();
     }
 

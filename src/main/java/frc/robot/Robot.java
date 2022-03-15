@@ -32,10 +32,12 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     m_robotContainer.setDisabled();
     m_robotContainer.disableLimelight();
+    m_robotContainer.resetSubsystems();
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
   public void autonomousInit() {
