@@ -82,7 +82,7 @@ public class RobotContainer {
 
     
     //Load the different trajectories from their JSON files
-    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute", "Meter"));
 
     //This object uses the trajectories to initialize each autonomous route command
     autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
@@ -100,6 +100,8 @@ public class RobotContainer {
     autoChooser.addOption("Back up Left", AutoPaths.BackUpLeft);
     autoChooser.addOption("Back up Mid", AutoPaths.BackUpMid);
     autoChooser.addOption("Back up Right", AutoPaths.BackUpRight);
+    autoChooser.addOption("Meter", AutoPaths.Meter);
+
 
     //TODO: Lights for if the turret is allowed to shoot or not
 

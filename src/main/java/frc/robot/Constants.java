@@ -9,7 +9,7 @@ import frc.robot.util.Range;
 
 public final class Constants {
     //Current limit for stopping motors from exceeding max power draw
-    public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 10, 10, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
+    public static final SupplyCurrentLimitConfiguration CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
     //Robot mode (for odometry toggling)
     public static RobotStatus robotStatus = RobotStatus.AUTO;
@@ -35,20 +35,19 @@ public final class Constants {
             (14.0 / 40.0);
         public static final double WHEEL_SIZE = 6; //In inches
 
-        public static double LEFT_P = 0.1;
+        public static double LEFT_P = 3.5;
         public static double LEFT_I = 0;
-        public static double LEFT_D = 0;
+        public static double LEFT_D = 0.;
 
-        public static double LEFT_KS = 1.25;
-        public static double LEFT_KV = 1.95;
+        public static double LEFT_KS = .75;
+        public static double LEFT_KV = 1.9;
 
-        public static double RIGHT_P = 0.1;
+        public static double RIGHT_P = 3.5;
         public static double RIGHT_I = 0;
-        public static double RIGHT_D = 0;
+        public static double RIGHT_D = 0.;
 
-        public static double RIGHT_KS = 1.25;
-        public static double RIGHT_KV = 1.95;
-
+        public static double RIGHT_KS = .75;
+        public static double RIGHT_KV = 1.9;
 
         //The multiplier used by default when the robot is in normal mode (instead of turbo)
         public static double NORMAL_SPEED_MULT = 0.6;
@@ -62,7 +61,7 @@ public final class Constants {
 
         public static final double MAX_VOLTAGE = 11.5;
         
-        public static final double TRACK_WIDTH = 0.64135; //meters
+        public static final double TRACK_WIDTH = 0.5334; //meters
 
         //Tested to be good values by WPILib
         public static final double K_RAMSETE_B = 2.0;
