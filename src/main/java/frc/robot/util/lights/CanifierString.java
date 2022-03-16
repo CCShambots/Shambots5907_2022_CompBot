@@ -3,23 +3,27 @@ package frc.robot.util.lights;
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.LEDChannel;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants;
 import frc.robot.util.lights.animations.LEDAnimation;
 import frc.robot.util.lights.animations.SolidAnimation;
 import frc.robot.util.lights.animations.LEDAnimation.AnimationType;
 
-public class CanifierString{
+public class CanifierString implements Sendable{
 
-    private CANifier controller = new CANifier(Constants.Lights.CONTROLLER_ID);
+    private CANifier controller;
     private LEDAnimation animation = new SolidAnimation(new RGB(255, 255, 255));
 
-    private double[] prevSample;
+    private double[] prevSample = {0,0,0};
     private double[] currentSample;
     private Timer animationTimer;
+    
 
-    public CanifierString() {
+    public CanifierString(int id) {
+        controller = new CANifier(id);
         animationTimer = new Timer();
+
     }
 
     public void setAnimation(LEDAnimation animation) {
@@ -35,7 +39,8 @@ public class CanifierString{
 
     public void periodic() {
         if(animation.getType() == AnimationType.Variable) {
-            currentSample = animation.sample(animationTimer.get()).toPercentage();
+            RGB rgb = animation.sample(animationTimer.get());
+            currentSample = rgb.toPercentage();
             
             if(!sameState(prevSample, currentSample)) {
                 setLights(currentSample);
@@ -46,10 +51,6 @@ public class CanifierString{
     }
 
     private void setLights(double[] percentages) {
-
-        //TODO: Remove
-        System.out.println("Sending CAN data to lights");
-
         controller.setLEDOutput(percentages[0], LEDChannel.LEDChannelA);
         controller.setLEDOutput(percentages[1], LEDChannel.LEDChannelB);
         controller.setLEDOutput(percentages[2], LEDChannel.LEDChannelC);
@@ -67,5 +68,13 @@ public class CanifierString{
         if(color1[2] != color2[2]) return false;
         return true;
     }
-    
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("CANifier");
+        builder.addDoubleProperty("r", () -> currentSample[0] * 255, null);
+        builder.addDoubleProperty("g", () -> currentSample[1] * 255, null);
+        builder.addDoubleProperty("b", () -> currentSample[2] * 255, null);
+
+    }
 }

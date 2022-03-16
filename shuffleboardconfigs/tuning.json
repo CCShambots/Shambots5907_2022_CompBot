@@ -2156,12 +2156,37 @@
           }
         }
       }
+    },
+    {
+      "title": "Tab 10",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "5,0": {
+            "size": [
+              4,
+              4
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/Lights",
+              "_title": "SmartDashboard/Lights"
+            }
+          }
+        }
+      }
     }
   ],
   "windowGeometry": {
-    "x": -10.399999618530273,
+    "x": -7.0,
     "y": 0.0,
-    "width": 1553.5999755859375,
-    "height": 629.5999755859375
+    "width": 1919.0,
+    "height": 868.0
   }
 }

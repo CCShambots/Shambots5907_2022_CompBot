@@ -10,11 +10,6 @@
         "header": {
           "open": true
         }
-      },
-      "Talon FX[4]": {
-        "header": {
-          "open": true
-        }
       }
     },
     "Solenoids": {
@@ -65,6 +60,11 @@
       "/LiveWindow/Ungrouped/Talon FX [41]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [42]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [4]": "Motor Controller",
+      "/Shuffleboard/Configuration/Lower Left Climber": "Command",
+      "/Shuffleboard/Configuration/Lower Right Climber": "Command",
+      "/Shuffleboard/Configuration/Raise Left Climber": "Command",
+      "/Shuffleboard/Configuration/Raise Right Climber": "Command",
+      "/Shuffleboard/Drive Team/DISABLE TURRET TRACKING": "Command",
       "/Shuffleboard/Drive Team/Fake gyro": "Gyro",
       "/Shuffleboard/Drive Team/Field": "Field2d",
       "/Shuffleboard/Drive Team/Lower Climber": "Command",
@@ -97,6 +97,9 @@
       "Ungrouped": {
         "open": true
       },
+      "open": true
+    },
+    "SmartDashboard": {
       "open": true
     }
   }

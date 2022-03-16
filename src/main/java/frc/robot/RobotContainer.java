@@ -19,6 +19,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lights;
 import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpFlywheelCommand;
@@ -59,6 +60,7 @@ public class RobotContainer {
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
   private final Climber climber = new Climber();
+  private final Lights lights = new Lights();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
