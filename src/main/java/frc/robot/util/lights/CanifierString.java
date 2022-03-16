@@ -1,11 +1,13 @@
-package frc.robot.util.ledAnimations;
+package frc.robot.util.lights;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.LEDChannel;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
-import frc.robot.util.ledAnimations.LEDAnimation.AnimationType;
+import frc.robot.util.lights.animations.LEDAnimation;
+import frc.robot.util.lights.animations.SolidAnimation;
+import frc.robot.util.lights.animations.LEDAnimation.AnimationType;
 
 public class CanifierString{
 

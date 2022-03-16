@@ -1,4 +1,6 @@
-package frc.robot.util.ledAnimations;
+package frc.robot.util.lights.animations;
+
+import frc.robot.util.lights.RGB;
 
 public abstract class LEDAnimation {
     /**

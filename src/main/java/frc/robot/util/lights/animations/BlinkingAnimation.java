@@ -1,4 +1,6 @@
-package frc.robot.util.ledAnimations;
+package frc.robot.util.lights.animations;
+
+import frc.robot.util.lights.RGB;
 
 public class BlinkingAnimation extends LEDAnimation{
 
@@ -20,11 +22,11 @@ public class BlinkingAnimation extends LEDAnimation{
 
     @Override
     public RGB sample(double timeIndex) {
-        double remainder = timeIndex % (2 * timeBetweenSwitch);
+        double remainder = timeIndex % (timeBetweenSwitch);
 
-        if(remainder > timeBetweenSwitch) {
-            return color1;
-        } else return color2;                
+        if(remainder > (timeBetweenSwitch / 2.0)) {
+            return color2;
+        } else return color1;
     }
 
     @Override

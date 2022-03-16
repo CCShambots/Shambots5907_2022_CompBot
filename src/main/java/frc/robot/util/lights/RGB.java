@@ -1,4 +1,4 @@
-package frc.robot.util.ledAnimations;
+package frc.robot.util.lights;
 
 public class RGB {
     private double r;
