@@ -2156,12 +2156,37 @@
           }
         }
       }
+    },
+    {
+      "title": "PrioritySystem",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "3,0": {
+            "size": [
+              4,
+              3
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/subsystems",
+              "_title": "/SmartDashboard/subsystems"
+            }
+          }
+        }
+      }
     }
   ],
   "windowGeometry": {
-    "x": -10.399999618530273,
-    "y": 0.0,
-    "width": 1553.5999755859375,
-    "height": 629.5999755859375
+    "x": -8.0,
+    "y": 3.200000047683716,
+    "width": 1550.4000244140625,
+    "height": 636.7999877929688
   }
 }
