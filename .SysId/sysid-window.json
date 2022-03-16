@@ -18,7 +18,7 @@
     },
     "###Generator": {
       "Collapsed": "0",
-      "Pos": "5,24",
+      "Pos": "0,25",
       "Size": "422,982"
     },
     "###Logger": {
@@ -28,7 +28,7 @@
     },
     "###Program Log": {
       "Collapsed": "0",
-      "Pos": "433,492",
+      "Pos": "431,491",
       "Size": "339,504"
     },
     "Debug##Default": {
@@ -38,7 +38,7 @@
     },
     "Diagnostic Plots": {
       "Collapsed": "0",
-      "Pos": "1373,35",
+      "Pos": "1363,29",
       "Size": "545,965"
     }
   }
