@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.SoftStop;
 import frc.robot.commands.climber.MoveClimberCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
-import frc.robot.commands.intake.EjectBallCommand;
+import frc.robot.commands.intake.HardEjectCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
@@ -110,7 +110,7 @@ public class RobotContainer {
       registerCommand(LowGoalShootCommand.class, 1);
       registerCommand(IntakeCommand.class, 2);
       registerCommand(TeleopTrackingCommand.class, 2);
-      registerCommand(EjectBallCommand.class, 3);
+      registerCommand(HardEjectCommand.class, 3);
       registerCommand(SoftStop.class, 5);
     } catch (NotACommandException e) {
       e.printStackTrace();
@@ -145,7 +145,7 @@ public class RobotContainer {
 
       //Ejects balls from the conveyor
       new JoystickButton(operatorController, 2)
-        .whenPressed(new PriorityCommand(new EjectBallCommand(conveyor, intake, 1.5)));
+        .whenPressed(new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5)));
       
 
     //Turret Controls

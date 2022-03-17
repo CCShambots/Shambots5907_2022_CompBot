@@ -107,6 +107,8 @@ public class Conveyor extends PrioritizedSubsystem{
         SmartDashboard.putData("Ball tracker", tracker);
         SmartDashboard.putNumber("Stage 1 speed", conveyorStage1.getMotorOutputPercent());
         SmartDashboard.putNumber("Stage 2 speed", conveyorStage2.getMotorOutputPercent());
+        //TOOD: Implement lights for tracker error
+        SmartDashboard.putBoolean("Tracker status", tracker.getError());
     }
 
     public static enum Direction {

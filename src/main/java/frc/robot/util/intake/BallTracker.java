@@ -23,6 +23,7 @@ public class BallTracker implements Sendable{
     private boolean prevStage2;
 
     private boolean disabled = false;
+    private boolean error = false;
 
     private Ball emptyBall = new Ball(Color.Ours, BallPosition.NotInBot);
 
@@ -43,6 +44,7 @@ public class BallTracker implements Sendable{
 
     public void setCurrentState(List<Ball> balls) {
         this.balls = balls;
+        this.error = false;
     }
 
     public void setDisabled(boolean value) { 
@@ -70,32 +72,32 @@ public class BallTracker implements Sendable{
 
                 //Advance the ball if the stage 1 sensor just got deactivated
                 if(!currStage1 && currStage1 != prevStage1) {
-                    balls.get(balls.size()-1).advancePosition();
+                    safeAdvanceBall(balls.size()-1);
                 }
 
                 //If the second stage sensor was just activated, advance that ball to being in the second stage
                 if(currStage2 && currStage2 != prevStage2) {
-                    balls.get(0).advancePosition();
+                    safeAdvanceBall(0);
                 }
 
                 //If the second stage sensor was just deactivated, remove that ball from the list (it exited the bot)
                 if(!currStage2 && currStage2 != prevStage2) {
-                    balls.get(0).advancePosition();
+                    safeAdvanceBall(0);
                 }
             } else if(conveyor.getDirection() == Direction.Exhaust) {
                 //If the second stage sensor deactivated, regress the ball once
                 if(!currStage2 && currStage2 != prevStage2) {
-                    balls.get(0).regressPosition();
+                    safeRegressBall(0);
                 }
                 
                 //If the first stage sensor deactivates, remove the ball (it's been ejected)
                 if(!currStage1 && currStage1 != prevStage1) {
-                    balls.remove(balls.size()-1);
+                    safeDeleteBall(balls.size()-1);
                 }   
                 
                 //If the first stage sensor activates, regress, the first or second ball's position (depending on how many are in the bot)
                 if(currStage1 && currStage1 != prevStage1) {
-                    if(balls.get(0).getPosition() == BallPosition.BetweenStages) balls.get(0).regressPosition();
+                    if(balls.get(0).getPosition() == BallPosition.BetweenStages) safeRegressBall(0);
                     else if(balls.size() > 1) balls.get(1).regressPosition();
                 }
             }
@@ -114,10 +116,45 @@ public class BallTracker implements Sendable{
 
     }
 
+    private void safeRegressBall(int index) {
+        Ball ball = safeGetBall(index);
+        if(ball == null) {
+            error = true;
+            return;
+        }
+        ball.regressPosition();
+    }
+
+    private void safeAdvanceBall(int index) {
+        Ball ball = safeGetBall(index);
+        if(ball == null) {
+            error = true;
+            return;
+        }
+        ball.advancePosition();
+    }
+
+    private void safeDeleteBall(int index) {
+        Ball ball = safeGetBall(index);
+        if(ball == null) {
+            error = true;
+            return;
+        }
+
+        balls.remove(ball);
+    }
+
+    private Ball safeGetBall(int index) {
+        if(balls.size() > index) return balls.get(index);
+        return null;
+    }
+
     public void resetForAuto() {
         balls.clear();
         balls.add(new Ball(Color.Ours, BallPosition.PastStage2));
     }
+    
+    public boolean getError() {return error;}
 
     @Override
     public void initSendable(SendableBuilder builder) {
@@ -126,4 +163,5 @@ public class BallTracker implements Sendable{
         builder.addBooleanProperty("Stage one sensor", () -> stage1Sensor.isActivated(), null);
         builder.addBooleanProperty("Stage two sensor", () -> stage2Sensor.isActivated(), null);
     }
+
 }
