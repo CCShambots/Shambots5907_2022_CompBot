@@ -19,7 +19,7 @@ public class SoftStop extends CommandBase{
         this.turret = turret;
         this.climber = climber;
     
-        addRequirements(intake, conveyor, turret, climber);
+        addRequirements(intake, conveyor, turret); //climber);
     }
 
     @Override

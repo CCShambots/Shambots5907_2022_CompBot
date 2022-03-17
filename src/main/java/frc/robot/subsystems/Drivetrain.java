@@ -42,7 +42,7 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
   //TODO: Make PDH power draw viewing visible at some point
-  // private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
+  private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
   
 
   //Drivetrain control
@@ -280,7 +280,7 @@ public class Drivetrain extends PrioritizedSubsystem {
     SmartDashboard.putNumber("left setpoint", getLeftModule().getSetpoint());
     SmartDashboard.putNumber("right setpoint", getRightModule().getSetpoint());
 
-    // SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
+    SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
   }
 
   //TODO: Remove these after testing
