@@ -1,11 +1,11 @@
 {
   "MainWindow": {
     "GLOBAL": {
-      "height": "720",
+      "height": "1013",
       "maximized": "1",
       "style": "0",
       "userScale": "2",
-      "width": "1280",
+      "width": "1920",
       "xpos": "0",
       "ypos": "23"
     }
@@ -18,7 +18,7 @@
     },
     "###Generator": {
       "Collapsed": "0",
-      "Pos": "5,24",
+      "Pos": "0,25",
       "Size": "422,982"
     },
     "###Logger": {
@@ -28,18 +28,33 @@
     },
     "###Program Log": {
       "Collapsed": "0",
-      "Pos": "433,492",
-      "Size": "339,504"
+      "Pos": "414,487",
+      "Size": "921,271"
     },
     "Debug##Default": {
       "Collapsed": "0",
       "Pos": "60,60",
       "Size": "400,400"
     },
+    "Deploy Status": {
+      "Collapsed": "0",
+      "Pos": "655,83",
+      "Size": "960,810"
+    },
     "Diagnostic Plots": {
       "Collapsed": "0",
-      "Pos": "1373,35",
+      "Pos": "1363,29",
       "Size": "545,965"
+    },
+    "Exception Caught!": {
+      "Collapsed": "0",
+      "Pos": "720,410",
+      "Size": "480,192"
+    },
+    "Warning": {
+      "Collapsed": "0",
+      "Pos": "919,3",
+      "Size": "532,602"
     }
   }
 }

@@ -5,16 +5,16 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Drivetrain;
 import frc.robot.util.ClimbingModule;
 import frc.robot.util.PIDandFFConstants;
+import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import static frc.robot.Constants.Climber.*;
 
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 
-public class Climber extends SubsystemBase {
+public class Climber extends PrioritizedSubsystem {
     //Important thing to remember when reading this: The right module follows the left module, meaning that any command sent through the left module also does that on the right module.
 
     private ClimbingModule leftModule = new ClimbingModule(LEFT_CLIMBER_ID,

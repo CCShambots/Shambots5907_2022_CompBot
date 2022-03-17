@@ -19,15 +19,18 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
+import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import java.util.Map;
 
-public class Drivetrain extends SubsystemBase {
+public class Drivetrain extends PrioritizedSubsystem {
   //Hardware declarations
   private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
   private PIDandFFConstants rightConstants = new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
@@ -40,6 +43,7 @@ public class Drivetrain extends SubsystemBase {
   private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
   //TODO: Make PDH power draw viewing visible at some point
   // private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
+  
 
   //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
@@ -259,7 +263,24 @@ public class Drivetrain extends SubsystemBase {
     leftModule.runControlLoop();
     rightModule.runControlLoop();
 
-    // SmartDashboard.putNumber("Used Current", pdh.getTotalCurrent());
+    //Drivetrain telemetry
+    SmartDashboard.putNumber("Gyro value", getGyroHeading());
+    SmartDashboard.putNumber("Left meters traveled", getLeftMeters());
+    SmartDashboard.putNumber("Right meters traveled", getRightMeters());
+    SmartDashboard.putNumber("Left voltage", getLeftVoltage());
+    SmartDashboard.putNumber("Right voltage", getRightVoltage());
+    SmartDashboard.putNumber("Left velocity", getLeftVelocity());
+    SmartDashboard.putNumber("Right velocity", getRightVelocity());
+    SmartDashboard.putNumber("Left feed forward", getLeftModule().getFeedForwardOutput());
+    SmartDashboard.putNumber("Right feed forward", getRightModule().getFeedForwardOutput());
+    SmartDashboard.putNumber("Left PID", getLeftModule().getPIDOutput());
+    SmartDashboard.putNumber("Right PID", getRightModule().getPIDOutput());
+    SmartDashboard.putData("RightPID", getRightModule().getPIDController());
+    SmartDashboard.putData("leftPID", getLeftModule().getPIDController());
+    SmartDashboard.putNumber("left setpoint", getLeftModule().getSetpoint());
+    SmartDashboard.putNumber("right setpoint", getRightModule().getSetpoint());
+
+    // SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
   }
 
   //TODO: Remove these after testing

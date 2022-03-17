@@ -1345,7 +1345,13 @@
               "_source0": "network_table:///LiveWindow/Drivetrain",
               "_title": "Drivetrain",
               "Layout/Label position": "BOTTOM",
-              "_children": []
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Drivetrain/Priority",
+                  "_title": "Priority"
+                }
+              ]
             }
           },
           "4,0": {
@@ -1371,7 +1377,13 @@
               "_source0": "network_table:///LiveWindow/Turret",
               "_title": "Turret",
               "Layout/Label position": "BOTTOM",
-              "_children": []
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Turret/Priority",
+                  "_title": "Priority"
+                }
+              ]
             }
           },
           "8,0": {
@@ -1384,7 +1396,13 @@
               "_source0": "network_table:///LiveWindow/Conveyor",
               "_title": "Conveyor",
               "Layout/Label position": "BOTTOM",
-              "_children": []
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Conveyor/Priority",
+                  "_title": "Priority"
+                }
+              ]
             }
           },
           "10,0": {
@@ -1696,7 +1714,7 @@
               "_title": "SmartDashboard/RightPID"
             }
           },
-          "4,4": {
+          "4,3": {
             "size": [
               5,
               1
@@ -1853,7 +1871,7 @@
           "4,0": {
             "size": [
               5,
-              4
+              3
             ],
             "content": {
               "_type": "Field",
@@ -2158,7 +2176,7 @@
       }
     },
     {
-      "title": "Tab 10",
+      "title": "PrioritySystem",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
       "widgetPane": {
@@ -2168,15 +2186,15 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "5,0": {
+          "3,0": {
             "size": [
               4,
-              4
+              3
             ],
             "content": {
               "_type": "Network Table Tree",
-              "_source0": "network_table:///SmartDashboard/Lights",
-              "_title": "SmartDashboard/Lights"
+              "_source0": "network_table:///SmartDashboard/subsystems",
+              "_title": "/SmartDashboard/subsystems"
             }
           }
         }
@@ -2184,9 +2202,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -7.0,
-    "y": 0.0,
-    "width": 1919.0,
-    "height": 868.0
+    "x": -8.0,
+    "y": 3.200000047683716,
+    "width": 1550.4000244140625,
+    "height": 637.5999755859375
   }
 }
