@@ -61,10 +61,11 @@ public final class Constants {
 
         public static final double MAX_VOLTAGE = 11.5;
         
-        public static final double TRACK_WIDTH = 0.5334; //meters
+        public static final double TRACK_WIDTH = 0.6798; //meters
+        
 
         //Tested to be good values by WPILib
-        public static final double K_RAMSETE_B = 2.0;
+        public static final double K_RAMSETE_B = 12.5;
         public static final double K_RAMSETE_ZETA = 0.7;
 
         //TODO: Set this to the actual achievable error

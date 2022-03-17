@@ -62,7 +62,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
-  private final Climber climber = new Climber();
+  // private final Climber climber = new Climber();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -183,23 +183,23 @@ public class RobotContainer {
 
 
     //Climber controls
-    new JoystickButton(operatorController, 3)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered, drivetrain));
+    // new JoystickButton(operatorController, 3)
+      // .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered, drivetrain));
     
-    new JoystickButton(operatorController, 5)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
+    // new JoystickButton(operatorController, 5)
+      // .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
 
     //Manual commands for moving the climber in for tim
-    configurationTab.add("Raise Right Climber", climber.moveMotor(0.15, MotorSide.Right, false));
-    configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
-    configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
-    configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
+    // configurationTab.add("Raise Right Climber", climber.moveMotor(0.15, MotorSide.Right, false));
+    // configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
+    // configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
+    // configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
 
     driveTab.add("DISABLE TURRET TRACKING", new InstantCommand(() -> turret.setKnowsLocation(false)));
     
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
-      .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, climber)));
+      .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, null)));
   }
 
   public void telemetry() {
@@ -224,7 +224,7 @@ public class RobotContainer {
     SmartDashboard.putData("subsystems/Intake", intake);
     SmartDashboard.putData("subsystems/Conveyor", conveyor);
     SmartDashboard.putData("subsystems/Turret", turret);
-    SmartDashboard.putData("subsystems/Climber", climber);
+    // SmartDashboard.putData("subsystems/Climber", climber);
   }
   
   /**
@@ -292,14 +292,14 @@ public class RobotContainer {
 
   public void raiseIntake() {intake.raiseIntake();}
 
-  public void resetClimber() {climber.resetClimber();}
+  // public void resetClimber() {climber.resetClimber();}
 
   public void resetSubsystems() {
     drivetrain.resetPriority();
     intake.resetPriority();
     conveyor.resetPriority();
     turret.resetPriority();
-    climber.resetPriority();
+    // climber.resetPriority();
   }
 
   private String getRobotStatus() {return Constants.robotStatus.name();}

@@ -31,7 +31,7 @@ public class SoftStop extends CommandBase{
         turret.setSpinnerTarget(turret.getSpinnerAngle());
 
         conveyor.setEjecting(false);
-        climber.brake();
+        // climber.brake();
     }
 
     @Override
