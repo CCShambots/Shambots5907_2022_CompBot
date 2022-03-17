@@ -51,8 +51,8 @@ public class CanifierString implements Sendable{
     }
 
     private void setLights(double[] percentages) {
-        controller.setLEDOutput(percentages[0], LEDChannel.LEDChannelA);
-        controller.setLEDOutput(percentages[1], LEDChannel.LEDChannelB);
+        controller.setLEDOutput(percentages[0], LEDChannel.LEDChannelB);
+        controller.setLEDOutput(percentages[1], LEDChannel.LEDChannelA);
         controller.setLEDOutput(percentages[2], LEDChannel.LEDChannelC);
     }
 
