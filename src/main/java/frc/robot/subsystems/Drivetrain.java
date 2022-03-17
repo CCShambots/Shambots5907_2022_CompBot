@@ -57,7 +57,7 @@ public class Drivetrain extends PrioritizedSubsystem {
   private DifferentialDriveOdometry odometry;
 
   //Value that determines whether odometry should be used or not
-  private boolean useOdometry = true;
+  private boolean useOdometry = false;
 
   private NetworkTableEntry smoothingSlider;
   private NetworkTableEntry speedSlider;
@@ -226,6 +226,7 @@ public class Drivetrain extends PrioritizedSubsystem {
     odometry.resetPosition(pose, getGyroHeadingOdometry());
   }
 
+  public void setUseOdometry(boolean value) {useOdometry = value;}
   public void toggleUseOdometry() {useOdometry = !useOdometry;}
   public boolean shouldUseOdometry() {return useOdometry;}
 
