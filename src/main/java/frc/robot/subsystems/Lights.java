@@ -16,7 +16,7 @@ public class Lights extends SubsystemBase{
     public Lights() {
         setAnimation(new AdvancedAnimation(new LightState(0, 0, 255, 2, 1), new LightState(255, 0, 0, 2, 1), new LightState(25, 255, 255, 2, 1)));
         setAnimation(new BlinkingAnimation(new RGB(255, 255, 255), new RGB(0, 0, 255), 3));
-        setAnimation(AdvancedAnimation.acceleratingAnimation(new RGB(255, 255, 255), new RGB(0, 0, 255), 2.5, .33, 30));
+        setAnimation(AdvancedAnimation.acceleratingAnimation(new RGB(255, 255, 255), new RGB(0, 0, 255), 1.0, 2.5, .33, 20));
     }
 
     public void setAnimation(LEDAnimation animation) {

@@ -3,10 +3,7 @@ package frc.robot.util.lights.animations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.spi.CurrencyNameProvider;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.util.lights.HSV;
 import frc.robot.util.lights.RGB;
 
 public class AdvancedAnimation extends LEDAnimation{
@@ -88,27 +85,29 @@ public class AdvancedAnimation extends LEDAnimation{
         
             return rgb;
         }
-
-        /**
-         * 
-         * @param color1
-         * @param color2
-         * @param initialTime Initial time in seconds for both holding and transitioning
-         * @param acceleration Percent of current value to accelerate by
-         * @param iterations amount of times to iterate before stopping
-         * @return
-         */
     }
     
-    public static AdvancedAnimation acceleratingAnimation(RGB color1, RGB color2, double initialTime, double acceleration, int iterations) {
+    /**
+     * 
+     * @param color1 RGB of the first color to use in the sequence
+     * @param color2 RGB of the second color to use in the sequence
+     * @param initialHoldTime How long the animation should hold at each color to begin with (in seconds)
+     * @param initialTransitionTime How long the animation should transition for at the beginning of the animation (seconds)
+     * @param acceleration What percentage (0.0-1.0) the animatino should speed up by each iteration
+     * @param iterations How many times the animatino should speed up
+     * @return
+     */
+    public static AdvancedAnimation acceleratingAnimation(RGB color1, RGB color2, double initialHoldTime, double initialTransitionTime, double acceleration, int iterations) {
         List<LightState> states = new ArrayList<>();
-        double currentTime = initialTime;
+        double currentHoldTime = initialHoldTime;
+        double currentTransitionTime = initialTransitionTime;
 
         for(int i = 0; i<=iterations; i++) {
-            states.add(new LightState(color1, currentTime, currentTime));
-            states.add(new LightState(color2, currentTime, currentTime));
+            states.add(new LightState(color1, currentHoldTime, currentTransitionTime));
+            states.add(new LightState(color2, currentHoldTime, currentTransitionTime));
     
-            currentTime *= 1-acceleration;
+            currentHoldTime *= 1-acceleration;
+            currentTransitionTime *= 1-acceleration;
         }
     
         LightState[] stateArray = new LightState[states.size()];
