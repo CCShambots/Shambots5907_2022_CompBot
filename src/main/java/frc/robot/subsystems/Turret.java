@@ -32,8 +32,9 @@ public class Turret extends PrioritizedSubsystem{
     private HallEffectSensor clockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_CLOCKWISE);
     private HallEffectSensor counterClockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_COUNTERCLOCKWISE);
 
-
     private FakeGyro fakeGyro;
+
+    private double previousSpinnerAngle=0;
 
     // Flywheel controls
     private PIDController bottomFlywheelPID = new PIDController(BOTTOM_FLYWHEEL_P, BOTTOM_FLYWHEEL_I, BOTTOM_FLYWHEEL_D);
@@ -281,6 +282,7 @@ public class Turret extends PrioritizedSubsystem{
 
     public Constraints getOriginalSpinnerConstraints() {return originalSpinnerConstraints;}
     public Constraints getSlowSpinnerConstraints() {return slowSpinnerConstraints;}
+    public double getPreviousSpinnerAngle() {return previousSpinnerAngle;}
 
 
     /* Other sensors */
@@ -325,7 +327,10 @@ public class Turret extends PrioritizedSubsystem{
         spinnerFFOutput = spinnerFeedForward.calculate(spinnerPIDController.getSetpoint().velocity);
 
         //Only apply voltage to the spinner if we know where it is (otherwise there may only be very slow manual movements)
-        if(knowsLocation) spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
+        if(knowsLocation) {
+            spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
+            previousSpinnerAngle = getSpinnerAngle();
+        }
 
 
         //TODO: Remove this telemetry when it's no longer used

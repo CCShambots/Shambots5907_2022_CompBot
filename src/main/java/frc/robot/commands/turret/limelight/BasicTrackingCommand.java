@@ -1,6 +1,5 @@
 package frc.robot.commands.turret.limelight;
 
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,21 +15,14 @@ import static frc.robot.Constants.Turret.*;
  */
 public abstract class BasicTrackingCommand extends CommandBase{
     protected Turret turret;
-
+    
     //Config values
-    private LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
-    //How many loops between sending hardware values to the turret
-    private double loopsBetweenSample = 15; 
-    //Time (in seconds) to wait before trusting the limelight value
-    private double waitTime = .25; 
+    private double limelightDeadband = 2; //Degrees in which to deadband the limelight
 
     //Control variables (control the state of the command)
     private Mode mode = Mode.Targeting;
     private Timer timer;
     private double limelightOffset = 0; //The value of the target off on the limelight (x-axis)
-    private double lowPassOutput = 0; //The current output of the SinglePoleIIR (basically low-pass) filter
-    //Note: it starts at a ridiculously high value so the turret will immediately sample
-    private double loopsSinceSample = 1000000; //Tracking variable for the number of loops since the last time the turret was commanded to move.
     private double targetAngle = 0; //The shooter's current setpoint
     private Direction prevDirection = Direction.Clockwise;
 
@@ -54,11 +46,8 @@ public abstract class BasicTrackingCommand extends CommandBase{
 
 
         //Reset values so the same command instance can be called again
-        filter.reset();
         mode = Mode.Targeting;
         limelightOffset = 0;
-        lowPassOutput = 0;
-        loopsSinceSample = 100000000;
         targetAngle = 0;
 
         //Code that runs in specific implementations
@@ -70,18 +59,14 @@ public abstract class BasicTrackingCommand extends CommandBase{
     public void execute() {
         updateLimelight();
         
-        //This if statement executes if the command has been running long enough that the limelight can be trusted
-        if(timer.get() >= waitTime) {
-            if(mode == Mode.Targeting) targetingLoop();
-            if(mode == Mode.WrapAround) {if(!turret.isSpinnerBusy(WRAPAROUND_ERROR)) mode = Mode.Targeting;}
-            if(mode == Mode.Searching) searchingLoop();
-        }
+        if(mode == Mode.Targeting) targetingLoop();
+        if(mode == Mode.WrapAround) {if(!turret.isSpinnerBusy(WRAPAROUND_ERROR)) mode = Mode.Targeting;}
+        if(mode == Mode.Searching) searchingLoop();
 
         additionalCodeInExecute();
 
         //TODO: Remove telemetry when no longer debugging
         SmartDashboard.putBoolean("Turret overextended?", turret.isOverRotated());
-        SmartDashboard.putNumber("Rolling Average", lowPassOutput);
         SmartDashboard.putNumber("Limelight offset", limelightOffset);
         SmartDashboard.putString("Mode", mode.name());
     }
@@ -90,18 +75,11 @@ public abstract class BasicTrackingCommand extends CommandBase{
     private void updateLimelight() {
         limelightOffset = turret.correctLimelightAngle(turret.getLimelightOffset()); //Get the limelight offset from the network table
 
-        //Deadband the limelightOffset if it's within 2 degrees (to avoid oscillations)
-        if(Math.abs(limelightOffset) < 2) limelightOffset = 0;
+        //Limelight deadbanding
+        if(Math.abs(limelightOffset) < limelightDeadband) limelightOffset = 0;
 
-        lowPassOutput = filter.calculate(limelightOffset);
-
-        //Set the limelight value if the limelight has a target and enough loops have passed since the last time the shooter's angle was commanded
-        if(turret.doesLimelightHaveTarget() && loopsSinceSample >= loopsBetweenSample) { 
-            targetAngle =  lowPassOutput + turret.getSpinnerAngle();
-            loopsSinceSample = 0;
-        } else {
-            loopsSinceSample++;
-        }
+        //Only change the limelight target if the limelight has a target
+        if(turret.doesLimelightHaveTarget()) targetAngle =  limelightOffset + turret.getPreviousSpinnerAngle();
     }
 
     //The loop that runs as the turret is actively targeting 
@@ -177,7 +155,6 @@ public abstract class BasicTrackingCommand extends CommandBase{
             !turret.isSpinnerBusy() &&                              //True if the turret IS close enough to the target
             turret.doesLimelightHaveTarget() &&                     //True if the limelight currently is tracking the goal
             Math.abs(limelightOffset) <= ACCEPTABLE_ERROR &&                    //True if the turret is close enough to the goal
-            timer.get() >= waitTime &&                              //True if the limelight can be trusted
             mode == Mode.Targeting                                  //True if the turret is actively tracking a target (rather than searching)
         ;
     }
