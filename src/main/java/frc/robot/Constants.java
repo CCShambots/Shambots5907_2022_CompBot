@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.Range;
+import frc.robot.util.lights.animations.AdvancedAnimation;
+import frc.robot.util.lights.animations.LightState;
 
 public final class Constants {
     //Current limit for stopping motors from exceeding max power draw
@@ -191,6 +193,9 @@ public final class Constants {
 
     public static class Lights {
         public static final int CONTROLLER_ID = 51;
+
+        public static final AdvancedAnimation DEFAULT_ANIMAION = new AdvancedAnimation(new LightState(0, 0, 255, .66, .33), new LightState(255, 255, 255, .66, .33));
+        
     }
 
     public static class Controller {
