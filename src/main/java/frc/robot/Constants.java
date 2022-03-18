@@ -130,7 +130,7 @@ public final class Constants {
 
         //Spinner control
         public static final double COUNTS_SPINNER_ENCODER = 2048;
-        public static final double TURRET_GEAR_RATIO = (1.0 / 3.0) * (10.0 / 140.0);
+        public static final double TURRET_GEAR_RATIO = (10.0 / 140.0);
 
         public static final double SPINNER_CLOCKWISE_LIMIT = -165; //Clockwise turns are negative
         public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 165; //Counter-clockwise turns are psotiive
@@ -140,18 +140,16 @@ public final class Constants {
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
         public static final double MANUAL_SPEED = 0.1; //How fast the spinner can move manually (in the event of a crash)
 
-        public static final double SPINNER_P = 0.017;
+        public static final double SPINNER_P = 0.035;
         // public static final double SPINNER_P = 0.0;
-        public static final double SPINNER_I = 0.00;
-        public static final double SPINNER_D = 0.0;
+        public static final double SPINNER_I = 0.0;
+        public static final double SPINNER_D = 0.01;
 
-        public static final double SPINNER_MAX_VEL = 360; //Deg/sec
-        public static final double SPINNER_MAX_ACCEL = 480; //Deg/sec/sec
+        public static final double SPINNER_MAX_VEL = 90; //Deg/sec
+        public static final double SPINNER_MAX_ACCEL = 720; //Deg/sec/sec
 
-        // public static final double SPINNER_S = 0.85;
-        public static final double SPINNER_S = 0.8;
-
-        public static final double SPINNER_V = 0.009;
+        public static final double SPINNER_S = 0.7;
+        public static final double SPINNER_V = 0.00385;
         // public static final double SPINNER_V = 0.0;
     
         public static final SupplyCurrentLimitConfiguration FLYWHEEL_CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time

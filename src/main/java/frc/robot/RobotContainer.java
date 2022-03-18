@@ -66,7 +66,7 @@ public class RobotContainer {
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
   // private final Climber climber = new Climber();
-  private final Lights lights = new Lights();
+  public static final Lights lights = new Lights();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -171,6 +171,12 @@ public class RobotContainer {
       //Moves the turret to facing directly forward
       new JoystickButton(operatorController, 11)
         .whenPressed(new PriorityCommand(new InstantCommand(() -> turret.setSpinnerTarget(0)), 1));
+
+      new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)));
+      
+      new JoystickButton(driverController, Button.kB.value)
+        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
         
       //Spin up the flywheel and shoot into the low goal
       new JoystickButton(operatorController, 12)
