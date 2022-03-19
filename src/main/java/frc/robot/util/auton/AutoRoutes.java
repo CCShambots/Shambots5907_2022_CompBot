@@ -11,6 +11,7 @@ import frc.robot.commands.auton.BackUpRightRoute;
 import frc.robot.commands.auton.CSGO1Route;
 import frc.robot.commands.auton.CSGO2Route;
 import frc.robot.commands.auton.CSGO3Route;
+import frc.robot.commands.auton.MeterRoute;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -38,8 +39,8 @@ public class AutoRoutes {
         autoRoutes.put(AutoPaths.CSGO3, new CSGO3Route(allRobotSubsystems, paths));
         autoRoutes.put(AutoPaths.BackUpLeft, new BackUpLeftRoute(allRobotSubsystems, paths));
         autoRoutes.put(AutoPaths.BackUpMid, new BackUpMidRoute(allRobotSubsystems, paths));
-        autoRoutes.put(AutoPaths.BackUpRight, new BackUpRightRoute(allRobotSubsystems
-        , paths));
+        autoRoutes.put(AutoPaths.BackUpRight, new BackUpRightRoute(allRobotSubsystems, paths));
+        autoRoutes.put(AutoPaths.Meter, new MeterRoute(allRobotSubsystems, paths));
 
     }
 
@@ -59,6 +60,7 @@ public class AutoRoutes {
             case BackUpLeft: return paths.get(Trajectories.BackUpLeftRoute);
             case BackUpMid: return paths.get(Trajectories.BackUpMidRoute);
             case BackUpRight: return paths.get(Trajectories.BackUpRightRoute);
+            case Meter: return paths.get(Trajectories.Meter);
         }
 
         return null;
@@ -71,7 +73,8 @@ public class AutoRoutes {
         CSGO3,
         BackUpLeft,
         BackUpMid,
-        BackUpRight
+        BackUpRight,
+        Meter
     }
 
     public static enum Trajectories {
@@ -82,6 +85,7 @@ public class AutoRoutes {
         BackUpLeftRoute,
         BackUpMidRoute,
         BackUpRightRoute,
+        Meter
     }
 
 }

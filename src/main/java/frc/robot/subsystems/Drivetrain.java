@@ -19,6 +19,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,7 +42,8 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
   //TODO: Make PDH power draw viewing visible at some point
-  // private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
+  private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
+  
 
   //Drivetrain control
   private DriveModes driveMode = DriveModes.Tank;
@@ -288,6 +291,8 @@ public class Drivetrain extends PrioritizedSubsystem {
     SmartDashboard.putData("leftPID", getLeftModule().getPIDController());
     SmartDashboard.putNumber("left setpoint", getLeftModule().getSetpoint());
     SmartDashboard.putNumber("right setpoint", getRightModule().getSetpoint());
+
+    SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
   }
 
   //TODO: Remove these after testing

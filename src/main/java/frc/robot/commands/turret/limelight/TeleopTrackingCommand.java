@@ -1,10 +1,13 @@
 package frc.robot.commands.turret.limelight;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotContainer;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
+import frc.robot.util.lights.RGB;
+import frc.robot.util.lights.animations.SolidAnimation;
 
 import static frc.robot.Constants.Turret.*;
 import static frc.robot.Constants.*;
@@ -69,9 +72,12 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
      * @return true if the turret is locked into the target and the flywheel is spun up
      */
     public boolean isReady() {
-        return 
-            !turret.isFlywheelBusy() &&
-            isLockedIn();
+
+        boolean ready = !turret.isFlywheelBusy() && isLockedIn();
+
+        if(ready) RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 255, 255)));
+
+        return ready;
     }
 
     @Override

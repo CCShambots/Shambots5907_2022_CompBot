@@ -3,9 +3,13 @@ package frc.robot.commands.intake;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.intake.Ball.BallPosition;
+import frc.robot.util.lights.RGB;
+import frc.robot.util.lights.animations.BlinkingAnimation;
+import frc.robot.util.lights.animations.SolidAnimation;
 
 public class IntakeCommand extends CommandBase{
     
@@ -45,6 +49,7 @@ public class IntakeCommand extends CommandBase{
         if(conveyor.getNumberOfBalls() == 0) {conveyor.intakeStage2();}
         timer = new Timer();
         timer.start();
+
     }
 
     @Override
@@ -81,6 +86,9 @@ public class IntakeCommand extends CommandBase{
             intake.raiseIntake();
             state = State.Cancelling;
         }
+
+        if(conveyor.getNumberOfBalls() == 1) {RobotContainer.lights.setAnimation(new BlinkingAnimation(new RGB(0, 0, 255), new RGB(255, 255, 255), 2));}
+        else if(conveyor.getNumberOfBalls() == 2) {RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 0, 255)));}
     }
 
     @Override

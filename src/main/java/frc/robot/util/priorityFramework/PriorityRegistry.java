@@ -10,7 +10,7 @@ public class PriorityRegistry {
     public static Map<Class<?>, Integer> registry = new HashMap<>();
 
     public static void registerCommand(Class<?> cls, Integer priority) throws NotACommandException {
-        if(!cls.isAssignableFrom(Command.class)) throw new NotACommandException("registerCommand()");
+        if(!Command.class.isAssignableFrom(cls)) throw new NotACommandException("registerCommand()");
 
         registry.put(cls, priority);
     }

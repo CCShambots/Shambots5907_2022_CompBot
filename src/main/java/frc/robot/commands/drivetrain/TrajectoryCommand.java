@@ -12,8 +12,10 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
@@ -55,9 +57,7 @@ public class TrajectoryCommand extends CommandBase{
                     MAX_LINEAR_VELOCITY,
                     MAX_LINEAR_ACCELERATION)
                 // Add kinematics to ensure max speed is actually obeyed
-                .setKinematics(kDriveKinematics)
-                // Apply the voltage constraint
-                .addConstraint(autoVoltageConstraint);
+                .setKinematics(kDriveKinematics);
         
         trajectory = TrajectoryGenerator.generateTrajectory(startPose, passThroughPoints, endPose, config);
 
@@ -80,6 +80,8 @@ public class TrajectoryCommand extends CommandBase{
     }
     @Override
     public void initialize() {
+        finished = false;
+        
         timer = new Timer();
         timer.start();
     }
@@ -106,6 +108,7 @@ public class TrajectoryCommand extends CommandBase{
             Translation2d robotTranslation = robotPose.getTranslation();
             Pose2d goalPose = trajectory.sample(trajectory.getTotalTimeSeconds()).poseMeters;
             Translation2d goal = goalPose.getTranslation();
+
             
             //Check if the robot is within our preferred translation and angle errors
             //The command will also finish if the robot has been trying to get to the endpoint for too long
@@ -123,6 +126,15 @@ public class TrajectoryCommand extends CommandBase{
 
     private void sendMotorPowers(double timeIndexSeonds) {
         Trajectory.State goal = trajectory.sample(timeIndexSeonds);
+
+        SmartDashboard.putNumber("robot pose x", drivetrain.getOdometryPose().getX());
+        SmartDashboard.putNumber("robot pose y", drivetrain.getOdometryPose().getY());
+        SmartDashboard.putNumber("robot pose theta", drivetrain.getOdometryPose().getRotation().getDegrees());
+
+        SmartDashboard.putNumber("goal x", goal.poseMeters.getX());
+        SmartDashboard.putNumber("goal y", goal.poseMeters.getY());
+        SmartDashboard.putNumber("goal theta", goal.poseMeters.getRotation().getDegrees());
+
 
         ChassisSpeeds adjustedSpeeds = controller.calculate(drivetrain.getOdometryPose(), goal);
         DifferentialDriveWheelSpeeds wheelSpeeds = kDriveKinematics.toWheelSpeeds(adjustedSpeeds);
