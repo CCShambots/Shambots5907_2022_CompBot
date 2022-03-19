@@ -332,8 +332,6 @@ public class Turret extends PrioritizedSubsystem{
             previousSpinnerAngle = getSpinnerAngle();
         }
 
-
-        //TODO: Remove this telemetry when it's no longer used
         
         //Flywheel telemetry
         SmartDashboard.putData("Bottom Flywheel PID", bottomFlywheelPID);

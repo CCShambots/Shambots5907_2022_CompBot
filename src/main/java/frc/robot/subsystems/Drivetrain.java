@@ -41,7 +41,6 @@ public class Drivetrain extends PrioritizedSubsystem {
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
   private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
-  //TODO: Make PDH power draw viewing visible at some point
   private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
   
 
@@ -295,9 +294,7 @@ public class Drivetrain extends PrioritizedSubsystem {
     SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
   }
 
-  //TODO: Remove these after testing
   public TankDriveModule getLeftModule() {return leftModule;}
-
   public TankDriveModule getRightModule() {return rightModule;}
 
   public static enum DriveModes {

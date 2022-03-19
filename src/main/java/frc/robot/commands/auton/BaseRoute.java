@@ -22,8 +22,6 @@ public class BaseRoute extends SequentialCommandGroup{
 
     protected Map<Trajectories, Trajectory> paths;
 
-    //TODO: Simple, delayed auto that shoots one ball
-
     public BaseRoute(AllRobotSubsystems subsystems, Map<Trajectories, Trajectory> paths) {
         drivetrain = subsystems.getDrivetrain();
         intake = subsystems.getIntake();
@@ -34,8 +32,6 @@ public class BaseRoute extends SequentialCommandGroup{
 
 
         addRequirements(drivetrain, intake, conveyor, turret);
-        //TODO: Add climber back once we add it
-        // addRequirements(drivetrain, intake, conveyor, turret, climber);
     }
 
     protected SequentialCommandGroup setupAuto(Trajectory trajectory) {
