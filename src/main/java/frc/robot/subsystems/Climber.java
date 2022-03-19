@@ -85,7 +85,6 @@ public class Climber extends PrioritizedSubsystem {
     public void periodic() {
         leftModule.periodic(); //Run the main control loop on the left module, which also updates the right module
 
-        //TODO: Remove this telemetry once we're done with it
         SmartDashboard.putData("Left module", leftModule);
         SmartDashboard.putData("right module", rightModule);
     }

@@ -161,10 +161,8 @@ public final class Constants {
         public static final int LEFT_CLIMBER_ID = 41;
         public static final int RIGHT_CLIMBER_ID = 42;
 
-        //TODO: fix these 
         public static final int BRAKE = 4; //Pneumatics port
 
-        //TODO: Tune
         public static final double LEFT_P = 0.0001;
         public static final double LEFT_I = 0;
         public static final double LEFT_D = 0;
@@ -181,8 +179,6 @@ public final class Constants {
 
         public static final double MAX_VEL = 200 * 2048; //Encoder counts per second
         public static final double MAX_ACCEL = 250 * 2048; //Encoder counts per second per second
-
-        //TODO: calculate these
 
         public static final double MID_HEIGHT = 28; //The height (in inches) that the climber will move to for the mid level climb
         public static final double LOW_HEIGHT = 12; //Same as above (in inches) but for low goal

@@ -1,6 +1,5 @@
 package frc.robot.commands.turret.limelight;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotContainer;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.subsystems.Conveyor;
@@ -38,8 +37,6 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
     @Override
     public void additionalCodeInExecute() {
-        //TODO: Remove this telemetry
-        SmartDashboard.putBoolean("Teleop Tracking command is ready to shoot", isReady());
 
         if(turret.getShouldShoot() 
             && shootCommand == null
