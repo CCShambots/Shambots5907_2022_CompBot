@@ -189,9 +189,9 @@ public class RobotContainer {
     configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
     configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
     
-    //TODO: some method of turning odometry tracking off so they can still shoot high goal but with mnanual (flag already exists in Drivetrain)
-    driveTab.add("DISABLE AUTO TURRET TRACKING", new InstantCommand(() -> drivetrain.setUseOdometry(false)));
-    
+    driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry()));
+    driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry());
+
     //Soft stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
       .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, climber)));
