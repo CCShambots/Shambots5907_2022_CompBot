@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -11,10 +12,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.Color;
 import frc.robot.commands.SoftStop;
 import frc.robot.commands.climber.MoveClimberCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.HardEjectCommand;
+import frc.robot.commands.intake.IndexedEjectionCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
@@ -79,8 +82,9 @@ public class RobotContainer {
     driveTab.add(autoChooser);
     driveTab.addString("Robot Status", () -> getRobotStatus());
     driveTab.add(field);
+    driveTab.addString("Alliance", () -> Constants.allianceColor.name());
+    driveTab.add("Toggle Alliance Color", new InstantCommand(this::toggleAllianceColor));
 
-    
     //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute", "Meter"));
 
@@ -110,7 +114,8 @@ public class RobotContainer {
       registerCommand(LowGoalShootCommand.class, 1);
       registerCommand(IntakeCommand.class, 2);
       registerCommand(TeleopTrackingCommand.class, 2);
-      registerCommand(HardEjectCommand.class, 3);
+      registerCommand(IndexedEjectionCommand.class, 3);
+      registerCommand(HardEjectCommand.class, 4);
       registerCommand(SoftStop.class, 5);
     } catch (NotACommandException e) {
       e.printStackTrace();
@@ -145,6 +150,13 @@ public class RobotContainer {
 
       //Ejects balls from the conveyor
       new JoystickButton(operatorController, 2)
+        .whenPressed(new PriorityCommand(
+          new IndexedEjectionCommand(conveyor, intake, () -> operatorController.getRawButton(2)), 
+          () -> conveyor.getNumberOfBalls() > 0));
+
+      //Hard eject command (in the event of a tracker error)
+      //TODO: Make this work
+      new JoystickButton(operatorController, 3)
         .whenPressed(new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5)));
       
 
@@ -265,6 +277,15 @@ public class RobotContainer {
 
     //TODO: Remove this
     turret.setKnowsLocation(true);
+  }
+
+  public void getAllianceColorFromFMS() {
+    boolean isRed = NetworkTableInstance.getDefault().getTable("FMSInfo").getEntry("IsRedAlliance").getBoolean(true);
+    Constants.allianceColor = isRed ? Color.Red : Color.Blue;
+  }
+
+  public void toggleAllianceColor() {
+    Constants.allianceColor = Constants.allianceColor == Color.Red ? Color.Blue : Color.Red;
   }
   
   /**

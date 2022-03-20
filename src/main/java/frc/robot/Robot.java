@@ -45,6 +45,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.resetDrivetrainPID();
 
     m_robotContainer.getAutoCommand().schedule();
+
+    m_robotContainer.getAllianceColorFromFMS();
   }
 
   @Override
@@ -64,6 +66,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.resetClimber();
 
     m_robotContainer.resetDrivetrainPID();
+
+    m_robotContainer.getAllianceColorFromFMS();
   }
 
   @Override

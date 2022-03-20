@@ -16,6 +16,8 @@ public final class Constants {
 
     public static Translation2d goalPos = new Translation2d(27, 13.5);
 
+    public static Color allianceColor = Color.Red;
+
     public static class Drivetrain {
         //Hardware ID's
         public static final int RIGHT_DRIVETRAIN_LEADER = 01;
@@ -87,8 +89,11 @@ public final class Constants {
         //Hardware
         public static final int CONVEYOR_STAGE1_ID = 21;
         public static final int CONVEYOR_STAGE2_ID = 22;
-        public static final int PROX_STAGE1_ID = 0; //DIO port
-        public static final int PROX_STAGE2_ID = 1; //DIO port
+        public static final int PROX_STAGE1_PORT = 0; //DIO port
+        public static final int PROX_STAGE2_PORT = 1; //DIO port
+        public static final int PROX_STAGE3_PORT = 2; //DIO port
+
+        public static final int COLOR_SENSOR_PORT = 0; //PWM port
 
         //Control variables
         public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
@@ -99,9 +104,9 @@ public final class Constants {
         //Hardware devices
         public static final int BOTTOM_FLYWHEEL = 31;
         public static final int TURRET_SPINNER = 33;
-        public static final int HALL_EFFECT_CENTER = 2; //DIO port
-        public static final int HALL_EFFECT_CLOCKWISE = 3; //DIO port
-        public static final int HALL_EFFECT_COUNTERCLOCKWISE = 4; //DIO port
+        public static final int HALL_EFFECT_CENTER = 3; //DIO port
+        public static final int HALL_EFFECT_CLOCKWISE = 4; //DIO port
+        public static final int HALL_EFFECT_COUNTERCLOCKWISE = 5; //DIO port
 
         //TOOD: Get the actual values for this
         public static final double CENTRAL_SENSOR_ANGLE = -5;
@@ -199,6 +204,10 @@ public final class Constants {
 
         //Operator Controller
         public static final int OPERATOR_CONTROLLER_PORT = 1;
+    }
+
+    public static enum Color {
+        Red, Blue
     }
     
 }

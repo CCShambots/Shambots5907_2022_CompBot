@@ -4,15 +4,15 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 public class Ball implements Sendable{
-    private Color color;
+    private BallColor color;
     private BallPosition position;
 
-    public Ball(Color color) {
+    public Ball(BallColor color) {
         this.color = color;
         position = BallPosition.Stage1;
     }
 
-    public Ball(Color color, BallPosition position) {
+    public Ball(BallColor color, BallPosition position) {
         this.color = color;
         this.position = position;
     }
@@ -21,22 +21,38 @@ public class Ball implements Sendable{
     public void regressPosition() {position = position.previous();}
     public void setPosition(BallPosition pos) {position = pos;}
     public BallPosition getPosition() {return position;}
-    public Color getColor() {return color;}
+    public BallColor getColor() {return color;}
+    
+    /**
+     * @param pos The position that we're trying to move the ball to
+     * @return whether that is indeed the next position that should next be moved to
+     */
+    public boolean isNextPosition(BallPosition pos) {return position.next().equals(pos);}
+
+    /**
+     * @param pos The position that we're trying to move the ball to
+     * @return whether that is indeed the previous position that the ball should go to
+     */
+    public boolean isPrevPosition(BallPosition pos) {return position.previous().equals(pos);}
 
     public static enum BallPosition {
         Stage1, //The first sensor IS activated
-        BetweenStages, //The first sensor WAS activated, but the second has not yet been
+        Between1And2, //The first sensor WAS activated, but the second has not yet been
         Stage2, //The second presence sensor IS activated
-        PastStage2, //The second presence sensor WAS activated
+        Between2And3, //The second presence sensor WAS activated
+        Stage3, //The third presence sensor IS activated
         NotInBot; //The ball has left the robot
 
         private static BallPosition[] vals = values();
         public BallPosition next() { return vals[(this.ordinal() +1) % vals.length];}
-        public BallPosition previous() { return vals[(this.ordinal() -1) % vals.length];}
+        public BallPosition previous() { 
+            if(this.ordinal() - 1 == -1) return BallPosition.NotInBot;
+            return vals[(this.ordinal() -1) % vals.length];
+        }
 
     }
 
-    public static enum Color {
+    public static enum BallColor {
         Ours, //Our alliance's colored balls
         Opposing //The opposing alliance's colored balls
     }

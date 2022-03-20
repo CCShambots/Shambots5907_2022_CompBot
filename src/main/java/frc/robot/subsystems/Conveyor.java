@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.util.hardware.ColorSensor;
 import frc.robot.util.hardware.ProximitySensor;
 import frc.robot.util.intake.Ball;
 import frc.robot.util.intake.BallTracker;
@@ -22,10 +23,13 @@ public class Conveyor extends PrioritizedSubsystem{
     private WPI_TalonFX conveyorStage1 = new WPI_TalonFX(CONVEYOR_STAGE1_ID);
     private WPI_TalonFX conveyorStage2 = new WPI_TalonFX(CONVEYOR_STAGE2_ID);
 
-    private ProximitySensor proxStage1 = new ProximitySensor(PROX_STAGE1_ID);
-    private ProximitySensor proxStage2 = new ProximitySensor(PROX_STAGE2_ID);
+    private ProximitySensor proxStage1 = new ProximitySensor(PROX_STAGE1_PORT);
+    private ProximitySensor proxStage2 = new ProximitySensor(PROX_STAGE2_PORT);
+    private ProximitySensor proxStage3 = new ProximitySensor(PROX_STAGE3_PORT);
 
-    private BallTracker tracker = new BallTracker(proxStage1, proxStage2, this);
+    private ColorSensor colorSensor = new ColorSensor(COLOR_SENSOR_PORT);
+
+    private BallTracker tracker = new BallTracker(proxStage1, proxStage2, proxStage3, colorSensor, this);
     
     boolean running = false;
     Direction direction = Direction.Stopped;
@@ -63,6 +67,7 @@ public class Conveyor extends PrioritizedSubsystem{
     private void setStage2(double power) {conveyorStage2.set(ControlMode.PercentOutput, power);}
 
 
+    //Interactions with the BallTracker util
     public int getNumberOfBalls() {return tracker.getNumberOfBalls();} 
     public BallPosition getBall1Pos() {return tracker.getBall1Pos();} 
     public BallPosition getBall2Pos() {return tracker.getBall2Pos();} 
@@ -93,6 +98,8 @@ public class Conveyor extends PrioritizedSubsystem{
     public void setEjecting(boolean value) {ejecting = value;}
     public boolean isEjecting() {return ejecting;}
 
+    public boolean isTrackerError() {return tracker.getError();}
+
     @Override
     public void periodic() {
         tracker.periodic();
@@ -108,7 +115,7 @@ public class Conveyor extends PrioritizedSubsystem{
         SmartDashboard.putNumber("Stage 1 speed", conveyorStage1.getMotorOutputPercent());
         SmartDashboard.putNumber("Stage 2 speed", conveyorStage2.getMotorOutputPercent());
         //TOOD: Implement lights for tracker error
-        SmartDashboard.putBoolean("Tracker status", tracker.getError());
+        SmartDashboard.putBoolean("Tracker status", !tracker.getError());
     }
 
     public static enum Direction {

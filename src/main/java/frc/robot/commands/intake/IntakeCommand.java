@@ -56,7 +56,7 @@ public class IntakeCommand extends CommandBase{
 
         if(state == State.Normal) {
             //If the first ball (i.e. the one that entered the robot first) has reached Stage 2, we will stop the stage 2 conveyor
-            if(conveyor.getBall1Pos() == BallPosition.PastStage2) {conveyor.stopStage2();}
+            if(conveyor.getBall1Pos() == BallPosition.Between2And3) {conveyor.stopStage2();}
 
             //If the second ball has reached stage 1, we will end the command and stop and raise the intake/conveyor
             if(conveyor.getBall2Pos() == BallPosition.Stage1) {
@@ -67,7 +67,7 @@ public class IntakeCommand extends CommandBase{
             }
         } else if(state == State.Cancelling) {
             //If the frist ball is not between two stages, we can safely end the command
-            if(!(conveyor.getBall1Pos() == BallPosition.BetweenStages || conveyor.getBall1Pos() == BallPosition.Stage2) && !(conveyor.getBall1Pos() == BallPosition.Stage1)) {
+            if(!(conveyor.getBall1Pos() == BallPosition.Between1And2 || conveyor.getBall1Pos() == BallPosition.Stage2) && !(conveyor.getBall1Pos() == BallPosition.Stage1)) {
                 conveyor.stopAll();
                 finished = true;
             }

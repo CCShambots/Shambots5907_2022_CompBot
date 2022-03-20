@@ -1878,17 +1878,6 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "3,0": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Network Table Tree",
-              "_source0": "network_table:///SmartDashboard/Ball tracker",
-              "_title": "SmartDashboard/Ball tracker"
-            }
-          },
           "1,0": {
             "size": [
               2,
@@ -1966,19 +1955,6 @@
               "_title": "SmartDashboard/Stage 2 speed"
             }
           },
-          "4,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Intake Command cancel supplier",
-              "_title": "/SmartDashboard/Intake Command cancel supplier",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
           "8,0": {
             "size": [
               3,
@@ -1990,28 +1966,39 @@
               "_title": "SmartDashboard/Intake command"
             }
           },
-          "9,2": {
+          "8,2": {
             "size": [
-              1,
-              1
+              2,
+              2
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Conveyor command equals null",
-              "_title": "SmartDashboard/Conveyor command equals null",
+              "_source0": "network_table:///SmartDashboard/Tracker status",
+              "_title": "SmartDashboard/Tracker status",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "8,2": {
+          "3,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/Ball tracker",
+              "_title": "SmartDashboard/Ball tracker"
+            }
+          },
+          "4,3": {
             "size": [
               1,
               1
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Intake command allowed",
-              "_title": "/SmartDashboard/Intake command allowed",
+              "_source0": "network_table:///SmartDashboard/Intake should end",
+              "_title": "SmartDashboard/Intake should end",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
@@ -2184,9 +2171,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -7.0,
-    "y": 0.0,
-    "width": 1919.0,
-    "height": 868.0
+    "x": 1914.0,
+    "y": 20.0,
+    "width": 1614.0,
+    "height": 691.0
   }
 }
