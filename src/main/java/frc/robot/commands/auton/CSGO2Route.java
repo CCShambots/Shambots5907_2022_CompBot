@@ -31,7 +31,7 @@ public class CSGO2Route extends BaseRoute{
             new ParallelCommandGroup(
                 new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
           
-                new IntakeCommand(intake, conveyor),
+                new IntakeCommand(intake, conveyor, turret),
 
                 new SequentialCommandGroup(
                     new WaitCommand(2),                    

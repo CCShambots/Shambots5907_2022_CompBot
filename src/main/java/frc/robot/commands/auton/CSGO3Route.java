@@ -30,7 +30,7 @@ public class CSGO3Route extends BaseRoute{
             new ParallelCommandGroup(
                 new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
           
-                new IntakeCommand(intake, conveyor),
+                new IntakeCommand(intake, conveyor, turret),
 
                 new SequentialCommandGroup(                    
                     new TrajectoryCommand(drivetrain, paths.get(CSGO31)),

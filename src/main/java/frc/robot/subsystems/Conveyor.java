@@ -72,6 +72,8 @@ public class Conveyor extends PrioritizedSubsystem{
     public BallPosition getBall1Pos() {return tracker.getBall1Pos();} 
     public BallPosition getBall2Pos() {return tracker.getBall2Pos();} 
 
+    
+
     public boolean isRunning() {return running;}
     public Direction getDirection() {return direction;}
 

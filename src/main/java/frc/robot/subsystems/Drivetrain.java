@@ -55,6 +55,9 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   private double smoothing = 8;
 
+  //Defense flag
+  private boolean defending = false;
+
   //Autonomous objects (odometry, trajectory following, etc)
   RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
   DifferentialDriveOdometry odometry;
@@ -179,17 +182,16 @@ public class Drivetrain extends PrioritizedSubsystem {
 
 
   /**Change whether drivetrain is reversed or not */
-  public void setReversed(boolean value) {
-    this.reversed = value;
-  }
-
-  public boolean isReversed() {
-    return reversed;
-  }
+  public void setReversed(boolean value) {this.reversed = value;}
+  public boolean isReversed() {return reversed;}
 
   public void toggleReversed() {
     setReversed(!reversed);
   }
+
+  public boolean isDefending() {return defending;}
+  public void setDefending(boolean value) {this.defending = value;}
+  public void toggleDefending() {this.defending = !defending;}
 
   /**
    * Set the speed of the robot to normal or turbo mode

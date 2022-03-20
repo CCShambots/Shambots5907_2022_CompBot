@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Turret;
 import frc.robot.util.intake.Ball.BallPosition;
 import frc.robot.util.lights.RGB;
 import frc.robot.util.lights.animations.BlinkingAnimation;
@@ -15,6 +16,7 @@ public class IntakeCommand extends CommandBase{
     
     private Intake intake;
     private Conveyor conveyor;
+    private Turret turret;
 
     private State state = State.Normal;
     private boolean finished = false;
@@ -29,9 +31,10 @@ public class IntakeCommand extends CommandBase{
      * @param conveyor
      * @param cancelSupplier
      */
-    public IntakeCommand(Intake intake, Conveyor conveyor) {
+    public IntakeCommand(Intake intake, Conveyor conveyor, Turret turret) {
         this.intake = intake;
         this.conveyor = conveyor;
+        this.turret = turret;
 
 
         addRequirements(intake, conveyor);

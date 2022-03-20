@@ -54,7 +54,8 @@ public class Ball implements Sendable{
 
     public static enum BallColor {
         Ours, //Our alliance's colored balls
-        Opposing //The opposing alliance's colored balls
+        Opposing, //The opposing alliance's colored balls
+        NotInBot, //The ball is not in the robot 
     }
 
     @Override

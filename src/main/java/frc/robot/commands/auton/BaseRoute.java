@@ -38,10 +38,19 @@ public class BaseRoute extends SequentialCommandGroup{
         return new SequentialCommandGroup(
           new InstantCommand(() -> {
             drivetrain.resetOdometry(trajectory.getInitialPose());
+            drivetrain.setDefending(true);
             conveyor.setupTrackerAuto();
             turret.resetSpinnerAngle(0);
             turret.setKnowsLocation(true);
           })
         );
+    }
+
+    protected InstantCommand endAuto() {
+      return new InstantCommand(() -> {
+        turret.setSpinnerTarget(0);
+        turret.setFlywheelTarget(0);
+        drivetrain.setDefending(false);
+      });
     }
 }

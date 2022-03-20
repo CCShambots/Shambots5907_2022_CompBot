@@ -70,6 +70,7 @@
       "/Shuffleboard/Drive Team/Lower Climber": "Command",
       "/Shuffleboard/Drive Team/Raise Climber": "Command",
       "/Shuffleboard/Drive Team/SendableChooser[0]": "String Chooser",
+      "/Shuffleboard/Drive Team/Toggle Alliance Color": "Command",
       "/Shuffleboard/Drive Team/field": "Field2d",
       "/SmartDashboard/Bottom Flywheel PID": "PIDController",
       "/SmartDashboard/Fake gyro": "Gyro",

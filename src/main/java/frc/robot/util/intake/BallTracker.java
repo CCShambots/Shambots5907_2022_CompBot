@@ -25,7 +25,7 @@ public class BallTracker implements Sendable{
     private boolean disabled = false;
     private boolean error = false;
 
-    private Ball emptyBall = new Ball(BallColor.Ours, BallPosition.NotInBot);
+    private Ball emptyBall = new Ball(BallColor.NotInBot, BallPosition.NotInBot);
 
     //The balls that can exist that are currently in the robot
     List<Ball> balls = new ArrayList<>();
@@ -43,6 +43,8 @@ public class BallTracker implements Sendable{
     //Both of these methods are protected from being null; they will return NotInBot if there is no ball at the expected index
     public BallPosition getBall1Pos() {return balls.size() >= 1 ? balls.get(0).getPosition() : BallPosition.NotInBot;}
     public BallPosition getBall2Pos() {return balls.size() >= 2 ? balls.get(1).getPosition() : BallPosition.NotInBot;}
+
+
 
     public void setCurrentState(List<Ball> balls) {
         this.balls = balls;
