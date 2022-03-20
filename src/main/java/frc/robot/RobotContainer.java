@@ -66,7 +66,7 @@ public class RobotContainer {
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
   // private final Climber climber = new Climber();
-  public static final Lights lights = new Lights();
+  private final Lights lights = new Lights();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 

@@ -87,8 +87,6 @@ public class IntakeCommand extends CommandBase{
             state = State.Cancelling;
         }
 
-        if(conveyor.getNumberOfBalls() == 1) {RobotContainer.lights.setAnimation(new BlinkingAnimation(new RGB(0, 0, 255), new RGB(255, 255, 255), 2));}
-        else if(conveyor.getNumberOfBalls() == 2) {RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 0, 255)));}
     }
 
     @Override
