@@ -17,23 +17,23 @@ public class Ball implements Sendable{
         this.position = position;
     }
 
-    public void advancePosition() {position = position.next();}
-    public void regressPosition() {position = position.previous();}
-    public void setPosition(BallPosition pos) {position = pos;}
-    public BallPosition getPosition() {return position;}
-    public BallColor getColor() {return color;}
+    void advancePosition() {position = position.next();}
+    void regressPosition() {position = position.previous();}
+    void setPosition(BallPosition pos) {position = pos;}
+    BallPosition getPosition() {return position;}
+    BallColor getColor() {return color;}
     
     /**
      * @param pos The position that we're trying to move the ball to
      * @return whether that is indeed the next position that should next be moved to
      */
-    public boolean isNextPosition(BallPosition pos) {return position.next().equals(pos);}
+    boolean isNextPosition(BallPosition pos) {return position.next().equals(pos);}
 
     /**
      * @param pos The position that we're trying to move the ball to
      * @return whether that is indeed the previous position that the ball should go to
      */
-    public boolean isPrevPosition(BallPosition pos) {return position.previous().equals(pos);}
+    boolean isPrevPosition(BallPosition pos) {return position.previous().equals(pos);}
 
     public static enum BallPosition {
         Stage1, //The first sensor IS activated

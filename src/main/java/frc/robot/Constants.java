@@ -96,10 +96,12 @@ public final class Constants {
         public static final int PROX_STAGE2_PORT = 1; //DIO port
         public static final int PROX_STAGE3_PORT = 2; //DIO port
 
-        public static final int COLOR_SENSOR_PORT = 0; //PWM port
+        public static final int COLOR_SENSOR_PORT1 = 3; //DIO port
+        public static final int COLOR_SENSOR_PORT2 = 4; //DIO port
 
         //Control variables
         public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
+        public static final double EJECTION_DELAY = .5;
     }
 
     
@@ -107,9 +109,9 @@ public final class Constants {
         //Hardware devices
         public static final int BOTTOM_FLYWHEEL = 31;
         public static final int TURRET_SPINNER = 33;
-        public static final int HALL_EFFECT_CENTER = 3; //DIO port
-        public static final int HALL_EFFECT_CLOCKWISE = 4; //DIO port
-        public static final int HALL_EFFECT_COUNTERCLOCKWISE = 5; //DIO port
+        public static final int HALL_EFFECT_CENTER = 5; //DIO port
+        public static final int HALL_EFFECT_CLOCKWISE = 6; //DIO port
+        public static final int HALL_EFFECT_COUNTERCLOCKWISE = 7; //DIO port
 
         //TOOD: Get the actual values for this
         public static final double CENTRAL_SENSOR_ANGLE = -5;
@@ -209,7 +211,7 @@ public final class Constants {
     }
 
     public static enum Color {
-        Red, Blue
+        Red, Blue, SensorNotDetected, NoBallDetected
     }
     
 }

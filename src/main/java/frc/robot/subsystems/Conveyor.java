@@ -1,11 +1,15 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.util.hardware.ColorSensor;
 import frc.robot.util.hardware.ProximitySensor;
 import frc.robot.util.intake.Ball;
 import frc.robot.util.intake.BallTracker;
+import frc.robot.util.intake.Ball.BallColor;
 import frc.robot.util.intake.Ball.BallPosition;
+import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import static frc.robot.Constants.Conveyor.*;
@@ -27,7 +31,7 @@ public class Conveyor extends PrioritizedSubsystem{
     private ProximitySensor proxStage2 = new ProximitySensor(PROX_STAGE2_PORT);
     private ProximitySensor proxStage3 = new ProximitySensor(PROX_STAGE3_PORT);
 
-    private ColorSensor colorSensor = new ColorSensor(COLOR_SENSOR_PORT);
+    private ColorSensor colorSensor = new ColorSensor(COLOR_SENSOR_PORT1, COLOR_SENSOR_PORT2);
 
     private BallTracker tracker = new BallTracker(proxStage1, proxStage2, proxStage3, colorSensor, this);
     
@@ -71,6 +75,10 @@ public class Conveyor extends PrioritizedSubsystem{
     public int getNumberOfBalls() {return tracker.getNumberOfBalls();} 
     public BallPosition getBall1Pos() {return tracker.getBall1Pos();} 
     public BallPosition getBall2Pos() {return tracker.getBall2Pos();} 
+    public BallColor getBall1Color() {return tracker.getBall1Color();}
+    public BallColor getBall2Color() {return tracker.getBall2Color();}
+    public Ball getBall1() {return tracker.getBall1();}
+    public Ball getBall2() {return tracker.getBall2();}
 
     
 
@@ -117,6 +125,14 @@ public class Conveyor extends PrioritizedSubsystem{
         SmartDashboard.putNumber("Stage 2 speed", conveyorStage2.getMotorOutputPercent());
         //TOOD: Implement lights for tracker error
         SmartDashboard.putBoolean("Tracker status", !tracker.getError());
+        try {
+            SmartDashboard.putBoolean("Running intake command", isRunning(IntakeCommand.class));
+        } catch (NotACommandException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        SmartDashboard.putBoolean("Current conveyor command = null", getCurrentCommand() == null);
     }
 
     public static enum Direction {

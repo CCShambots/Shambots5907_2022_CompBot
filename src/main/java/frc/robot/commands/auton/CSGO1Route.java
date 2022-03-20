@@ -34,7 +34,7 @@ public class CSGO1Route extends BaseRoute{
                 }),
                 new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
           
-                new IntakeCommand(intake, conveyor, turret),
+                new IntakeCommand(intake, conveyor, turret, drivetrain),
 
                 new SequentialCommandGroup(
                     new TrajectoryCommand(drivetrain, paths.get(CSGO1)),

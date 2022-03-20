@@ -2,9 +2,12 @@ package frc.robot.commands.intake;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
+
+import static frc.robot.Constants.Conveyor.*;
 
 public class IndexedEjectionCommand extends CommandBase{
 
@@ -14,8 +17,10 @@ public class IndexedEjectionCommand extends CommandBase{
     private boolean prevButtonValue;
 
     private int startingBalls;
-
     private int numToEject = 1;
+
+    private Timer timer = new Timer();
+    private boolean ballLeftTracker;
 
     public IndexedEjectionCommand(Conveyor conveyor, Intake intake, BooleanSupplier supplier) {
         this.conveyor = conveyor;
@@ -34,6 +39,9 @@ public class IndexedEjectionCommand extends CommandBase{
         conveyor.setEjecting(true);
 
         prevButtonValue = ejectAdditionalBallSupplier.getAsBoolean();
+
+        timer.reset();
+        ballLeftTracker = false;
     }
 
     @Override
@@ -46,15 +54,22 @@ public class IndexedEjectionCommand extends CommandBase{
         }
 
         prevButtonValue = currentButtonValue;
+
+        if(conveyor.getNumberOfBalls() == startingBalls - numToEject && !ballLeftTracker) {
+            timer.start();
+        }
+
+        if(conveyor.getNumberOfBalls() == startingBalls - numToEject) ballLeftTracker = true;
     }
 
     @Override
     public boolean isFinished() {
-        return conveyor.getNumberOfBalls() == startingBalls - numToEject;
+        return timer.get() > EJECTION_DELAY;
     }
 
     @Override
     public void end(boolean interrupted) {
+        timer.stop();
         conveyor.setEjecting(false);
         conveyor.stopAll();
     }

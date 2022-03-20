@@ -1345,13 +1345,7 @@
               "_source0": "network_table:///LiveWindow/Drivetrain",
               "_title": "Drivetrain",
               "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///LiveWindow/Drivetrain/Priority",
-                  "_title": "Priority"
-                }
-              ]
+              "_children": []
             }
           },
           "4,0": {
@@ -1377,13 +1371,7 @@
               "_source0": "network_table:///LiveWindow/Turret",
               "_title": "Turret",
               "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///LiveWindow/Turret/Priority",
-                  "_title": "Priority"
-                }
-              ]
+              "_children": []
             }
           },
           "8,0": {
@@ -1396,13 +1384,7 @@
               "_source0": "network_table:///LiveWindow/Conveyor",
               "_title": "Conveyor",
               "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///LiveWindow/Conveyor/Priority",
-                  "_title": "Priority"
-                }
-              ]
+              "_children": []
             }
           },
           "10,0": {
@@ -1714,7 +1696,7 @@
               "_title": "SmartDashboard/RightPID"
             }
           },
-          "4,3": {
+          "4,4": {
             "size": [
               5,
               1
@@ -1871,7 +1853,7 @@
           "4,0": {
             "size": [
               5,
-              3
+              4
             ],
             "content": {
               "_type": "Field",
@@ -1896,17 +1878,6 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "1,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Network Table Tree",
-              "_source0": "network_table:///SmartDashboard/DoubleSolenoid[6,0]",
-              "_title": "SmartDashboard/DoubleSolenoid[6,0]"
-            }
-          },
           "1,2": {
             "size": [
               2,
@@ -1929,28 +1900,6 @@
               "_title": "SmartDashboard/Number of balls tracking"
             }
           },
-          "6,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Network Table Tree",
-              "_source0": "network_table:///SmartDashboard/Ball #0",
-              "_title": "SmartDashboard/Ball #0"
-            }
-          },
-          "6,2": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Network Table Tree",
-              "_source0": "network_table:///SmartDashboard/Ball #1",
-              "_title": "SmartDashboard/Ball #1"
-            }
-          },
           "3,3": {
             "size": [
               1,
@@ -1971,17 +1920,6 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Stage 2 speed",
               "_title": "SmartDashboard/Stage 2 speed"
-            }
-          },
-          "8,0": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/Intake command",
-              "_title": "SmartDashboard/Intake command"
             }
           },
           "8,2": {
@@ -2019,6 +1957,52 @@
               "_title": "SmartDashboard/Intake should end",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "1,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/Color Sensor",
+              "_title": "/SmartDashboard/Color Sensor"
+            }
+          },
+          "8,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Conveyor command equals null",
+              "_title": "/SmartDashboard/Conveyor command equals null",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "6,2": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/Ball #2",
+              "_title": "/SmartDashboard/Ball #2"
+            }
+          },
+          "6,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Network Table Tree",
+              "_source0": "network_table:///SmartDashboard/Ball #1",
+              "_title": "/SmartDashboard/Ball #1"
             }
           }
         }
@@ -2189,9 +2173,9 @@
     }
   ],
   "windowGeometry": {
-    "x": 1914.0,
-    "y": 20.0,
-    "width": 1614.0,
-    "height": 691.0
+    "x": 1917.0,
+    "y": 16.0,
+    "width": 1598.0,
+    "height": 701.0
   }
 }

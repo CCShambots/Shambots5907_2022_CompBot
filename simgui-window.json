@@ -6,8 +6,8 @@
       "style": "0",
       "userScale": "2",
       "width": "958",
-      "xpos": "961",
-      "ypos": "31"
+      "xpos": "846",
+      "ypos": "51"
     }
   },
   "Window": {
@@ -23,13 +23,13 @@
     },
     "###DIO": {
       "Collapsed": "0",
-      "Pos": "72,742",
-      "Size": "162,169"
+      "Pos": "72,741",
+      "Size": "162,215"
     },
     "###FMS": {
       "Collapsed": "0",
       "Pos": "13,515",
-      "Size": "169,184"
+      "Size": "175,184"
     },
     "###Joysticks": {
       "Collapsed": "0",

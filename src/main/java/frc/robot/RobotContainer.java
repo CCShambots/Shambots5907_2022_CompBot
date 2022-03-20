@@ -145,7 +145,7 @@ public class RobotContainer {
     
       //Runs the intake command if the robot has fewer than two balls and the turret is not trying to shoot
       new JoystickButton(operatorController, 4)
-        .whenPressed(new PriorityCommand(new IntakeCommand(intake, conveyor), () -> conveyor.getNumberOfBalls() < 2));
+        .whenPressed(new PriorityCommand(new IntakeCommand(intake, conveyor, turret, drivetrain), () -> conveyor.getNumberOfBalls() < 2));
       
       //Indicates that the intake command should end prematurely 
       //(balls will still be processed if they are still moving through the conveyor)

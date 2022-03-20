@@ -7,6 +7,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Constants.Color;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Conveyor.Direction;
 import frc.robot.util.hardware.ColorSensor;
@@ -44,6 +45,11 @@ public class BallTracker implements Sendable{
     public BallPosition getBall1Pos() {return balls.size() >= 1 ? balls.get(0).getPosition() : BallPosition.NotInBot;}
     public BallPosition getBall2Pos() {return balls.size() >= 2 ? balls.get(1).getPosition() : BallPosition.NotInBot;}
 
+    public BallColor getBall1Color() {return balls.size() >= 1 ? balls.get(0).getColor() : BallColor.NotInBot;}
+    public BallColor getBall2Color() {return balls.size() >= 2 ? balls.get(1).getColor() : BallColor.NotInBot;}
+
+    public Ball getBall1() {return balls.size() >= 1 ? balls.get(0) : emptyBall;}
+    public Ball getBall2() {return balls.size() >= 2 ? balls.get(1) : emptyBall;}
 
 
     public void setCurrentState(List<Ball> balls) {
@@ -73,6 +79,8 @@ public class BallTracker implements Sendable{
                 //Create a new ball in the conveyor if the stage 1 sensor has just turned on
                 if(currStage1 && currStage1 != prevStage1) {
                     BallColor color = colorSensor.getColor() == Constants.allianceColor ? BallColor.Ours : BallColor.Opposing;
+                    if(colorSensor.getColor() == Color.NoBallDetected || colorSensor.getColor() == Color.SensorNotDetected) setError(true);
+                    System.out.println("Creating new ball of color " + color.name());
                     balls.add(new Ball(color));
                 }
 
@@ -138,11 +146,13 @@ public class BallTracker implements Sendable{
 
         for(int i = 0; i<2; i++) {
             if(balls.size() > i) {
-                SmartDashboard.putData("Ball #" + i, balls.get(i));
+                SmartDashboard.putData("Ball #" + (i+1), balls.get(i));
             } else {
-                SmartDashboard.putData("Ball #" + i, emptyBall);
+                SmartDashboard.putData("Ball #" + (i+1), emptyBall);
             }
         }
+
+        SmartDashboard.putData("Color Sensor", colorSensor);
 
     }
 
