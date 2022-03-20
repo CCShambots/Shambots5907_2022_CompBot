@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.util.hardware.ColorSensor;
