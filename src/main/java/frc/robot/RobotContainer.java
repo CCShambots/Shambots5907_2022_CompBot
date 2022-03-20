@@ -135,6 +135,11 @@ public class RobotContainer {
       new JoystickButton(driverController, Button.kLeftBumper.value)
         .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
 
+      //TODO: What button should this be on?
+      //Reverse the bot controls
+      new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(drivetrain::toggleReversed));
+
 
     //Intake/Conveyor controls
     
