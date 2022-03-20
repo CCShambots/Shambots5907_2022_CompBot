@@ -57,6 +57,5 @@ public class HardEjectCommand extends CommandBase{
         
         conveyor.setEjecting(false);
 
-        RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 0, 0)));
     }
 }

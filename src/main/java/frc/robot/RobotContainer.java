@@ -69,7 +69,7 @@ public class RobotContainer {
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
   // private final Climber climber = new Climber();
-  public static final Lights lights = new Lights();
+  private final Lights lights = new Lights();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -139,6 +139,11 @@ public class RobotContainer {
       //Switch between tank and arcade drive
       new JoystickButton(driverController, Button.kLeftBumper.value)
         .whenPressed(new InstantCommand(drivetrain::toggleDriveMode));
+
+      //TODO: What button should this be on?
+      //Reverse the bot controls
+      new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(drivetrain::toggleReversed));
 
 
     //Intake/Conveyor controls

@@ -55,8 +55,6 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
         boolean ready = !turret.isFlywheelBusy() && isLockedIn();
 
-        if(ready) RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 255, 255)));
-
         return ready;
     }
 
@@ -64,17 +62,5 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
     public void additionalCodeInEnd() {
         turret.setFlywheelTarget(0);
         turret.setShouldEndTargeting(false);
-
-        switch (conveyor.getNumberOfBalls()) {
-            case 0:
-                RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 0, 0)));
-                break;
-            case 1:
-                RobotContainer.lights.setAnimation(new BlinkingAnimation(new RGB(0, 0, 255), new RGB(255, 255, 255), 3));
-                break;
-            case 2:
-                RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 0, 255)));
-                break;
-        }
     }
 }
