@@ -19,7 +19,7 @@ public class SoftStop extends CommandBase{
         this.turret = turret;
         this.climber = climber;
     
-        addRequirements(intake, conveyor, turret, climber);
+        addRequirements(intake, conveyor, turret); //climber);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SoftStop extends CommandBase{
         turret.setSpinnerTarget(turret.getSpinnerAngle());
 
         conveyor.setEjecting(false);
-        climber.brake();
+        // climber.brake();
     }
 
     @Override

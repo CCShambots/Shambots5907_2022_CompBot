@@ -2,8 +2,11 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
+import frc.robot.util.lights.RGB;
+import frc.robot.util.lights.animations.SolidAnimation;
 
 public class HardEjectCommand extends CommandBase{
 
@@ -53,5 +56,7 @@ public class HardEjectCommand extends CommandBase{
         timer.stop();
         
         conveyor.setEjecting(false);
+
+        RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 0, 0)));
     }
 }

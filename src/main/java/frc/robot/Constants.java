@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.Range;
+import frc.robot.util.lights.animations.AdvancedAnimation;
+import frc.robot.util.lights.animations.LightState;
 
 public final class Constants {
     //Current limit for stopping motors from exceeding max power draw
@@ -63,10 +65,11 @@ public final class Constants {
 
         public static final double MAX_VOLTAGE = 11.5;
         
-        public static final double TRACK_WIDTH = 0.5334; //meters
+        public static final double TRACK_WIDTH = 0.6798; //meters
+        
 
         //Tested to be good values by WPILib
-        public static final double K_RAMSETE_B = 2.0;
+        public static final double K_RAMSETE_B = 12.5;
         public static final double K_RAMSETE_ZETA = 0.7;
 
         //TODO: Set this to the actual achievable error
@@ -134,7 +137,7 @@ public final class Constants {
 
         //Spinner control
         public static final double COUNTS_SPINNER_ENCODER = 2048;
-        public static final double TURRET_GEAR_RATIO = (1.0 / 3.0) * (10.0 / 140.0);
+        public static final double TURRET_GEAR_RATIO = (1.0/3.0) * (10.0 / 140.0);
 
         public static final double SPINNER_CLOCKWISE_LIMIT = -165; //Clockwise turns are negative
         public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 165; //Counter-clockwise turns are psotiive
@@ -145,18 +148,14 @@ public final class Constants {
         public static final double MANUAL_SPEED = 0.1; //How fast the spinner can move manually (in the event of a crash)
 
         public static final double SPINNER_P = 0.017;
-        // public static final double SPINNER_P = 0.0;
-        public static final double SPINNER_I = 0.00;
-        public static final double SPINNER_D = 0.0;
+        public static final double SPINNER_I = 0.0;
+        public static final double SPINNER_D = 0.01;
 
         public static final double SPINNER_MAX_VEL = 360; //Deg/sec
         public static final double SPINNER_MAX_ACCEL = 480; //Deg/sec/sec
 
-        // public static final double SPINNER_S = 0.85;
         public static final double SPINNER_S = 0.8;
-
         public static final double SPINNER_V = 0.009;
-        // public static final double SPINNER_V = 0.0;
     
         public static final SupplyCurrentLimitConfiguration FLYWHEEL_CURRENT_LIMIT = new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1); //enable these limits, current limit, trigger threshold, trigger threshold time
 
@@ -167,10 +166,8 @@ public final class Constants {
         public static final int LEFT_CLIMBER_ID = 41;
         public static final int RIGHT_CLIMBER_ID = 42;
 
-        //TODO: fix these 
         public static final int BRAKE = 4; //Pneumatics port
 
-        //TODO: Tune
         public static final double LEFT_P = 0.0001;
         public static final double LEFT_I = 0;
         public static final double LEFT_D = 0;
@@ -188,11 +185,16 @@ public final class Constants {
         public static final double MAX_VEL = 200 * 2048; //Encoder counts per second
         public static final double MAX_ACCEL = 250 * 2048; //Encoder counts per second per second
 
-        //TODO: calculate these
-
         public static final double MID_HEIGHT = 28; //The height (in inches) that the climber will move to for the mid level climb
         public static final double LOW_HEIGHT = 12; //Same as above (in inches) but for low goal
         public static final double LOWERED_HEIGHT = -40; //The fully lowered position of the climber (also in inches)
+    }
+
+    public static class Lights {
+        public static final int CONTROLLER_ID = 51;
+
+        public static final AdvancedAnimation DEFAULT_ANIMAION = new AdvancedAnimation(new LightState(0, 0, 255, .66, .33), new LightState(255, 255, 255, .66, .33));
+        
     }
 
     public static class Controller {

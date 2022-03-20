@@ -78,7 +78,6 @@ public abstract class BasicTrackingCommand extends CommandBase{
 
         additionalCodeInExecute();
 
-        //TODO: Remove telemetry when no longer debugging
         SmartDashboard.putBoolean("Turret overextended?", turret.isOverRotated());
         SmartDashboard.putNumber("Rolling Average", lowPassOutput);
         SmartDashboard.putNumber("Limelight offset", limelightOffset);

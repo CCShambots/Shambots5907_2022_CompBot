@@ -317,8 +317,6 @@ public class Turret extends PrioritizedSubsystem{
         //Only apply voltage to the spinner if we know where it is (otherwise there may only be very slow manual movements)
         if(knowsLocation) spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
 
-
-        //TODO: Remove this telemetry when it's no longer used
         
         //Flywheel telemetry
         SmartDashboard.putData("Bottom Flywheel PID", bottomFlywheelPID);

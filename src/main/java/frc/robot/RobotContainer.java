@@ -23,6 +23,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lights;
 import frc.robot.commands.turret.LowGoalShootCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.ShootCommand;
@@ -34,6 +35,8 @@ import frc.robot.subsystems.Climber.MotorSide;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PriorityCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -65,7 +68,8 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
-  private final Climber climber = new Climber();
+  // private final Climber climber = new Climber();
+  public static final Lights lights = new Lights();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -179,6 +183,12 @@ public class RobotContainer {
       //Moves the turret to facing directly forward
       new JoystickButton(operatorController, 11)
         .whenPressed(new PriorityCommand(new InstantCommand(() -> turret.setSpinnerTarget(0)), 1));
+
+      new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)));
+      
+      new JoystickButton(driverController, Button.kB.value)
+        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
         
       //Spin up the flywheel and shoot into the low goal
       new JoystickButton(operatorController, 12)
@@ -195,23 +205,24 @@ public class RobotContainer {
 
 
     //Climber controls
-    new JoystickButton(operatorController, 3)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered, drivetrain));
+    // new JoystickButton(operatorController, 3)
+      // .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered, drivetrain));
     
-    new JoystickButton(operatorController, 5)
-      .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
+    // new JoystickButton(operatorController, 5)
+      // .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
 
     //Manual commands for moving the climber in for tim
-    configurationTab.add("Raise Right Climber", climber.moveMotor(0.15, MotorSide.Right, false));
-    configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
-    configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
-    configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
+    // configurationTab.add("Raise Right Climber", climber.moveMotor(0.15, MotorSide.Right, false));
+    // configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
+    // configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
+    // configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
 
     driveTab.add("DISABLE TURRET TRACKING", new InstantCommand(() -> turret.setKnowsLocation(false)));
+    driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation());
     
     //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
-      .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, climber)));
+      .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, null)));
   }
 
   public void telemetry() {
@@ -236,7 +247,7 @@ public class RobotContainer {
     SmartDashboard.putData("subsystems/Intake", intake);
     SmartDashboard.putData("subsystems/Conveyor", conveyor);
     SmartDashboard.putData("subsystems/Turret", turret);
-    SmartDashboard.putData("subsystems/Climber", climber);
+    // SmartDashboard.putData("subsystems/Climber", climber);
   }
   
   /**
@@ -313,14 +324,14 @@ public class RobotContainer {
 
   public void raiseIntake() {intake.raiseIntake();}
 
-  public void resetClimber() {climber.resetClimber();}
+  // public void resetClimber() {climber.resetClimber();}
 
   public void resetSubsystems() {
     drivetrain.resetPriority();
     intake.resetPriority();
     conveyor.resetPriority();
     turret.resetPriority();
-    climber.resetPriority();
+    // climber.resetPriority();
   }
 
   private String getRobotStatus() {return Constants.robotStatus.name();}

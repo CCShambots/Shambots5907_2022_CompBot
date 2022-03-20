@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.raiseIntake();
     m_robotContainer.doTurretSetup();
 
-    m_robotContainer.resetClimber();
+    // m_robotContainer.resetClimber();
 
     m_robotContainer.resetDrivetrainPID();
 

@@ -110,7 +110,6 @@ public class Conveyor extends PrioritizedSubsystem{
         else if(conveyorStage1.getMotorOutputPercent() > 0 || conveyorStage2.getMotorOutputPercent() > 0) direction = Direction.Intake;
         else if(conveyorStage1.getMotorOutputPercent() < 0 || conveyorStage2.getMotorOutputPercent() < 0) direction = Direction.Exhaust;
 
-        //TODO: Remove this telemetry later
         SmartDashboard.putData("Ball tracker", tracker);
         SmartDashboard.putNumber("Stage 1 speed", conveyorStage1.getMotorOutputPercent());
         SmartDashboard.putNumber("Stage 2 speed", conveyorStage2.getMotorOutputPercent());

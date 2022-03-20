@@ -1,9 +1,12 @@
 package frc.robot.commands.turret.limelight;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotContainer;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Turret;
+import frc.robot.util.lights.RGB;
+import frc.robot.util.lights.animations.BlinkingAnimation;
+import frc.robot.util.lights.animations.SolidAnimation;
 
 import static frc.robot.Constants.Turret.*;
 
@@ -34,8 +37,6 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
     @Override
     public void additionalCodeInExecute() {
-        //TODO: Remove this telemetry
-        SmartDashboard.putBoolean("Teleop Tracking command is ready to shoot", isReady());
 
         if(turret.getShouldShoot() 
             && shootCommand == null
@@ -51,14 +52,29 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
      * @return true if the turret is locked into the target and the flywheel is spun up
      */
     public boolean isReady() {
-        return 
-            !turret.isFlywheelBusy() &&
-            isLockedIn();
+
+        boolean ready = !turret.isFlywheelBusy() && isLockedIn();
+
+        if(ready) RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 255, 255)));
+
+        return ready;
     }
 
     @Override
     public void additionalCodeInEnd() {
         turret.setFlywheelTarget(0);
         turret.setShouldEndTargeting(false);
+
+        switch (conveyor.getNumberOfBalls()) {
+            case 0:
+                RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 0, 0)));
+                break;
+            case 1:
+                RobotContainer.lights.setAnimation(new BlinkingAnimation(new RGB(0, 0, 255), new RGB(255, 255, 255), 3));
+                break;
+            case 2:
+                RobotContainer.lights.setAnimation(new SolidAnimation(new RGB(0, 0, 255)));
+                break;
+        }
     }
 }
