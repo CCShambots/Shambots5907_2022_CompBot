@@ -3,13 +3,9 @@ package frc.robot.commands.intake;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.intake.Ball.BallPosition;
-import frc.robot.util.lights.RGB;
-import frc.robot.util.lights.animations.BlinkingAnimation;
-import frc.robot.util.lights.animations.SolidAnimation;
 
 public class IntakeCommand extends CommandBase{
     

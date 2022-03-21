@@ -33,13 +33,10 @@ import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PriorityCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
@@ -86,7 +83,8 @@ public class RobotContainer {
 
     
     //Load the different trajectories from their JSON files
-    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute", "Meter"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", 
+    "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute", "Meter", "FourBall1", "FourBall2", "FourBall3"));
 
     //This object uses the trajectories to initialize each autonomous route command
     autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);

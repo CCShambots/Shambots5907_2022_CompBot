@@ -74,7 +74,8 @@ public class AutoRoutes {
         BackUpLeft,
         BackUpMid,
         BackUpRight,
-        Meter
+        Meter,
+        FourBall
     }
 
     public static enum Trajectories {
@@ -85,7 +86,10 @@ public class AutoRoutes {
         BackUpLeftRoute,
         BackUpMidRoute,
         BackUpRightRoute,
-        Meter
+        Meter,
+        FourBall1,
+        FourBall2,
+        FourBall3
     }
 
 }
