@@ -2,7 +2,6 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
@@ -11,7 +10,6 @@ import frc.robot.subsystems.Turret;
 import frc.robot.util.intake.Ball;
 import frc.robot.util.intake.Ball.BallColor;
 import frc.robot.util.intake.Ball.BallPosition;
-import frc.robot.Constants;
 import static frc.robot.Constants.Turret.*;
 import static frc.robot.Constants.Conveyor.*;
 

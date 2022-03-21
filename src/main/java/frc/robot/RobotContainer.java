@@ -19,6 +19,7 @@ import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.HardEjectCommand;
 import frc.robot.commands.intake.IndexedEjectionCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.lights.DefaultLightCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
@@ -326,6 +327,10 @@ public class RobotContainer {
   }
   public void disableLimelight() { turret.setLimelightOff();}
   public void enableLimelight() { turret.setLimelightOn();}
+
+  public void setLEDDefaultCommand() {
+    lights.setDefaultCommand(new DefaultLightCommand(lights, drivetrain, intake, conveyor, turret));
+  }
 
   public void raiseIntake() {intake.raiseIntake();}
 

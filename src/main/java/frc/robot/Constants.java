@@ -6,8 +6,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.Range;
+import frc.robot.util.lights.RGB;
 import frc.robot.util.lights.animations.AdvancedAnimation;
+import frc.robot.util.lights.animations.BlinkingAnimation;
 import frc.robot.util.lights.animations.LightState;
+import frc.robot.util.lights.animations.SolidAnimation;
 
 public final class Constants {
     //Current limit for stopping motors from exceeding max power draw
@@ -196,7 +199,11 @@ public final class Constants {
         public static final int CONTROLLER_ID = 51;
 
         public static final AdvancedAnimation DEFAULT_ANIMAION = new AdvancedAnimation(new LightState(0, 0, 255, .66, .33), new LightState(255, 255, 255, .66, .33));
-        
+        public static final SolidAnimation EMPTY_ANIMATION = new SolidAnimation(new RGB(0,0,0));
+        public static final BlinkingAnimation ONE_BALL_ANIMATION = new BlinkingAnimation(new RGB(0, 0, 255), new RGB(255, 255, 255), 3);
+        public static final SolidAnimation TWO_BALL_ANIMATION = new SolidAnimation(new RGB(0, 0, 255));
+        public static final SolidAnimation LOCKED_IN_ANIMATION = new SolidAnimation(new RGB(0, 255, 0));
+        public static final BlinkingAnimation ERROR_ANIMATION = new BlinkingAnimation(new RGB(255, 0, 0), new RGB(0, 0, 0), 4);
     }
 
     public static class Controller {

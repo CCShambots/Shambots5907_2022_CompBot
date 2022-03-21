@@ -70,6 +70,8 @@ public class Turret extends PrioritizedSubsystem{
 
     private boolean shouldEndTargeting = false;
 
+    private boolean isReadyToShoot = false;
+
     public Turret(ShuffleboardTab driveTab) {
         bottomFlywheel.configFactoryDefault();
         spinner.configFactoryDefault();
@@ -284,6 +286,9 @@ public class Turret extends PrioritizedSubsystem{
     public boolean doesLimelightHaveTarget() {return limelight.hasTarget();}
     public Translation2d getLimelightOffset() {return limelight.targetOffset();}
     public double getLimelightLatency() {return limelight.getLatency();}
+
+    public void setIsReadyToShoot(boolean value) {isReadyToShoot = value;}
+    public boolean getIsReadyToShoot() {return isReadyToShoot;}
 
     /**
      * 

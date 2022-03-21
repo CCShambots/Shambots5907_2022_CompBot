@@ -50,7 +50,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
     public boolean isReady() {
 
         boolean ready = !turret.isFlywheelBusy() && isLockedIn();
-
+        setTurretReadyFlag(ready);
         return ready;
     }
 
