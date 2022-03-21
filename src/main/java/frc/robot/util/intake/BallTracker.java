@@ -78,7 +78,7 @@ public class BallTracker implements Sendable{
             if(conveyor.getDirection() == Direction.Intake) {
                 //Create a new ball in the conveyor if the stage 1 sensor has just turned on
                 if(currStage1 && currStage1 != prevStage1) {
-                    BallColor color = colorSensor.getColor() == Constants.allianceColor ? BallColor.Ours : BallColor.Opposing;
+                    BallColor color = colorSensor.getColor() != Constants.allianceColor ? BallColor.Opposing : BallColor.Ours;
                     if(colorSensor.getColor() == Color.NoBallDetected || colorSensor.getColor() == Color.SensorNotDetected) setError(true);
                     System.out.println("Creating new ball of color " + color.name());
                     balls.add(new Ball(color));
