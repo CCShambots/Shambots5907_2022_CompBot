@@ -1,5 +1,6 @@
 package frc.robot.commands.turret.limelight;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,7 +18,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
     protected Turret turret;
     
     //Config values
-    private double limelightDeadband = 2; //Degrees in which to deadband the limelight
+    private double limelightDeadband = 3; //Degrees in which to deadband the limelight
 
     //Control variables (control the state of the command)
     private Mode mode = Mode.Targeting;
@@ -25,6 +26,8 @@ public abstract class BasicTrackingCommand extends CommandBase{
     private double limelightOffset = 0; //The value of the target off on the limelight (x-axis)
     private double targetAngle = 0; //The shooter's current setpoint
     private Direction prevDirection = Direction.Clockwise;
+
+    private LinearFilter filter = LinearFilter.movingAverage(15);
 
     /**Command to turn automatically towards the target using the limelight */
     public BasicTrackingCommand(Turret turret, Subsystem... requirements) {
@@ -75,17 +78,21 @@ public abstract class BasicTrackingCommand extends CommandBase{
         limelightOffset = turret.correctLimelightAngle(turret.getLimelightOffset()); //Get the limelight offset from the network table
 
         //Limelight deadbanding
-        if(Math.abs(limelightOffset) < limelightDeadband) limelightOffset = 0;
+        // if(Math.abs(limelightOffset) < limelightDeadband) limelightOffset = 0;
+
 
         //Only change the limelight target if the limelight has a target
-        if(turret.doesLimelightHaveTarget()) targetAngle =  limelightOffset + turret.getPreviousSpinnerAngle();
+        if(turret.doesLimelightHaveTarget()) targetAngle = limelightOffset + turret.getPreviousSpinnerAngle();
+
     }
 
     //The loop that runs as the turret is actively targeting 
     private void targetingLoop() {
         if(turret.doesLimelightHaveTarget()) {
             //Set the spinner to the target angle
-            turret.setSpinnerTarget(targetAngle);
+            // if(Math.abs(limelightOffset) > 0) {
+                if(Math.abs(targetAngle - turret.getSpinnerAngle()) > limelightDeadband) turret.setSpinnerTarget(targetAngle);
+            // } else turret.setSpinnerTarget(turret.getSpinnerAngle());
 
             overRotatedCheck();
         } else {

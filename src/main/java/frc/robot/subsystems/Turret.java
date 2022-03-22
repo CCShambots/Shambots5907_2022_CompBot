@@ -35,7 +35,18 @@ public class Turret extends PrioritizedSubsystem{
 
     private FakeGyro fakeGyro;
 
-    private double previousSpinnerAngle=0;
+    private double previousUseValue=0;
+    private double previousAngle1=0;
+    private double previousAngle2=0;
+    private double previousAngle3=0;
+    private double previousAngle4=0;
+    private double previousAngle5=0;
+    private double previousAngle6=0;
+    private double previousAngle7=0;
+    private double previousAngle8=0;
+    private double previousAngle9=0;
+    private double previousAngle10=0;
+
 
     // Flywheel controls
     private PIDController highSpeedPID = new PIDController(HIGH_SPEED_P, HIGH_SPEED_I, HIGH_SPEED_D);
@@ -107,7 +118,7 @@ public class Turret extends PrioritizedSubsystem{
     }
 
     public double getFlywheelTarget() {
-        return activePID.getSetpoint();
+        return bangbang.getSetpoint();
     }
 
     public double getBottomFlyWheelRPM() {return countsToRPM(bottomFlywheel.getSelectedSensorVelocity());}
@@ -297,7 +308,7 @@ public class Turret extends PrioritizedSubsystem{
 
     public Constraints getOriginalSpinnerConstraints() {return originalSpinnerConstraints;}
     public Constraints getSlowSpinnerConstraints() {return slowSpinnerConstraints;}
-    public double getPreviousSpinnerAngle() {return previousSpinnerAngle;}
+    public double getPreviousSpinnerAngle() {return previousUseValue;}
 
 
     /* Other sensors */
@@ -345,7 +356,17 @@ public class Turret extends PrioritizedSubsystem{
         //Only apply voltage to the spinner if we know where it is (otherwise there may only be very slow manual movements)
         if(knowsLocation) {
             spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
-            previousSpinnerAngle = getSpinnerAngle();
+            previousUseValue = previousAngle2;
+            // previousAngle10 = previousAngle9;
+            // previousAngle9 = previousAngle8;
+            // previousAngle8 = previousAngle7;
+            // previousAngle7 = previousAngle6;
+            // previousAngle6 = previousAngle5;
+            // previousAngle5 = previousAngle4;
+            // previousAngle4 = previousAngle3;
+            // previousAngle3 = previousAngle2;
+            previousAngle2 = previousAngle1;
+            previousAngle1 = getSpinnerAngle();
         }
 
         
@@ -357,6 +378,7 @@ public class Turret extends PrioritizedSubsystem{
         SmartDashboard.putNumber("Bottom Flywheel Target Velo", bangbang.getSetpoint());
         SmartDashboard.putNumber("Bottom Flywheel Measured Velo", getBottomFlyWheelRPM());
         SmartDashboard.putNumber("Bottom Flywheel Voltage", bottomFlywheel.getMotorOutputVoltage());
+        SmartDashboard.putBoolean("Is flywheel busy", isFlywheelBusy());
 
         //Spinner telemetry
         SmartDashboard.putData("Spinner PID", spinnerPIDController);
@@ -367,6 +389,8 @@ public class Turret extends PrioritizedSubsystem{
         SmartDashboard.putNumber("Spinner Target Angle", getSpinnerTarget());
         SmartDashboard.putNumber("Spinner Measured Angle", getSpinnerAngle());
         SmartDashboard.putNumber("Spinner Voltage", getSpinnerVoltage());
+        SmartDashboard.putNumber("Spinner Look behind", getPreviousSpinnerAngle());
+
 
         SmartDashboard.putBoolean("Is spinner busy", isSpinnerBusy());
         SmartDashboard.putBoolean("Central hall effect", centerHallEffect.isActivated());
