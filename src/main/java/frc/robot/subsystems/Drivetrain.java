@@ -291,7 +291,7 @@ public class Drivetrain extends PrioritizedSubsystem {
     SmartDashboard.putNumber("left setpoint", getLeftModule().getSetpoint());
     SmartDashboard.putNumber("right setpoint", getRightModule().getSetpoint());
 
-    SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
+    // SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
   }
 
   public TankDriveModule getLeftModule() {return leftModule;}

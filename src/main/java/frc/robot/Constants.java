@@ -113,23 +113,23 @@ public final class Constants {
         public static final double CLOCKWISE_SENSOR_ANGLE = -175;
         public static final double COUNTERCLOCKWISE_SENSOR_ANGLE = 175;
 
-
         //Flywheel control
-        public static final double BOTTOM_FLYWHEEL_S = 0.75;
-        public static final double BOTTOM_FLYWHEEL_V = 0.00175;
-        public static final double BOTTOM_FLYWHEEL_P = 0.001;
-        public static final double BOTTOM_FLYWHEEL_I = 0;
-        public static final double BOTTOM_FLYWHEEL_D = 0.0005;
+        public static final double HIGH_SPEED_S = 0.69;
+        public static final double HIGH_SPEED_V = 0.00162;
+        public static final double HIGH_SPEED_P = 0.01;
+        public static final double HIGH_SPEED_I = 0;
+        // public static final double HIGH_SPEED_D = 0.002;
+        public static final double HIGH_SPEED_D = 0.00;
 
-        public static final double TOP_FLYWHEEL_S = 0.25;
-        public static final double TOP_FLYWHEEL_V = 0.0017;
-        public static final double TOP_FLYWHEEL_P = 0.01;
-        public static final double TOP_FLYWHEEL_I = 0;
-        public static final double TOP_FLYWHEEL_D = 0;
+        public static final double LOW_SPEED_S = 0.69;
+        public static final double LOW_SPEED_V = 0.00158;
+        public static final double LOW_SPEED_P = 0.001;
+        public static final double LOW_SPEED_I = 0;
+        public static final double LOW_SPEED_D = 0.0005;
 
         //TODO: Tune this value to attainable error
         public static final double FLYWHEEL_ALLOWED_ERROR = 50; //The allowed error for the flywheel setpoint (in RPM)
-        public static final double FLYWHEEL_TARGET_RPM = 3800; //The normal target rpm the turret will target
+        public static final double FLYWHEEL_HIGH_RPM = 3800; //The normal target rpm the turret will target
         public static final double FLYWHEEL_LOW_RPM = 1800; //The normal target rpm the turret will target
 
         //Spinner control

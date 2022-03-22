@@ -47,7 +47,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
     @Override
     public void additionalCodeInInitialize() {
         turret.setShouldEndTargeting(false);
-        turret.setFlywheelTarget(FLYWHEEL_TARGET_RPM);
+        turret.setFlywheelTarget(FLYWHEEL_HIGH_RPM);
 
         shootCommand = null;
     }

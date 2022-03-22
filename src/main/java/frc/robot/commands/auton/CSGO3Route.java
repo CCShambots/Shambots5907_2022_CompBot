@@ -28,7 +28,7 @@ public class CSGO3Route extends BaseRoute{
         addCommands(
             setupAuto(paths.get(CSGO31)),
             new ParallelCommandGroup(
-                new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
+                new SpinUpFlywheelCommand(turret, FLYWHEEL_HIGH_RPM),
           
                 new IntakeCommand(intake, conveyor),
 

@@ -27,6 +27,7 @@ import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Climber.MotorSide;
+import frc.robot.subsystems.Turret.ControlLoop;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
@@ -169,11 +170,29 @@ public class RobotContainer {
       new JoystickButton(operatorController, 11)
         .whenPressed(new PriorityCommand(new InstantCommand(() -> turret.setSpinnerTarget(0)), 1));
 
-      new JoystickButton(driverController, Button.kA.value)
-        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)));
+      // new JoystickButton(driverController, Button.kA.value)
+      //   .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)));
       
+      // new JoystickButton(driverController, Button.kB.value)
+      //   .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
+
+      new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> {
+          turret.setFlywheelControlLoop(ControlLoop.HighSpeed);
+          turret.setFlywheelTarget(FLYWHEEL_HIGH_RPM);
+        }))
+        .whenReleased(new InstantCommand(() -> {
+          turret.setFlywheelTarget(0);
+        }));
+
       new JoystickButton(driverController, Button.kB.value)
-        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
+      .whenPressed(new InstantCommand(() -> {
+        turret.setFlywheelControlLoop(ControlLoop.LowSpeed);
+        turret.setFlywheelTarget(FLYWHEEL_LOW_RPM);
+      }))
+      .whenReleased(new InstantCommand(() -> {
+        turret.setFlywheelTarget(0);
+      }));
         
       //Spin up the flywheel and shoot into the low goal
       new JoystickButton(operatorController, 12)
@@ -254,6 +273,9 @@ public class RobotContainer {
     turret.resetSpinnerPID();
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
+    
+    //TODO: REmove this at some point
+    turret.setKnowsLocation(true);
   }
   
   /**
