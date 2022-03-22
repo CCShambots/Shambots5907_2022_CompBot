@@ -32,7 +32,7 @@ public class CSGO1Route extends BaseRoute{
                     turret.setSpinnerTarget(-65);
                     turret.setSearchDirection(Direction.Clockwise);
                 }),
-                new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
+                new SpinUpFlywheelCommand(turret, FLYWHEEL_HIGH_RPM),
           
                 new IntakeCommand(intake, conveyor),
 

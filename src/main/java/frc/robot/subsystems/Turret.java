@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -10,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.util.FakeGyro;
+import frc.robot.util.Range;
 import frc.robot.util.hardware.HallEffectSensor;
 import frc.robot.util.hardware.Limelight;
 import frc.robot.util.priorityFramework.PrioritizedSubsystem;
@@ -31,18 +33,35 @@ public class Turret extends PrioritizedSubsystem{
     private HallEffectSensor clockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_CLOCKWISE);
     private HallEffectSensor counterClockwiseHallEffect = new HallEffectSensor(HALL_EFFECT_COUNTERCLOCKWISE);
 
-
     private FakeGyro fakeGyro;
 
+    private double previousUseValue=0;
+    private double previousAngle1=0;
+    private double previousAngle2=0;
+    private double previousAngle3=0;
+    private double previousAngle4=0;
+    private double previousAngle5=0;
+    private double previousAngle6=0;
+    private double previousAngle7=0;
+    private double previousAngle8=0;
+    private double previousAngle9=0;
+    private double previousAngle10=0;
+
+
     // Flywheel controls
-    private PIDController bottomFlywheelPID = new PIDController(BOTTOM_FLYWHEEL_P, BOTTOM_FLYWHEEL_I, BOTTOM_FLYWHEEL_D);
-    private SimpleMotorFeedforward bottomFlywheelFeedforward = new SimpleMotorFeedforward(BOTTOM_FLYWHEEL_S, BOTTOM_FLYWHEEL_V);
+    private PIDController highSpeedPID = new PIDController(HIGH_SPEED_P, HIGH_SPEED_I, HIGH_SPEED_D);
+    private SimpleMotorFeedforward highSpeedFF = new SimpleMotorFeedforward(HIGH_SPEED_S, HIGH_SPEED_V);
+    private PIDController lowSpeedPID = new PIDController(LOW_SPEED_P, LOW_SPEED_I, LOW_SPEED_D);
+    private SimpleMotorFeedforward lowSpeedFF = new SimpleMotorFeedforward(LOW_SPEED_S, LOW_SPEED_V);
+
+    private PIDController activePID = highSpeedPID;
+    private SimpleMotorFeedforward activeFF = highSpeedFF;
+
+    private BangBangController bangbang = new BangBangController(FLYWHEEL_ALLOWED_ERROR);
 
     //Monitoring variables for telemetry
-    private double bottomFlywheelPIDOutput = 0;
-    private double bottomFlywheelFFOutput = 0;
-    private double topFlywheelPIDOutput = 0;
-    private double topFlywheelFFOutput = 0;
+    private double flywheelPIDOutput = 0;
+    private double flywheelFFOutput = 0;
 
     // Spinner controls
 
@@ -95,11 +114,11 @@ public class Turret extends PrioritizedSubsystem{
     /* Flywheel methods */
 
     public void setFlywheelTarget(double RPM) {
-        bottomFlywheelPID.setSetpoint(RPM);
+        bangbang.setSetpoint(RPM);
     }
 
     public double getFlywheelTarget() {
-        return bottomFlywheelPID.getSetpoint();
+        return bangbang.getSetpoint();
     }
 
     public double getBottomFlyWheelRPM() {return countsToRPM(bottomFlywheel.getSelectedSensorVelocity());}
@@ -124,10 +143,8 @@ public class Turret extends PrioritizedSubsystem{
     public double getBottomFlywheelVoltage() {return bottomFlywheel.getMotorOutputVoltage();}
     public double getTopFlywheelVoltage() {return bottomFlywheel.getMotorOutputVoltage();}
 
-    public double getBottomFlywheelPIDOutput() {return bottomFlywheelPIDOutput;}
-    public double getBottomFlywheelFFOutput() {return bottomFlywheelFFOutput;}
-    public double getTopFlywheelPIDOutput() {return topFlywheelPIDOutput;}
-    public double getTopFlywheelFFOutput() {return topFlywheelFFOutput;}
+    public double getBottomFlywheelPIDOutput() {return flywheelPIDOutput;}
+    public double getBottomFlywheelFFOutput() {return flywheelFFOutput;}
 
     public boolean getShouldShoot() {return shouldShoot;}
     public void setShouldShoot(boolean value) {shouldShoot = value;}
@@ -186,15 +203,35 @@ public class Turret extends PrioritizedSubsystem{
     /**
      * @return true if the spinner is greater than ACCEPTABLE_ERROR degrees off from the target
      */
-    public boolean isSpinnerBusy() {
-        return Math.abs(getSpinnerAngle() - getSpinnerTarget()) >= ACCEPTABLE_ERROR;
+    public boolean isSpinnerBusy(double allowedError) {
+        return Math.abs(getSpinnerAngle() - getSpinnerTarget()) >= allowedError;
     }  
+
+    public boolean isSpinnerBusy() {
+        return isSpinnerBusy(ACCEPTABLE_ERROR);
+    }
 
     /**
      * @return true if the spinner is not in the range where it is unable to shoot
      */
     public boolean isShootingAllowed() {
-        return !INVALID_SHOOTING_RANGE.inRange(getSpinnerAngle()) && !isFlywheelBusy();
+        if (isFlywheelBusy()) return false;
+
+        for(Range r : INVALID_SHOOTING_RANGES) {
+            if(r.inRange(getSpinnerAngle())) return false;
+        }
+        return true;
+    }
+
+    public void setFlywheelControlLoop(ControlLoop type) {
+        if(type == ControlLoop.HighSpeed) {
+            activePID = highSpeedPID;
+            activeFF = highSpeedFF;
+        } else {
+            activePID = lowSpeedPID;
+            activeFF = lowSpeedFF;
+        }
+        activePID.reset();
     }
 
     /**
@@ -271,6 +308,7 @@ public class Turret extends PrioritizedSubsystem{
 
     public Constraints getOriginalSpinnerConstraints() {return originalSpinnerConstraints;}
     public Constraints getSlowSpinnerConstraints() {return slowSpinnerConstraints;}
+    public double getPreviousSpinnerAngle() {return previousUseValue;}
 
 
     /* Other sensors */
@@ -304,29 +342,43 @@ public class Turret extends PrioritizedSubsystem{
 
     @Override
     public void periodic() {
-        bottomFlywheelPIDOutput = bottomFlywheelPID.calculate(getBottomFlyWheelRPM());
-        bottomFlywheelFFOutput = bottomFlywheelFeedforward.calculate(bottomFlywheelPID.getSetpoint());
+        //Flywheel controls
+        flywheelPIDOutput = bangbang.calculate(getBottomFlyWheelRPM());
+        flywheelFFOutput = activeFF.calculate(bangbang.getSetpoint());
 
-        if(bottomFlywheelPID.getSetpoint() == 0) bottomFlywheel.setVoltage(0);
-        else bottomFlywheel.setVoltage(bottomFlywheelPIDOutput + bottomFlywheelFFOutput);
+        if(bangbang.getSetpoint() == 0) bottomFlywheel.setVoltage(0);
+        else bottomFlywheel.setVoltage(flywheelPIDOutput + flywheelFFOutput);
     
 
         spinnerPIDOutput = spinnerPIDController.calculate(getSpinnerAngle(), spinnerSetpoint);
         spinnerFFOutput = spinnerFeedForward.calculate(spinnerPIDController.getSetpoint().velocity);
 
         //Only apply voltage to the spinner if we know where it is (otherwise there may only be very slow manual movements)
-        if(knowsLocation) spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
+        if(knowsLocation) {
+            spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
+            previousUseValue = previousAngle2;
+            // previousAngle10 = previousAngle9;
+            // previousAngle9 = previousAngle8;
+            // previousAngle8 = previousAngle7;
+            // previousAngle7 = previousAngle6;
+            // previousAngle6 = previousAngle5;
+            // previousAngle5 = previousAngle4;
+            // previousAngle4 = previousAngle3;
+            // previousAngle3 = previousAngle2;
+            previousAngle2 = previousAngle1;
+            previousAngle1 = getSpinnerAngle();
+        }
 
         
         //Flywheel telemetry
-        SmartDashboard.putData("Bottom Flywheel PID", bottomFlywheelPID);
-        SmartDashboard.putNumber("Top Flywheel PID Output", topFlywheelPIDOutput);
-        SmartDashboard.putNumber("Bottom Flywheel PID Output", bottomFlywheelPIDOutput);
-        SmartDashboard.putNumber("Top Flywheel FF Output", bottomFlywheelFFOutput);
-        SmartDashboard.putNumber("Bottom Flywheel FF Output", bottomFlywheelFFOutput);
-        SmartDashboard.putNumber("Bottom Flywheel Target Velo", bottomFlywheelPID.getSetpoint());
+        SmartDashboard.putData("Bottom Flywheel PID", highSpeedPID);
+        SmartDashboard.putNumber("Bottom Flywheel PID Output", flywheelPIDOutput);
+        SmartDashboard.putNumber("Top Flywheel FF Output", flywheelFFOutput);
+        SmartDashboard.putNumber("Bottom Flywheel FF Output", flywheelFFOutput);
+        SmartDashboard.putNumber("Bottom Flywheel Target Velo", bangbang.getSetpoint());
         SmartDashboard.putNumber("Bottom Flywheel Measured Velo", getBottomFlyWheelRPM());
         SmartDashboard.putNumber("Bottom Flywheel Voltage", bottomFlywheel.getMotorOutputVoltage());
+        SmartDashboard.putBoolean("Is flywheel busy", isFlywheelBusy());
 
         //Spinner telemetry
         SmartDashboard.putData("Spinner PID", spinnerPIDController);
@@ -337,6 +389,8 @@ public class Turret extends PrioritizedSubsystem{
         SmartDashboard.putNumber("Spinner Target Angle", getSpinnerTarget());
         SmartDashboard.putNumber("Spinner Measured Angle", getSpinnerAngle());
         SmartDashboard.putNumber("Spinner Voltage", getSpinnerVoltage());
+        SmartDashboard.putNumber("Spinner Look behind", getPreviousSpinnerAngle());
+
 
         SmartDashboard.putBoolean("Is spinner busy", isSpinnerBusy());
         SmartDashboard.putBoolean("Central hall effect", centerHallEffect.isActivated());
@@ -346,6 +400,11 @@ public class Turret extends PrioritizedSubsystem{
     public enum Direction {
         Clockwise, 
         CounterClockwise
+    }
+
+    public enum ControlLoop {
+        HighSpeed,
+        LowSpeed
     }
 
 

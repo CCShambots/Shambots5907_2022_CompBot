@@ -23,12 +23,11 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.commands.turret.LowGoalShootCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
-import frc.robot.commands.turret.ShootCommand;
-import frc.robot.commands.turret.SpinUpFlywheelCommand;
 import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Climber.MotorSide;
+import frc.robot.subsystems.Turret.ControlLoop;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
@@ -159,7 +158,7 @@ public class RobotContainer {
     
       //Begin or cancel tracking the central target with the target
       new JoystickButton(operatorController, 7)
-        .whenPressed(new PriorityCommand(new TeleopTrackingCommand(turret, conveyor), () -> conveyor.getNumberOfBalls() > 0))
+        .whenPressed(new PriorityCommand(new TeleopTrackingCommand(drivetrain, turret, conveyor), () -> conveyor.getNumberOfBalls() > 0))
         .whenReleased(new InstantCommand(() -> turret.setShouldEndTargeting(true)));
       
       //Only let the turret shoot  if the conveyor doesn't have a command
@@ -175,11 +174,29 @@ public class RobotContainer {
       new JoystickButton(operatorController, 11)
         .whenPressed(new PriorityCommand(new InstantCommand(() -> turret.setSpinnerTarget(0)), 1));
 
-      new JoystickButton(driverController, Button.kA.value)
-        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)));
+      // new JoystickButton(driverController, Button.kA.value)
+      //   .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)));
       
+      // new JoystickButton(driverController, Button.kB.value)
+      //   .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
+
+      new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> {
+          turret.setFlywheelControlLoop(ControlLoop.HighSpeed);
+          turret.setFlywheelTarget(FLYWHEEL_HIGH_RPM);
+        }))
+        .whenReleased(new InstantCommand(() -> {
+          turret.setFlywheelTarget(0);
+        }));
+
       new JoystickButton(driverController, Button.kB.value)
-        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
+      .whenPressed(new InstantCommand(() -> {
+        turret.setFlywheelControlLoop(ControlLoop.LowSpeed);
+        turret.setFlywheelTarget(FLYWHEEL_LOW_RPM);
+      }))
+      .whenReleased(new InstantCommand(() -> {
+        turret.setFlywheelTarget(0);
+      }));
         
       //Spin up the flywheel and shoot into the low goal
       new JoystickButton(operatorController, 12)
@@ -207,11 +224,11 @@ public class RobotContainer {
     // configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
     // configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
     // configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
-
-    driveTab.add("DISABLE TURRET TRACKING", new InstantCommand(() -> turret.setKnowsLocation(false)));
-    driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation());
     
-    //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
+    driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry()));
+    driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry());
+
+    //Soft stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
       .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, null)));
   }
@@ -240,22 +257,6 @@ public class RobotContainer {
     SmartDashboard.putData("subsystems/Turret", turret);
     // SmartDashboard.putData("subsystems/Climber", climber);
   }
-  
-  /**
-   * Function that evaluates if the robot is in a state where it is able to shoot
-   * Requirements:
-   *  - the limelight is tracking
-   *  - the intake does not have another command running
-   *  - the limelight is locked in (i.e. right on target)
-   *  - the flywheel is at the right speed
-   * @return
-   */
-  public boolean isShootingAllowed() {
-    if(limeLightTeleopCommand == null) return false;
-    if(intake.getCurrentCommand() != null) return false;
-
-    return limeLightTeleopCommand.isReady();
-  }
 
   public void doDrivetrainSetup() {
     //Set the default command for easy driving
@@ -276,8 +277,8 @@ public class RobotContainer {
     turret.resetSpinnerPID();
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
-
-    //TODO: Remove this
+    
+    //TODO: REmove this at some point
     turret.setKnowsLocation(true);
   }
   

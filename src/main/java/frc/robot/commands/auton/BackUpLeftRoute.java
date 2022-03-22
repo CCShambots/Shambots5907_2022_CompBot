@@ -27,7 +27,7 @@ public class BackUpLeftRoute extends BaseRoute{
             new WaitCommand(8),
             new ParallelCommandGroup(
                 new MoveSpinnerCommand(turret, 0),
-                new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
+                new SpinUpFlywheelCommand(turret, FLYWHEEL_HIGH_RPM),
           
                 new TrajectoryCommand(drivetrain, paths.get(Trajectories.BackUpLeftRoute))
             ),

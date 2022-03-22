@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.List;
+
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -111,36 +113,41 @@ public final class Constants {
         public static final double CLOCKWISE_SENSOR_ANGLE = -175;
         public static final double COUNTERCLOCKWISE_SENSOR_ANGLE = 175;
 
-
         //Flywheel control
-        public static final double BOTTOM_FLYWHEEL_S = 0.75;
-        public static final double BOTTOM_FLYWHEEL_V = 0.00175;
-        public static final double BOTTOM_FLYWHEEL_P = 0.001;
-        public static final double BOTTOM_FLYWHEEL_I = 0;
-        public static final double BOTTOM_FLYWHEEL_D = 0.0005;
+        public static final double HIGH_SPEED_S = 0.69;
+        public static final double HIGH_SPEED_V = 0.00162;
+        public static final double HIGH_SPEED_P = 0.01;
+        public static final double HIGH_SPEED_I = 0;
+        // public static final double HIGH_SPEED_D = 0.002;
+        public static final double HIGH_SPEED_D = 0.00;
 
-        public static final double TOP_FLYWHEEL_S = 0.25;
-        public static final double TOP_FLYWHEEL_V = 0.0017;
-        public static final double TOP_FLYWHEEL_P = 0.01;
-        public static final double TOP_FLYWHEEL_I = 0;
-        public static final double TOP_FLYWHEEL_D = 0;
+        public static final double LOW_SPEED_S = 0.69;
+        public static final double LOW_SPEED_V = 0.00158;
+        public static final double LOW_SPEED_P = 0.001;
+        public static final double LOW_SPEED_I = 0;
+        public static final double LOW_SPEED_D = 0.0005;
 
         //TODO: Tune this value to attainable error
         public static final double FLYWHEEL_ALLOWED_ERROR = 50; //The allowed error for the flywheel setpoint (in RPM)
-        public static final double FLYWHEEL_TARGET_RPM = 3800; //The normal target rpm the turret will target
+        public static final double FLYWHEEL_HIGH_RPM = 3800; //The normal target rpm the turret will target
         public static final double FLYWHEEL_LOW_RPM = 1800; //The normal target rpm the turret will target
 
         //Spinner control
         public static final double COUNTS_SPINNER_ENCODER = 2048;
         public static final double TURRET_GEAR_RATIO = (1.0/3.0) * (10.0 / 140.0);
 
-        public static final double SPINNER_CLOCKWISE_LIMIT = -165; //Clockwise turns are negative
-        public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 165; //Counter-clockwise turns are psotiive
-        public static final double ACCEPTABLE_ERROR = 4; //How close the turret has to get to it's setpoint before isBusy() returns false
-        public static final Range INVALID_SHOOTING_RANGE = new Range(200, 300);
+        public static final double SPINNER_CLOCKWISE_LIMIT = -180; //Clockwise turns are negative
+        public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 180; //Counter-clockwise turns are psotiive
+        public static final List<Range> INVALID_SHOOTING_RANGES = List.of(new Range(165, 180), new Range(-165, -180));
         public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
         public static final double MANUAL_SPEED = 0.1; //How fast the spinner can move manually (in the event of a crash)
+
+        public static final double AUTOMATIC_START_DISTANCE = 10; //Feet away from the goal the turret should automatically start
+
+        //Allowed errors
+        public static final double ACCEPTABLE_ERROR = 4; //How close the turret has to get to it's setpoint before isBusy() returns false
+        public static final double WRAPAROUND_ERROR = 10; //How close the turret has to get when wrpaping around before searching again
 
         public static final double SPINNER_P = 0.017;
         public static final double SPINNER_I = 0.0;
