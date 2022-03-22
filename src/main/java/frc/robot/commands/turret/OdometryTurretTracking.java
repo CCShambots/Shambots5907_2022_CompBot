@@ -48,7 +48,7 @@ public class OdometryTurretTracking extends CommandBase{
             //Switch to tracking with
             double distanceToGoal = poseFeet.getTranslation().getDistance(goalPos);
 
-            if(distanceToGoal <= AUTOMATIC_START_DISTANCE && !turret.getShouldEndTargeting()) {
+            if(distanceToGoal <= AUTOMATIC_START_DISTANCE && !turret.getShouldEndTargeting() && false) {
                 //Begin teleop tracking command
                 new PriorityCommand(new TeleopTrackingCommand(drivetrain, turret, conveyor, true), () -> turret.knowsLocation()).schedule();
             } 
