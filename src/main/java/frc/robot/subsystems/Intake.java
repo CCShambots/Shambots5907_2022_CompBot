@@ -22,7 +22,7 @@ import static frc.robot.Constants.Drivetrain.*;
 public class Intake extends PrioritizedSubsystem {
   private WPI_TalonFX roller1 = new WPI_TalonFX(ROLLER_1_ID);
 
-  private DoubleSolenoid rotationalSolenoid1 = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.REVPH, SOLENOID_1_PORT_1, SOLENOID_1_PORT_2);
+  private DoubleSolenoid rotationalSolenoid1 = new DoubleSolenoid(COMPRESSOR_ID, PneumaticsModuleType.CTREPCM, SOLENOID_1_PORT_1, SOLENOID_1_PORT_2);
 
   private IntakeDirection direction = IntakeDirection.Stopped;
   private IntakeState intakeState = IntakeState.Raised;
