@@ -34,7 +34,7 @@ public class FourBallRoute extends BaseRoute{
                     turret.setSearchDirection(Direction.Clockwise);
                 }),
                 new SpinUpFlywheelCommand(turret, FLYWHEEL_HIGH_RPM + 250),
-                new IntakeCommand(intake, conveyor),
+                new IntakeCommand(intake, conveyor, turret, drivetrain),
                 new SequentialCommandGroup(
                     new TrajectoryCommand(drivetrain, paths.get(FourBall1)),
                     new InstantCommand(() -> intake.setShouldEnd(true))
@@ -44,7 +44,7 @@ public class FourBallRoute extends BaseRoute{
             new ShootCommand(conveyor),
             new ParallelCommandGroup(
                 new InstantCommand(() -> turret.setSpinnerTarget(65)),
-                new IntakeCommand(intake, conveyor),
+                new IntakeCommand(intake, conveyor, turret, drivetrain),
                 new SequentialCommandGroup(
                     new TrajectoryCommand(drivetrain, paths.get(FourBall2)),
                     new WaitCommand(1.5),
