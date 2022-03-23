@@ -87,8 +87,7 @@ public class Drivetrain extends PrioritizedSubsystem {
 
     smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 2, "max", 4.5
-      ))
+      .withProperties(Map.of("min", 2, "max", 4.5))
       .getEntry();
 
     speedSlider = driveTab.add("Speed", maxSpeed)

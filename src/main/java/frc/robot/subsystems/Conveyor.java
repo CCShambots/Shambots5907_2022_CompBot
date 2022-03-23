@@ -8,7 +8,6 @@ import frc.robot.util.intake.Ball;
 import frc.robot.util.intake.BallTracker;
 import frc.robot.util.intake.Ball.BallColor;
 import frc.robot.util.intake.Ball.BallPosition;
-import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import static frc.robot.Constants.Conveyor.*;
@@ -124,12 +123,7 @@ public class Conveyor extends PrioritizedSubsystem{
         SmartDashboard.putNumber("Stage 2 speed", conveyorStage2.getMotorOutputPercent());
         //TOOD: Implement lights for tracker error
         SmartDashboard.putBoolean("Tracker status", !tracker.getError());
-        try {
-            SmartDashboard.putBoolean("Running intake command", isRunning(IntakeCommand.class));
-        } catch (NotACommandException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        SmartDashboard.putBoolean("Running intake command", isRunning(IntakeCommand.class));
 
         SmartDashboard.putBoolean("Current conveyor command = null", getCurrentCommand() == null);
     }
