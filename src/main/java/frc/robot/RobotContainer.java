@@ -29,6 +29,7 @@ import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Climber.MotorSide;
 import frc.robot.subsystems.Turret.ControlLoop;
 import frc.robot.subsystems.Turret.Direction;
+import frc.robot.util.TankDriveModule.ControlMode;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -102,7 +103,7 @@ public class RobotContainer {
     autoChooser.addOption("Back up Mid", AutoPaths.BackUpMid);
     autoChooser.addOption("Back up Right", AutoPaths.BackUpRight);
     autoChooser.addOption("Meter", AutoPaths.Meter);
-
+    autoChooser.addOption("Four Ball", AutoPaths.FourBall);
 
     //TODO: Lights for if the turret is allowed to shoot or not
 
@@ -334,12 +335,14 @@ public class RobotContainer {
     Constants.robotStatus = RobotStatus.AUTO;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
     turret.setSpinnerNeutralMode(NeutralMode.Brake);
+    drivetrain.setControlLoopType(ControlMode.Auto);
   }
 
   public void setTeleop() {
     Constants.robotStatus = RobotStatus.TELEOP;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
     turret.setSpinnerNeutralMode(NeutralMode.Brake);
+    drivetrain.setControlLoopType(ControlMode.TeleOp);
   }
 
   public void setDisabled() {

@@ -45,8 +45,8 @@ public class TrajectoryCommand extends CommandBase{
         // Create a voltage constraint to ensure we don't accelerate too fast
         DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
         new SimpleMotorFeedforward(
-            LEFT_KS,
-            LEFT_KV),
+            KS,
+            KV),
         kDriveKinematics,
         MAX_VOLTAGE);
 

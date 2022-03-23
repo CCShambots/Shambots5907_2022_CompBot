@@ -26,17 +26,18 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
+import frc.robot.util.TankDriveModule.ControlMode;
 import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import java.util.Map;
 
 public class Drivetrain extends PrioritizedSubsystem {
   //Hardware declarations
-  private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
-  private PIDandFFConstants rightConstants = new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
+  private PIDandFFConstants autoConstants = new PIDandFFConstants(AUTO_P, AUTO_I, AUTO_D, KS, KV);
+  private PIDandFFConstants teleConstants = new PIDandFFConstants(TELE_P, TELE_I, TELE_D, KS, KV);
 
-  private TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, leftConstants);
-  private TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, rightConstants);
+  private TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, autoConstants, teleConstants);
+  private TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, autoConstants, teleConstants);
 
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
@@ -83,7 +84,8 @@ public class Drivetrain extends PrioritizedSubsystem {
 
     smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 2, "max", 12))
+      .withProperties(Map.of("min", 2, "max", 4.5
+      ))
       .getEntry();
 
     speedSlider = driveTab.add("Speed", maxSpeed)
@@ -158,6 +160,11 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   public double getLeftVoltage() {return leftModule.getVoltage();}
   public double getRightVoltage() {return rightModule.getVoltage();}
+
+  public void setControlLoopType(ControlMode type) {
+    leftModule.setPID(type);
+    rightModule.setPID(type);
+  }
   
 
   public DriveModes getDriveMode() {

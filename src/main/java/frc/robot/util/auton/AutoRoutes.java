@@ -11,6 +11,7 @@ import frc.robot.commands.auton.BackUpRightRoute;
 import frc.robot.commands.auton.CSGO1Route;
 import frc.robot.commands.auton.CSGO2Route;
 import frc.robot.commands.auton.CSGO3Route;
+import frc.robot.commands.auton.FourBallRoute;
 import frc.robot.commands.auton.MeterRoute;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
@@ -41,6 +42,7 @@ public class AutoRoutes {
         autoRoutes.put(AutoPaths.BackUpMid, new BackUpMidRoute(allRobotSubsystems, paths));
         autoRoutes.put(AutoPaths.BackUpRight, new BackUpRightRoute(allRobotSubsystems, paths));
         autoRoutes.put(AutoPaths.Meter, new MeterRoute(allRobotSubsystems, paths));
+        autoRoutes.put(AutoPaths.FourBall, new FourBallRoute(allRobotSubsystems, paths));
 
     }
 
@@ -61,6 +63,7 @@ public class AutoRoutes {
             case BackUpMid: return paths.get(Trajectories.BackUpMidRoute);
             case BackUpRight: return paths.get(Trajectories.BackUpRightRoute);
             case Meter: return paths.get(Trajectories.Meter);
+            case FourBall: return paths.get(Trajectories.FourBall1);
         }
 
         return null;

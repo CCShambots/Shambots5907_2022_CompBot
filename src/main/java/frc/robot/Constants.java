@@ -39,19 +39,17 @@ public final class Constants {
             (14.0 / 40.0);
         public static final double WHEEL_SIZE = 6; //In inches
 
-        public static double LEFT_P = 3.5;
-        public static double LEFT_I = 0;
-        public static double LEFT_D = 0.;
+        public static double AUTO_P = 3.5;
+        public static double AUTO_I = 0;
+        public static double AUTO_D = 0.;
 
-        public static double LEFT_KS = .75;
-        public static double LEFT_KV = 1.9;
+        public static double TELE_P = 2;
+        public static double TELE_I = 0;
+        public static double TELE_D = 0.;
 
-        public static double RIGHT_P = 3.5;
-        public static double RIGHT_I = 0;
-        public static double RIGHT_D = 0.;
+        public static double KS = .75;
+        public static double KV = 1.9;
 
-        public static double RIGHT_KS = .75;
-        public static double RIGHT_KV = 1.9;
 
         //The multiplier used by default when the robot is in normal mode (instead of turbo)
         public static double NORMAL_SPEED_MULT = 0.6;
