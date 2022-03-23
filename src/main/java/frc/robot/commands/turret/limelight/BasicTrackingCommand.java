@@ -1,6 +1,5 @@
 package frc.robot.commands.turret.limelight;
 
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,8 +25,6 @@ public abstract class BasicTrackingCommand extends CommandBase{
     private double limelightOffset = 0; //The value of the target off on the limelight (x-axis)
     private double targetAngle = 0; //The shooter's current setpoint
     private Direction prevDirection = Direction.Clockwise;
-
-    private LinearFilter filter = LinearFilter.movingAverage(15);
 
     /**Command to turn automatically towards the target using the limelight */
     public BasicTrackingCommand(Turret turret, Subsystem... requirements) {
@@ -75,10 +72,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
 
     //Update the value we can trust from the limelight
     private void updateLimelight() {
-        limelightOffset = turret.correctLimelightAngle(turret.getLimelightOffset()); //Get the limelight offset from the network table
-
-        //Limelight deadbanding
-        // if(Math.abs(limelightOffset) < limelightDeadband) limelightOffset = 0;
+        limelightOffset = turret.getLimelightOffset().getX(); //Get the limelight offset from the network table
 
 
         //Only change the limelight target if the limelight has a target

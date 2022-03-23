@@ -29,7 +29,7 @@ public class Limelight{
      */
     public Translation2d targetOffset() {
         return new Translation2d(
-            getLimeLightTable().getEntry("tx").getDouble(0),
+            -getLimeLightTable().getEntry("tx").getDouble(0),
             getLimeLightTable().getEntry("ty").getDouble(0)
         );
     }

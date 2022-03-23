@@ -2,42 +2,27 @@ package frc.robot.commands.turret.limelight;
 
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.subsystems.Conveyor;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
 import static frc.robot.Constants.Turret.*;
-import static frc.robot.Constants.*;
 
 public class TeleopTrackingCommand extends BasicTrackingCommand{
     private Conveyor conveyor;
     private ShootCommand shootCommand = null;
-    private boolean automatic;
-    private Drivetrain drivetrain;
 
-    public TeleopTrackingCommand(Drivetrain drivetrain, Turret turret, Conveyor conveyor, boolean automatic) {
+    public TeleopTrackingCommand(Turret turret, Conveyor conveyor) {
         super(turret);
         this.conveyor = conveyor;
-        this.automatic = automatic;
-        this.drivetrain = drivetrain;
 
         addRequirements(turret, conveyor);
     }
 
-    public TeleopTrackingCommand(Drivetrain drivetrain, Turret turret, Conveyor conveyor) {
-        this(drivetrain, turret, conveyor, false);
-    }
-
     @Override
     public boolean isComplete() {
-        boolean shouldEndAutomatic = false;
-        if(automatic) {
-            shouldEndAutomatic = drivetrain.getOdometryPoseFeet().getTranslation().getDistance(goalPos) > AUTOMATIC_START_DISTANCE;
-        }
 
-        //This will often be cancelled by itself, but it can also be cancelled by the drivers 
+        // 
         return 
             conveyor.getNumberOfBalls() == 0 || 
-            turret.getShouldEndTargeting() ||
-            shouldEndAutomatic;
+            turret.getShouldEndTargeting();
     }
 
     @Override

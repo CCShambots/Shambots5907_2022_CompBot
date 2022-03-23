@@ -38,14 +38,6 @@ public class Turret extends PrioritizedSubsystem{
     private double previousUseValue=0;
     private double previousAngle1=0;
     private double previousAngle2=0;
-    private double previousAngle3=0;
-    private double previousAngle4=0;
-    private double previousAngle5=0;
-    private double previousAngle6=0;
-    private double previousAngle7=0;
-    private double previousAngle8=0;
-    private double previousAngle9=0;
-    private double previousAngle10=0;
 
 
     // Flywheel controls
@@ -323,15 +315,6 @@ public class Turret extends PrioritizedSubsystem{
     public Translation2d getLimelightOffset() {return limelight.targetOffset();}
     public double getLimelightLatency() {return limelight.getLatency();}
 
-    /**
-     * 
-     * @param offset
-     * @return
-     */
-    public double correctLimelightAngle(Translation2d offset) {
-        return -offset.getX();
-    }
-
     public boolean setManualPower(double power) {
         if(!knowsLocation) {
             spinner.set(power);
@@ -357,14 +340,6 @@ public class Turret extends PrioritizedSubsystem{
         if(knowsLocation) {
             spinner.setVoltage(spinnerPIDOutput + spinnerFFOutput);
             previousUseValue = previousAngle2;
-            // previousAngle10 = previousAngle9;
-            // previousAngle9 = previousAngle8;
-            // previousAngle8 = previousAngle7;
-            // previousAngle7 = previousAngle6;
-            // previousAngle6 = previousAngle5;
-            // previousAngle5 = previousAngle4;
-            // previousAngle4 = previousAngle3;
-            // previousAngle3 = previousAngle2;
             previousAngle2 = previousAngle1;
             previousAngle1 = getSpinnerAngle();
         }

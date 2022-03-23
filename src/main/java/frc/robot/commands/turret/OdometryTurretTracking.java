@@ -2,15 +2,12 @@ package frc.robot.commands.turret;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Turret.Direction;
-import frc.robot.util.priorityFramework.PriorityCommand;
 
 import static frc.robot.Constants.*;
-import static frc.robot.Constants.Turret.*;
 import static java.lang.Math.*;
 
 
@@ -45,16 +42,8 @@ public class OdometryTurretTracking extends CommandBase{
             double targetAngle = getTurretAngleFromPose(poseFeet);
             turret.setSpinnerTarget(targetAngle);
 
-            //Switch to tracking with
-            double distanceToGoal = poseFeet.getTranslation().getDistance(goalPos);
-
-            if(distanceToGoal <= AUTOMATIC_START_DISTANCE && !turret.getShouldEndTargeting() && false) {
-                //Begin teleop tracking command
-                new PriorityCommand(new TeleopTrackingCommand(drivetrain, turret, conveyor, true), () -> turret.knowsLocation()).schedule();
-            } 
-
-            //If the turret was told that it should end, turn that falg off if the robot leaves the allowed starting area
-            if(turret.getShouldEndTargeting()) turret.setShouldEndTargeting(!(distanceToGoal > AUTOMATIC_START_DISTANCE));
+            //If the turret was told that it should end, turn that false off if the robot leaves the allowed starting area
+            // if(turret.getShouldEndTargeting()) turret.setShouldEndTargeting(!(distanceToGoal > AUTOMATIC_START_DISTANCE));
         }
     }
 
