@@ -14,15 +14,20 @@ public class TankDriveModule {
     private WPI_TalonFX leader;
     private WPI_TalonFX follower;
 
-    private PIDController pidController;
+    private PIDController autoPID;
+    private PIDController telePID;
+    private PIDController activePID;
     private SimpleMotorFeedforward feedForwardController;
 
     private double pidOutput = 0;
     private double feedForwardOutput = 0;
 
-    public TankDriveModule(int leaderID, int followerID, boolean inverted, PIDandFFConstants c) {
-        pidController = new PIDController(c.getP(), c.getI(), c.getD());
-        feedForwardController = new SimpleMotorFeedforward(c.getKS(), c.getKV());
+    public TankDriveModule(int leaderID, int followerID, boolean inverted, PIDandFFConstants autoC, PIDandFFConstants teleC) {
+        autoPID = new PIDController(autoC.getP(), autoC.getI(), autoC.getD());
+        telePID = new PIDController(teleC.getP(), teleC.getI(), teleC.getD());
+        feedForwardController = new SimpleMotorFeedforward(autoC.getKS(), autoC.getKV());
+
+        activePID = autoPID;
         
         leader = new WPI_TalonFX(leaderID);
         follower = new WPI_TalonFX(followerID);
@@ -43,12 +48,12 @@ public class TankDriveModule {
             follower.setInverted(InvertType.FollowMaster); 
         }
 
-        pidController.reset();
+        autoPID.reset();
 
     }
 
     public void setTargetVelocity(double velocity) {
-        pidController.setSetpoint(velocity);
+        activePID.setSetpoint(velocity);
     }
 
     public double getVelocity() {
@@ -76,16 +81,27 @@ public class TankDriveModule {
     public double getFeedForwardOutput() {return feedForwardOutput;}
 
     public void resetPID() {
-        pidController.reset();
+        activePID.reset();
+    }
+
+    public void setPID(ControlMode mode) {
+        if(mode == ControlMode.Auto) {
+            activePID = autoPID;
+        } else activePID = telePID;
+        activePID.reset();
     }
 
     public void runControlLoop() {
-        pidOutput = pidController.calculate(getVelocity());
-        feedForwardOutput = feedForwardController.calculate(pidController.getSetpoint());
+        pidOutput = activePID.calculate(getVelocity());
+        feedForwardOutput = feedForwardController.calculate(activePID.getSetpoint());
 
         leader.setVoltage(feedForwardOutput + pidOutput);
     }
 
-    public double getSetpoint() {return pidController.getSetpoint();}
-    public PIDController getPIDController() {return pidController;}
+    public double getSetpoint() {return activePID.getSetpoint();}
+    public PIDController getPIDController() {return activePID;}
+
+    public enum ControlMode {
+        Auto, TeleOp
+    }
 }

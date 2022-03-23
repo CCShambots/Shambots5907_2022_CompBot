@@ -29,7 +29,7 @@ public class CSGO2Route extends BaseRoute{
         addCommands(
             setupAuto(paths.get(CSGO2)),
             new ParallelCommandGroup(
-                new SpinUpFlywheelCommand(turret, FLYWHEEL_TARGET_RPM),
+                new SpinUpFlywheelCommand(turret, FLYWHEEL_HIGH_RPM),
           
                 new IntakeCommand(intake, conveyor, turret, drivetrain),
 

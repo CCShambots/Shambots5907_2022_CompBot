@@ -27,23 +27,20 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.commands.turret.LowGoalShootCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
-import frc.robot.commands.turret.ShootCommand;
-import frc.robot.commands.turret.SpinUpFlywheelCommand;
 import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Climber.MotorSide;
+import frc.robot.subsystems.Turret.ControlLoop;
 import frc.robot.subsystems.Turret.Direction;
+import frc.robot.util.TankDriveModule.ControlMode;
 import frc.robot.util.auton.AutoRoutes;
 import frc.robot.util.auton.AutoRoutes.AutoPaths;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PriorityCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
@@ -91,7 +88,8 @@ public class RobotContainer {
     driveTab.add("Toggle Alliance Color", new InstantCommand(this::toggleAllianceColor));
 
     //Load the different trajectories from their JSON files
-    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute", "Meter"));
+    Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", 
+    "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute", "Meter", "FourBall1", "FourBall2", "FourBall3"));
 
     //This object uses the trajectories to initialize each autonomous route command
     autoRoutes = new AutoRoutes(paths, drivetrain, intake, conveyor, turret);
@@ -110,7 +108,7 @@ public class RobotContainer {
     autoChooser.addOption("Back up Mid", AutoPaths.BackUpMid);
     autoChooser.addOption("Back up Right", AutoPaths.BackUpRight);
     autoChooser.addOption("Meter", AutoPaths.Meter);
-
+    autoChooser.addOption("Four Ball", AutoPaths.FourBall);
 
     //TODO: Lights for if the turret is allowed to shoot or not
 
@@ -190,11 +188,29 @@ public class RobotContainer {
       new JoystickButton(operatorController, 11)
         .whenPressed(new PriorityCommand(new InstantCommand(() -> turret.setSpinnerTarget(0)), 1));
 
-      new JoystickButton(driverController, Button.kA.value)
-        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)));
+      // new JoystickButton(driverController, Button.kA.value)
+      //   .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(-90)));
       
+      // new JoystickButton(driverController, Button.kB.value)
+      //   .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
+
+      new JoystickButton(driverController, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> {
+          turret.setFlywheelControlLoop(ControlLoop.HighSpeed);
+          turret.setFlywheelTarget(FLYWHEEL_HIGH_RPM);
+        }))
+        .whenReleased(new InstantCommand(() -> {
+          turret.setFlywheelTarget(0);
+        }));
+
       new JoystickButton(driverController, Button.kB.value)
-        .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
+      .whenPressed(new InstantCommand(() -> {
+        turret.setFlywheelControlLoop(ControlLoop.LowSpeed);
+        turret.setFlywheelTarget(FLYWHEEL_LOW_RPM);
+      }))
+      .whenReleased(new InstantCommand(() -> {
+        turret.setFlywheelTarget(0);
+      }));
         
       //Spin up the flywheel and shoot into the low goal
       new JoystickButton(operatorController, 12)
@@ -222,11 +238,11 @@ public class RobotContainer {
     // configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
     // configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
     // configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
-
-    driveTab.add("DISABLE TURRET TRACKING", new InstantCommand(() -> turret.setKnowsLocation(false)));
-    driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation());
     
-    //Soft e-stop that cancels all subsystem commands and should stop motors from moving.
+    driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry()));
+    driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry());
+
+    //Soft stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
       .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, null)));
   }
@@ -255,22 +271,6 @@ public class RobotContainer {
     SmartDashboard.putData("subsystems/Turret", turret);
     // SmartDashboard.putData("subsystems/Climber", climber);
   }
-  
-  /**
-   * Function that evaluates if the robot is in a state where it is able to shoot
-   * Requirements:
-   *  - the limelight is tracking
-   *  - the intake does not have another command running
-   *  - the limelight is locked in (i.e. right on target)
-   *  - the flywheel is at the right speed
-   * @return
-   */
-  public boolean isShootingAllowed() {
-    if(limeLightTeleopCommand == null) return false;
-    if(intake.getCurrentCommand() != null) return false;
-
-    return limeLightTeleopCommand.isReady();
-  }
 
   public void doDrivetrainSetup() {
     //Set the default command for easy driving
@@ -291,8 +291,8 @@ public class RobotContainer {
     turret.resetSpinnerPID();
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
-
-    //TODO: Remove this
+    
+    //TODO: REmove this at some point
     turret.setKnowsLocation(true);
   }
 
@@ -361,12 +361,14 @@ public class RobotContainer {
     Constants.robotStatus = RobotStatus.AUTO;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
     turret.setSpinnerNeutralMode(NeutralMode.Brake);
+    drivetrain.setControlLoopType(ControlMode.Auto);
   }
 
   public void setTeleop() {
     Constants.robotStatus = RobotStatus.TELEOP;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
     turret.setSpinnerNeutralMode(NeutralMode.Brake);
+    drivetrain.setControlLoopType(ControlMode.TeleOp);
   }
 
   public void setDisabled() {

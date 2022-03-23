@@ -1331,6 +1331,11 @@
                   "_title": "Solenoid[6,4]/Value",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[6,5]/Value",
+                  "_title": "DoubleSolenoid[6,5]/Value"
                 }
               ]
             }
@@ -1427,18 +1432,7 @@
           },
           "0,0": {
             "size": [
-              1,
-              2
-            ],
-            "content": {
-              "_type": "PID Controller",
-              "_source0": "network_table:///SmartDashboard/Top Flywheel PID",
-              "_title": "SmartDashboard/Top Flywheel PID"
-            }
-          },
-          "3,0": {
-            "size": [
-              1,
+              2,
               2
             ],
             "content": {
@@ -1458,9 +1452,9 @@
               "_title": "SmartDashboard/Bottom Flywheel FF Output"
             }
           },
-          "4,0": {
+          "2,0": {
             "size": [
-              2,
+              3,
               1
             ],
             "content": {
@@ -1469,9 +1463,9 @@
               "_title": "SmartDashboard/Bottom Flywheel Measured Velo"
             }
           },
-          "3,3": {
+          "3,2": {
             "size": [
-              3,
+              2,
               1
             ],
             "content": {
@@ -1480,59 +1474,15 @@
               "_title": "SmartDashboard/Bottom Flywheel PID Output"
             }
           },
-          "4,1": {
+          "2,1": {
             "size": [
-              2,
+              3,
               1
             ],
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Bottom Flywheel Target Velo",
               "_title": "SmartDashboard/Bottom Flywheel Target Velo"
-            }
-          },
-          "0,2": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Top Flywheel Voltage",
-              "_title": "SmartDashboard/Top Flywheel Voltage"
-            }
-          },
-          "1,1": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Top Flywheel Target Velo",
-              "_title": "SmartDashboard/Top Flywheel Target Velo"
-            }
-          },
-          "0,3": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Top Flywheel PID Output",
-              "_title": "SmartDashboard/Top Flywheel PID Output"
-            }
-          },
-          "1,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Top Flywheel Measured Velo",
-              "_title": "SmartDashboard/Top Flywheel Measured Velo"
             }
           },
           "0,4": {
@@ -1612,7 +1562,7 @@
               "_title": "SmartDashboard/Spinner Measured Angle"
             }
           },
-          "3,2": {
+          "0,2": {
             "size": [
               3,
               1
@@ -1667,6 +1617,19 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Central hall effect",
               "_title": "/SmartDashboard/Central hall effect",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "5,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Is flywheel busy",
+              "_title": "/SmartDashboard/Is flywheel busy",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }

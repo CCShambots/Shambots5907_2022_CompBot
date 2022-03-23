@@ -11,11 +11,11 @@ import static frc.robot.Constants.Drivetrain.*;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -26,17 +26,18 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.PIDandFFConstants;
 import frc.robot.util.TankDriveModule;
+import frc.robot.util.TankDriveModule.ControlMode;
 import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import java.util.Map;
 
 public class Drivetrain extends PrioritizedSubsystem {
   //Hardware declarations
-  private PIDandFFConstants leftConstants = new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV);
-  private PIDandFFConstants rightConstants = new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV);
+  private PIDandFFConstants autoConstants = new PIDandFFConstants(AUTO_P, AUTO_I, AUTO_D, KS, KV);
+  private PIDandFFConstants teleConstants = new PIDandFFConstants(TELE_P, TELE_I, TELE_D, KS, KV);
 
-  private TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, leftConstants);
-  private TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, rightConstants);
+  private TankDriveModule leftModule = new TankDriveModule(LEFT_DRIVETRAIN_LEADER, LEFT_DRIVETRAIN_FOLLOWER, false, autoConstants, teleConstants);
+  private TankDriveModule rightModule = new TankDriveModule(RIGHT_DRIVETRAIN_LEADER, RIGHT_DRIVETRAIN_FOLLOWER, true, autoConstants, teleConstants);
 
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
@@ -58,9 +59,11 @@ public class Drivetrain extends PrioritizedSubsystem {
   //Defense flag
   private boolean defending = false;
 
-  //Autonomous objects (odometry, trajectory following, etc)
-  RamseteController controller = new RamseteController();  //Default arguments 2.0 and 0.7
-  DifferentialDriveOdometry odometry;
+  //Odometry object for tracking robot pose
+  private DifferentialDriveOdometry odometry;
+
+  //Value that determines whether odometry should be used or not
+  private boolean useOdometry = false;
 
   private NetworkTableEntry smoothingSlider;
   private NetworkTableEntry speedSlider;
@@ -84,7 +87,8 @@ public class Drivetrain extends PrioritizedSubsystem {
 
     smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 2, "max", 12))
+      .withProperties(Map.of("min", 2, "max", 4.5
+      ))
       .getEntry();
 
     speedSlider = driveTab.add("Speed", maxSpeed)
@@ -159,6 +163,11 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   public double getLeftVoltage() {return leftModule.getVoltage();}
   public double getRightVoltage() {return rightModule.getVoltage();}
+
+  public void setControlLoopType(ControlMode type) {
+    leftModule.setPID(type);
+    rightModule.setPID(type);
+  }
   
 
   public DriveModes getDriveMode() {
@@ -208,8 +217,14 @@ public class Drivetrain extends PrioritizedSubsystem {
    * Pose starts at (0,0) in the bottom left corner. Angle of the robot is from -pi to pi
    * @return the pose of the bot
    */
-  public Pose2d getOdometryPose() {
-    return odometry.getPoseMeters();
+  public Pose2d getOdometryPose() {return odometry.getPoseMeters();}
+
+  /**
+   * @return pose of the bot in feet instead of meters
+   */
+  public Pose2d getOdometryPoseFeet() {
+    Pose2d initialPose = getOdometryPose();
+    return new Pose2d(Units.metersToFeet(initialPose.getX()), Units.metersToFeet(initialPose.getY()), initialPose.getRotation());
   }
 
   /**
@@ -221,6 +236,10 @@ public class Drivetrain extends PrioritizedSubsystem {
 
     odometry.resetPosition(pose, getGyroHeadingOdometry());
   }
+
+  public void setUseOdometry(boolean value) {useOdometry = value;}
+  public void toggleUseOdometry() {useOdometry = !useOdometry;}
+  public boolean shouldUseOdometry() {return useOdometry;}
 
   public void resetPID() {
     leftModule.resetPID();
@@ -281,7 +300,7 @@ public class Drivetrain extends PrioritizedSubsystem {
     SmartDashboard.putNumber("left setpoint", getLeftModule().getSetpoint());
     SmartDashboard.putNumber("right setpoint", getRightModule().getSetpoint());
 
-    SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
+    // SmartDashboard.putNumber("Total power draw", pdh.getTotalCurrent());
   }
 
   public TankDriveModule getLeftModule() {return leftModule;}

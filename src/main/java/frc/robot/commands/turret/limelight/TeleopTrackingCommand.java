@@ -3,7 +3,6 @@ package frc.robot.commands.turret.limelight;
 import frc.robot.commands.turret.ShootCommand;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Turret;
-
 import static frc.robot.Constants.Turret.*;
 
 public class TeleopTrackingCommand extends BasicTrackingCommand{
@@ -19,14 +18,17 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
     @Override
     public boolean isComplete() {
-        //This will often be cancelled by itself, but it can also be cancelled
-        return conveyor.getNumberOfBalls() == 0 || turret.getShouldEndTargeting();
+
+        // 
+        return 
+            conveyor.getNumberOfBalls() == 0 || 
+            turret.getShouldEndTargeting();
     }
 
     @Override
     public void additionalCodeInInitialize() {
         turret.setShouldEndTargeting(false);
-        turret.setFlywheelTarget(FLYWHEEL_TARGET_RPM);
+        turret.setFlywheelTarget(FLYWHEEL_HIGH_RPM);
 
         shootCommand = null;
     }
@@ -57,6 +59,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
     @Override
     public void additionalCodeInEnd() {
         turret.setFlywheelTarget(0);
-        turret.setShouldEndTargeting(false);
+
+        if(conveyor.getNumberOfBalls() == 0) turret.setShouldEndTargeting(false);
     }
 }
