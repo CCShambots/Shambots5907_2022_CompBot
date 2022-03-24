@@ -134,9 +134,9 @@ public final class Constants {
         public static final double COUNTS_SPINNER_ENCODER = 2048;
         public static final double TURRET_GEAR_RATIO = (1.0/3.0) * (10.0 / 140.0);
 
-        public static final double SPINNER_CLOCKWISE_LIMIT = -180; //Clockwise turns are negative
+        public static final double SPINNER_CLOCKWISE_LIMIT = -210; //Clockwise turns are negative
         public static final double SPINNER_COUNTERCLOCKWISE_LIMIT = 180; //Counter-clockwise turns are psotiive
-        public static final List<Range> INVALID_SHOOTING_RANGES = List.of(new Range(165, 180), new Range(-165, -180));
+        public static final List<Range> INVALID_SHOOTING_RANGES = List.of(new Range(200, 300), new Range(-200, -300));
         public static final double SEARCH_VEL = 90; //In deg/sec: The speed the spinner will search at when it doesn't have a target
         public static final double ZERO_VEL = 45; //In deg/sec: The speed the spinner use to zero out at the start of a match
         public static final double MANUAL_SPEED = 0.1; //How fast the spinner can move manually (in the event of a crash)

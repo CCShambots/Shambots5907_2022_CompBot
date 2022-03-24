@@ -102,7 +102,7 @@ public abstract class BasicTrackingCommand extends CommandBase{
     }
 
     private void overRotatedCheck() {
-        if(turret.isOverRotated()) {
+        if(turret.isOverRotated() && false) {
             //Set the wrap-around point to the opposite side of the direction the spinner is over-extended
             double wrapAroundPoint = turret.getOverRotatedDirection() == Direction.Clockwise ? SPINNER_COUNTERCLOCKWISE_LIMIT : SPINNER_CLOCKWISE_LIMIT;
 
