@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.Constants.Drivetrain;
@@ -15,14 +17,16 @@ import static frc.robot.Constants.Climber.*;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 
 public class Climber extends PrioritizedSubsystem {
-    //Important thing to remember when reading this: The right module follows the left module, meaning that any command sent through the left module also does that on the right module.
+    //Important thing to remember when reading this: 
+    //The right module follows the left module, meaning that any command sent through the left module also does that on the right module.
 
-    private ClimbingModule leftModule = new ClimbingModule(LEFT_CLIMBER_ID,
-        new PIDandFFConstants(LEFT_P, LEFT_I, LEFT_D, LEFT_KS, LEFT_KV, MAX_VEL, MAX_ACCEL), "Left");
+    private PIDandFFConstants noLoadConstants = new PIDandFFConstants(NO_LOAD_P, NO_LOAD_I, NO_LOAD_D, NO_LOAD_KS, NO_LOAD_KV, MAX_VEL, MAX_ACCEL);
+    private PIDandFFConstants loadConstants = new PIDandFFConstants(LOAD_P, LOAD_I, LOAD_D, LOAD_KS, LOAD_KV, MAX_VEL, MAX_ACCEL);
 
-    private ClimbingModule rightModule = new ClimbingModule(RIGHT_CLIMBER_ID, 
-        new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV, MAX_VEL, MAX_ACCEL), "Right");
+    private ClimbingModule leftModule = new ClimbingModule(LEFT_CLIMBER_ID, noLoadConstants, loadConstants, "Left");
+    private ClimbingModule rightModule = new ClimbingModule(RIGHT_CLIMBER_ID, noLoadConstants, loadConstants, "Right");
 
+    private DoubleSolenoid solenoid = new DoubleSolenoid(Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.CTREPCM, CLIMBER_PORT_1, CLIMBER_PORT_2);
     private Solenoid brake = new Solenoid(Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.CTREPCM, BRAKE);
 
     public Climber(){
@@ -30,8 +34,8 @@ public class Climber extends PrioritizedSubsystem {
 
         leftModule.setInverted(TalonFXInvertType.Clockwise);
         rightModule.setInverted(TalonFXInvertType.Clockwise);
-    }   
-    
+    }
+
     /**
      * Changies the physical state of the brake solenoids
      * @param braked
@@ -44,13 +48,20 @@ public class Climber extends PrioritizedSubsystem {
 
     public void brake(){setSolenoids(true);}
     public void unBrake(){setSolenoids(false);}
-    public void setClimberState(ClimberState state) {leftModule.setModuleState(state);}
+
+    public void setClimberState(ClimberState state, ControlLoopType type) {leftModule.setModuleState(state, type);}
     public boolean isUp() {return leftModule.getClimberState() != ClimberState.Lowered;} 
     public boolean isBusy() { return leftModule.isBusy() || rightModule.isBusy();}
     public boolean isForceStopped() {return leftModule.isForceStopped() || rightModule.isForceStopped();}
+    public void setForceStopped(boolean value) {
+        leftModule.setBraked(value);
+        rightModule.setBraked(value);
+    }
 
     public double getLeftPosition() {return leftModule.getPosition();}
     public double getRightPosition() {return rightModule.getPosition();}
+    public double getLeftPositionInches() {return leftModule.getPositionInches();}
+    public double getRightPositionInches() {return rightModule.getPositionInches();}
     public double getLeftVelocity() {return leftModule.getVelocity();}
     public double getRightVelocity() {return rightModule.getVelocity();}
     public ProfiledPIDController getLeftPID() {return leftModule.getPID();}
@@ -63,9 +74,19 @@ public class Climber extends PrioritizedSubsystem {
 
     public void resetClimber() {
         leftModule.reset();
+        rightModule.reset();
     }
 
-    public FunctionalCommand moveMotor(double power, MotorSide side, boolean zero) {
+    public void setSolenoids(Value v) {solenoid.set(v);}
+    public Value getSolenoidState() {return solenoid.get();}
+
+    /**
+     * Command that will manually move one of the motors at a power and reset that motos's module when it finishes
+     * @param power 0.0-1.0
+     * @param side Left or right module to move
+     * @return The command to run
+     */
+    public FunctionalCommand moveMotor(double power, MotorSide side) {
 
         ClimbingModule module = side == MotorSide.Right ? rightModule : leftModule;
 
@@ -73,13 +94,41 @@ public class Climber extends PrioritizedSubsystem {
             unBrake();
             setManual(true);
             module.setMotors(power);
+            System.out.println("Set a motor power");
           }, () -> {}, (interrupted) -> {
             module.setMotors(0);
-            brake();
             setManual(false);
             module.reset();
+            brake();
           }, () -> false, this);
     }
+
+    public FunctionalCommand moveMotors(double power) {
+
+        return new FunctionalCommand(() -> {
+            unBrake();
+            setManual(true);
+            leftModule.setMotors(power);
+            rightModule.setMotors(power);
+          }, () -> {}, (interrupted) -> {
+            leftModule.setMotors(0);
+            rightModule.setMotors(0);
+            setManual(false);
+            leftModule.reset();
+            rightModule.reset();
+            brake();
+          }, () -> false, this);
+    }
+
+    /**
+     * A command that does nothing and will end once the climber's measured position is greater than the given threshold
+     * @param threshhold
+     * @return the command to run
+     */
+    public FunctionalCommand waitForMovementCommand(double threshhold) {
+        return new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {}, () -> getLeftPosition() > threshhold && getRightPosition() > threshhold);
+    }
+
 
     @Override
     public void periodic() {
@@ -87,9 +136,10 @@ public class Climber extends PrioritizedSubsystem {
 
         SmartDashboard.putData("Left module", leftModule);
         SmartDashboard.putData("right module", rightModule);
+        SmartDashboard.putData("Solenoid state", solenoid);
     }
     
-    public static enum ClimberState { Low, Mid, Lowered};
-
-    public static enum MotorSide { Left, Right};
+    public static enum ClimberState {Low, FullExtension, Lowered};
+    public static enum ControlLoopType {NoLoad, Load};
+    public static enum MotorSide {Left, Right};
 }

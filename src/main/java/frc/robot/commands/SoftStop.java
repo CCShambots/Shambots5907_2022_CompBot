@@ -1,6 +1,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
@@ -31,11 +34,18 @@ public class SoftStop extends CommandBase{
         turret.setSpinnerTarget(turret.getSpinnerAngle());
 
         conveyor.setEjecting(false);
-        // climber.brake();
+        climber.setForceStopped(true);
+
+        SequentialCommandGroup g = new SequentialCommandGroup(
+            new WaitCommand(0.5),
+            new InstantCommand(() -> climber.setForceStopped(false))
+        );
+        g.addRequirements(climber);
+        g.schedule();
     }
 
     @Override
     public boolean isFinished() {
         return true;
-    }    
+    }
 }

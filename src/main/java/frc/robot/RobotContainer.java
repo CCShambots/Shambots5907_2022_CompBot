@@ -5,6 +5,7 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -12,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.SoftStop;
-import frc.robot.commands.climber.MoveClimberCommand;
+import frc.robot.commands.climber.ClimbLevelCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.EjectBallCommand;
 import frc.robot.commands.intake.IntakeCommand;
@@ -25,7 +26,6 @@ import frc.robot.commands.turret.LowGoalShootCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Climber.MotorSide;
 import frc.robot.subsystems.Turret.ControlLoop;
 import frc.robot.subsystems.Turret.Direction;
@@ -37,6 +37,7 @@ import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PriorityCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
@@ -62,8 +63,8 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
-  // private final Climber climber = new Climber();
-  private final Lights lights = new Lights();
+  private final Climber climber = new Climber();
+  public static final Lights lights = new Lights();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -113,6 +114,7 @@ public class RobotContainer {
       registerCommand(IntakeCommand.class, 2);
       registerCommand(TeleopTrackingCommand.class, 2);
       registerCommand(EjectBallCommand.class, 3);
+      registerCommand(ClimbLevelCommand.class, 4);
       registerCommand(SoftStop.class, 5);
     } catch (NotACommandException e) {
       e.printStackTrace();
@@ -214,17 +216,23 @@ public class RobotContainer {
 
 
     //Climber controls
-    // new JoystickButton(operatorController, 3)
-      // .whenPressed(new MoveClimberCommand(climber, ClimberState.Lowered, drivetrain));
+    new JoystickButton(operatorController, 3)
+      .whenPressed(new PriorityCommand(new ClimbLevelCommand(climber, drivetrain, turret, () -> operatorController.getRawButton(3))));
     
     // new JoystickButton(operatorController, 5)
-      // .whenPressed(new MoveClimberCommand(climber, ClimberState.Mid, drivetrain));
+    //   .whenPressed(new (climber, ClimberState.FullExtension, drivetrain));
 
-    //Manual commands for moving the climber in for tim
-    // configurationTab.add("Raise Right Climber", climber.moveMotor(0.15, MotorSide.Right, false));
-    // configurationTab.add("Lower Right Climber", climber.moveMotor(-0.15, MotorSide.Right, true));
-    // configurationTab.add("Raise Left Climber", climber.moveMotor(0.15, MotorSide.Left, false));
-    // configurationTab.add("Lower Left Climber", climber.moveMotor(-0.15, MotorSide.Left, true));
+    configurationTab.add("Raise Right Climber", climber.moveMotor(0.25, MotorSide.Right));
+    configurationTab.add("Lower Right Climber", climber.moveMotor(-0.25, MotorSide.Right));
+    configurationTab.add("Raise Left Climber", climber.moveMotor(0.25, MotorSide.Left));
+    configurationTab.add("Lower Left Climber", climber.moveMotor(-0.25, MotorSide.Left));
+    configurationTab.add("Raise Both Climbers", climber.moveMotors(0.25));
+    configurationTab.add("Lower Both Climbers", climber.moveMotors(-0.25));
+    configurationTab.add("Extend Climber solenoids", new InstantCommand(() -> climber.setSolenoids(Value.kForward)));
+    configurationTab.add("Retract Climber solenoigs", new InstantCommand(() -> climber.setSolenoids(Value.kReverse)));
+
+    driveTab.add("DISABLE TURRET TRACKING", new InstantCommand(() -> turret.setKnowsLocation(false)));
+    driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation());
     
     driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry()));
     driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry());
@@ -249,14 +257,29 @@ public class RobotContainer {
     SmartDashboard.putNumber("robot x", drivetrain.getOdometryPose().getX());
     SmartDashboard.putNumber("robot y", drivetrain.getOdometryPose().getY());
     SmartDashboard.putNumber("robot z", drivetrain.getOdometryPose().getRotation().getDegrees());
-
-    SmartDashboard.putBoolean("Conveyor command equals null", conveyor.getCurrentCommand() == null);
   
     SmartDashboard.putData("subsystems/Drivetrain", drivetrain);
     SmartDashboard.putData("subsystems/Intake", intake);
     SmartDashboard.putData("subsystems/Conveyor", conveyor);
     SmartDashboard.putData("subsystems/Turret", turret);
-    // SmartDashboard.putData("subsystems/Climber", climber);
+    SmartDashboard.putData("subsystems/Climber", climber);
+  }
+
+  
+  /**
+   * Function that evaluates if the robot is in a state where it is able to shoot
+   * Requirements:
+   *  - the limelight is tracking
+   *  - the intake does not have another command running
+   *  - the limelight is locked in (i.e. right on target)
+   *  - the flywheel is at the right speed
+   * @return
+   */
+  public boolean isShootingAllowed() {
+    if(limeLightTeleopCommand == null) return false;
+    if(intake.getCurrentCommand() != null) return false;
+
+    return limeLightTeleopCommand.isReady();
   }
 
   public void doDrivetrainSetup() {

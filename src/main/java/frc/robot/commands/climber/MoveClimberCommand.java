@@ -4,23 +4,30 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Climber.ClimberState;
+import frc.robot.subsystems.Climber.ControlLoopType;
 import frc.robot.subsystems.Drivetrain.TeleopSpeeds;
 
 public class MoveClimberCommand extends CommandBase{
-    Climber climber;
-    ClimberState state;
-    Drivetrain drivetrain;
+    private Climber climber;
+    private ClimberState state;
+    private Drivetrain drivetrain;
+    private ControlLoopType type;
+    private boolean brakeAtEnd;
     
-    public MoveClimberCommand(Climber climber, ClimberState state, Drivetrain d) {
+    public MoveClimberCommand(Climber climber, Drivetrain drivetrain, ClimberState state, ControlLoopType type, boolean brakeAtEnd) {
         this.climber = climber;
         this.state = state;
-        this.drivetrain = d;
+        this.drivetrain = drivetrain;
+        this.type = type;
+        this.brakeAtEnd = brakeAtEnd;
+
+        addRequirements(climber);
     }
 
     @Override
     public void initialize() {
         climber.unBrake();
-        climber.setClimberState(state);
+        climber.setClimberState(state, type);
         if (climber.isUp()){drivetrain.setSpeed(TeleopSpeeds.Slow);}
         else {drivetrain.setSpeed(TeleopSpeeds.Normal);}
     }
@@ -35,7 +42,6 @@ public class MoveClimberCommand extends CommandBase{
 
     @Override
     public void end(boolean interrupted) {
-        climber.brake();
+        if(brakeAtEnd) climber.brake();
     }
-    
 }
