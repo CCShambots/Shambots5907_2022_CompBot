@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.priorityFramework.PrioritizedSubsystem;
 
 import static frc.robot.Constants.Intake.*;
@@ -109,7 +110,10 @@ public class Intake extends PrioritizedSubsystem {
    * Periodic loop
    */
   @Override
-  public void periodic() {  }
+  public void periodic() {  
+    SmartDashboard.putBoolean("Intake should end", getShouldEnd());
+    SmartDashboard.putNumber("Intake speed percentage", roller1.get());
+  }
 
   public static enum IntakeState {
     Raised, Lowered

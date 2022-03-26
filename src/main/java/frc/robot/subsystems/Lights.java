@@ -10,7 +10,7 @@ import static frc.robot.Constants.Lights.*;
 
 public class Lights extends SubsystemBase{
     CanifierString string = new CanifierString(Constants.Lights.CONTROLLER_ID);
-
+    
     public Lights() {
         setAnimation(DEFAULT_ANIMAION);
     }

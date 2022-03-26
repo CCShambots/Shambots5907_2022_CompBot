@@ -17,6 +17,8 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.setDisabled();
 
+    m_robotContainer.setLEDDefaultCommand();
+
     LiveWindow.disableAllTelemetry();
   }
 
@@ -45,6 +47,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.resetDrivetrainPID();
 
     m_robotContainer.getAutoCommand().schedule();
+
+    m_robotContainer.getAllianceColorFromFMS();
   }
 
   @Override
@@ -63,8 +67,8 @@ public class Robot extends TimedRobot {
 
     //TODO: Add this back
     // m_robotContainer.resetClimber();
-
     m_robotContainer.resetDrivetrainPID();
+    m_robotContainer.getAllianceColorFromFMS();
   }
 
   @Override
