@@ -77,9 +77,11 @@ public class Turret extends PrioritizedSubsystem{
     private double spinnerSetpoint = 0;
 
     private Direction searchDirection = Direction.Clockwise; //The direction the turret will spin in if no targets are spotted
-    private boolean shouldShoot = false; //Whether or not the turret should shoot if it is able (while tracking)
 
+    private boolean shouldShoot = false; //Whether or not the turret should shoot if it is able (while tracking)
     private boolean shouldEndTargeting = false;
+    private boolean isReadyToShoot = false;
+    private boolean isShooting = false;
 
     public Turret(ShuffleboardTab driveTab) {
         bottomFlywheel.configFactoryDefault();
@@ -316,6 +318,13 @@ public class Turret extends PrioritizedSubsystem{
     public boolean doesLimelightHaveTarget() {return limelight.hasTarget();}
     public Translation2d getLimelightOffset() {return limelight.targetOffset();}
     public double getLimelightLatency() {return limelight.getLatency();}
+
+    public void setIsReadyToShoot(boolean value) {isReadyToShoot = value;}
+    public boolean getIsReadyToShoot() {return isReadyToShoot;}
+
+    public void setIsShooting(boolean value) {isShooting = value;}
+    public boolean isShooting() {return isShooting;}
+    
 
     public boolean setManualPower(double power) {
         if(!knowsLocation) {

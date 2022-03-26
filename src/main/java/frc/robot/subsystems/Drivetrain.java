@@ -56,6 +56,9 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   private double smoothing = 8;
 
+  //Defense flag
+  private boolean defending = false;
+
   //Odometry object for tracking robot pose
   private DifferentialDriveOdometry odometry;
 
@@ -84,8 +87,7 @@ public class Drivetrain extends PrioritizedSubsystem {
 
     smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 2, "max", 4.5
-      ))
+      .withProperties(Map.of("min", 2, "max", 4.5))
       .getEntry();
 
     speedSlider = driveTab.add("Speed", maxSpeed)
@@ -188,17 +190,16 @@ public class Drivetrain extends PrioritizedSubsystem {
 
 
   /**Change whether drivetrain is reversed or not */
-  public void setReversed(boolean value) {
-    this.reversed = value;
-  }
-
-  public boolean isReversed() {
-    return reversed;
-  }
+  public void setReversed(boolean value) {this.reversed = value;}
+  public boolean isReversed() {return reversed;}
 
   public void toggleReversed() {
     setReversed(!reversed);
   }
+
+  public boolean isDefending() {return defending;}
+  public void setDefending(boolean value) {this.defending = value;}
+  public void toggleDefending() {this.defending = !defending;}
 
   /**
    * Set the speed of the robot to normal or turbo mode

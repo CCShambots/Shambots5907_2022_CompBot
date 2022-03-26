@@ -8,8 +8,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.RobotContainer.RobotStatus;
 import frc.robot.util.Range;
+import frc.robot.util.lights.RGB;
 import frc.robot.util.lights.animations.AdvancedAnimation;
+import frc.robot.util.lights.animations.BlinkingAnimation;
 import frc.robot.util.lights.animations.LightState;
+import frc.robot.util.lights.animations.SolidAnimation;
 
 public final class Constants {
     //Current limit for stopping motors from exceeding max power draw
@@ -19,6 +22,8 @@ public final class Constants {
     public static RobotStatus robotStatus = RobotStatus.AUTO;
 
     public static Translation2d goalPos = new Translation2d(27, 13.5);
+
+    public static Color allianceColor = Color.Red;
 
     public static class Drivetrain {
         //Hardware ID's
@@ -90,11 +95,16 @@ public final class Constants {
         //Hardware
         public static final int CONVEYOR_STAGE1_ID = 21;
         public static final int CONVEYOR_STAGE2_ID = 22;
-        public static final int PROX_STAGE1_ID = 0; //DIO port
-        public static final int PROX_STAGE2_ID = 1; //DIO port
+        public static final int PROX_STAGE1_PORT = 0; //DIO port
+        public static final int PROX_STAGE2_PORT = 1; //DIO port
+        public static final int PROX_STAGE3_PORT = 2; //DIO port
+
+        public static final int COLOR_SENSOR_PORT1 = 3; //DIO port
+        public static final int COLOR_SENSOR_PORT2 = 4; //DIO port
 
         //Control variables
         public static final double DEFAULT_CONVEYOR_SPEED = 0.25;
+        public static final double EJECTION_DELAY = .5;
     }
 
     
@@ -102,9 +112,9 @@ public final class Constants {
         //Hardware devices
         public static final int BOTTOM_FLYWHEEL = 31;
         public static final int TURRET_SPINNER = 33;
-        public static final int HALL_EFFECT_CENTER = 2; //DIO port
-        public static final int HALL_EFFECT_CLOCKWISE = 3; //DIO port
-        public static final int HALL_EFFECT_COUNTERCLOCKWISE = 4; //DIO port
+        public static final int HALL_EFFECT_CENTER = 5; //DIO port
+        public static final int HALL_EFFECT_CLOCKWISE = 6; //DIO port
+        public static final int HALL_EFFECT_COUNTERCLOCKWISE = 7; //DIO port
 
         //TOOD: Get the actual values for this
         public static final double CENTRAL_SENSOR_ANGLE = -5;
@@ -194,7 +204,11 @@ public final class Constants {
         public static final int CONTROLLER_ID = 51;
 
         public static final AdvancedAnimation DEFAULT_ANIMAION = new AdvancedAnimation(new LightState(0, 0, 255, .66, .33), new LightState(255, 255, 255, .66, .33));
-        
+        public static final SolidAnimation EMPTY_ANIMATION = new SolidAnimation(new RGB(0,0,0));
+        public static final BlinkingAnimation ONE_BALL_ANIMATION = new BlinkingAnimation(new RGB(0, 0, 255), new RGB(255, 255, 255), 3);
+        public static final SolidAnimation TWO_BALL_ANIMATION = new SolidAnimation(new RGB(0, 0, 255));
+        public static final SolidAnimation LOCKED_IN_ANIMATION = new SolidAnimation(new RGB(0, 255, 0));
+        public static final BlinkingAnimation ERROR_ANIMATION = new BlinkingAnimation(new RGB(255, 0, 0), new RGB(0, 0, 0), 4);
     }
 
     public static class Controller {
@@ -207,4 +221,9 @@ public final class Constants {
         //Operator Controller
         public static final int OPERATOR_CONTROLLER_PORT = 1;
     }
+
+    public static enum Color {
+        Red, Blue, SensorNotDetected, NoBallDetected
+    }
+    
 }

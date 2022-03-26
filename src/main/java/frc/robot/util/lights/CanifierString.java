@@ -27,17 +27,23 @@ public class CanifierString implements Sendable{
     }
 
     public void setAnimation(LEDAnimation animation) {
-        this.animation = animation;
-        if(animation.getType() == AnimationType.Variable) {
-            animationTimer.stop();
-            animationTimer.reset();
-            animationTimer.start();
-        } else if(animation.getType() == AnimationType.Solid) {
-            setLights(animation.sample(0).toPercentage());
+        //Only restart the animation if it is different from the current animation
+        if(!this.animation.equals(animation)) {
+            this.animation = animation;
+            if(animation.getType() == AnimationType.Variable) {
+                //If the animation is variable, restart the timer and send commands to the lights that way
+                animationTimer.stop();
+                animationTimer.reset();
+                animationTimer.start();
+            } else if(animation.getType() == AnimationType.Solid) {
+                //If the animation is just solid, only send a command to the lights once 
+                setLights(animation.sample(0).toPercentage());
+            }
         }
     }
 
     public void periodic() {
+        //Only update LED colors if the animation is variable
         if(animation.getType() == AnimationType.Variable) {
             RGB rgb = animation.sample(animationTimer.get());
             currentSample = rgb.toPercentage();
@@ -75,6 +81,5 @@ public class CanifierString implements Sendable{
         builder.addDoubleProperty("r", () -> currentSample[0] * 255, null);
         builder.addDoubleProperty("g", () -> currentSample[1] * 255, null);
         builder.addDoubleProperty("b", () -> currentSample[2] * 255, null);
-
     }
 }

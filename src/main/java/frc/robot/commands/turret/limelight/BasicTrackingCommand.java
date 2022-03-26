@@ -178,6 +178,10 @@ public abstract class BasicTrackingCommand extends CommandBase{
         return isComplete();
     }
 
+    public void setTurretReadyFlag(boolean value) {
+        turret.setIsReadyToShoot(value);
+    }
+
 
     /* METHODS THAT SHOULD BE OVERWRITTEN FOR DIFFERENT BEHAVIORS IN DIFFERENT COMMANDS */
     //Is finished already taken >:(

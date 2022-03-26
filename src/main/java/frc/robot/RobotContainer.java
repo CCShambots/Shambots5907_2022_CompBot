@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -11,11 +12,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.Color;
 import frc.robot.commands.SoftStop;
 import frc.robot.commands.climber.MoveClimberCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
-import frc.robot.commands.intake.EjectBallCommand;
+import frc.robot.commands.intake.HardEjectCommand;
+import frc.robot.commands.intake.IndexedEjectionCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.lights.DefaultLightCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
@@ -80,8 +84,9 @@ public class RobotContainer {
     driveTab.add(autoChooser);
     driveTab.addString("Robot Status", () -> getRobotStatus());
     driveTab.add(field);
+    driveTab.addString("Alliance", () -> Constants.allianceColor.name());
+    driveTab.add("Toggle Alliance Color", new InstantCommand(this::toggleAllianceColor));
 
-    
     //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", 
     "BackUpLeftRoute", "BackUpMidRoute", "BackUpRightRoute", "Meter", "FourBall1", "FourBall2", "FourBall3"));
@@ -105,14 +110,13 @@ public class RobotContainer {
     autoChooser.addOption("Meter", AutoPaths.Meter);
     autoChooser.addOption("Four Ball", AutoPaths.FourBall);
 
-    //TODO: Lights for if the turret is allowed to shoot or not
-
     //Register priority comnmads
     try {
       registerCommand(LowGoalShootCommand.class, 1);
       registerCommand(IntakeCommand.class, 2);
       registerCommand(TeleopTrackingCommand.class, 2);
-      registerCommand(EjectBallCommand.class, 3);
+      registerCommand(IndexedEjectionCommand.class, 3);
+      registerCommand(HardEjectCommand.class, 4);
       registerCommand(SoftStop.class, 5);
     } catch (NotACommandException e) {
       e.printStackTrace();
@@ -143,7 +147,7 @@ public class RobotContainer {
     
       //Runs the intake command if the robot has fewer than two balls and the turret is not trying to shoot
       new JoystickButton(operatorController, 4)
-        .whenPressed(new PriorityCommand(new IntakeCommand(intake, conveyor), () -> conveyor.getNumberOfBalls() < 2));
+        .whenPressed(new PriorityCommand(new IntakeCommand(intake, conveyor, turret, drivetrain), () -> conveyor.getNumberOfBalls() < 2));
       
       //Indicates that the intake command should end prematurely 
       //(balls will still be processed if they are still moving through the conveyor)
@@ -152,7 +156,12 @@ public class RobotContainer {
 
       //Ejects balls from the conveyor
       new JoystickButton(operatorController, 2)
-        .whenPressed(new PriorityCommand(new EjectBallCommand(conveyor, intake, 1.5)));
+        .whenPressed(new PriorityCommand(
+          new IndexedEjectionCommand(conveyor, intake, () -> operatorController.getRawButton(2)), 
+          () -> conveyor.getNumberOfBalls() > 0));
+
+      //Hard eject command (in the event of a tracker error)
+      driveTab.add("Hard eject balls", new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5)));
       
 
     //Turret Controls
@@ -291,8 +300,17 @@ public class RobotContainer {
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
     
-    //TODO: REmove this at some point
+    //TODO: Remove this at some point
     turret.setKnowsLocation(true);
+  }
+
+  public void getAllianceColorFromFMS() {
+    boolean isRed = NetworkTableInstance.getDefault().getTable("FMSInfo").getEntry("IsRedAlliance").getBoolean(true);
+    Constants.allianceColor = isRed ? Color.Red : Color.Blue;
+  }
+
+  public void toggleAllianceColor() {
+    Constants.allianceColor = Constants.allianceColor == Color.Red ? Color.Blue : Color.Red;
   }
   
   /**
@@ -317,6 +335,10 @@ public class RobotContainer {
   }
   public void disableLimelight() { turret.setLimelightOff();}
   public void enableLimelight() { turret.setLimelightOn();}
+
+  public void setLEDDefaultCommand() {
+    lights.setDefaultCommand(new DefaultLightCommand(lights, drivetrain, intake, conveyor, turret));
+  }
 
   public void raiseIntake() {intake.raiseIntake();}
 

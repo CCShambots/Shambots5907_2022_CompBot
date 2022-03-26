@@ -1,12 +1,11 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
 
-public class EjectBallCommand extends CommandBase{
+public class HardEjectCommand extends CommandBase{
 
     Conveyor conveyor;
     Intake intake;
@@ -19,13 +18,13 @@ public class EjectBallCommand extends CommandBase{
      * @param intake subsystem
      * @param time time (in seconds) to exhaust the conveyor
      */
-    public EjectBallCommand(Conveyor conveyor, Intake intake, double time) {
+    public HardEjectCommand(Conveyor conveyor, Intake intake, double time) {
         this.conveyor = conveyor;
         this.intake = intake;
 
         this.time = time;
 
-        this.addRequirements(conveyor);
+        this.addRequirements(conveyor, intake);
     }
 
     @Override
@@ -36,8 +35,6 @@ public class EjectBallCommand extends CommandBase{
 
         conveyor.setEjecting(true);
 
-        Command intakeCommand = intake.getCurrentCommand();
-        if(intakeCommand != null) intakeCommand.cancel();
         conveyor.exhaustAll();
         conveyor.setTrackerDisabled(true);
     }

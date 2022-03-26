@@ -1,9 +1,10 @@
 package frc.robot.commands.turret.limelight;
 
-import frc.robot.commands.turret.ShootCommand;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Turret;
 import static frc.robot.Constants.Turret.*;
+
+import frc.robot.commands.turret.shooting.ShootCommand;
 
 public class TeleopTrackingCommand extends BasicTrackingCommand{
     private Conveyor conveyor;
@@ -18,11 +19,11 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
 
     @Override
     public boolean isComplete() {
-
-        // 
         return 
             conveyor.getNumberOfBalls() == 0 || 
-            turret.getShouldEndTargeting();
+            (
+                turret.getShouldEndTargeting() && !turret.isShooting()
+            );
     }
 
     @Override
@@ -40,7 +41,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
             && shootCommand == null
             && isReady()) 
         {
-            shootCommand = new ShootCommand(conveyor);
+            shootCommand = new ShootCommand(conveyor, turret);
             shootCommand.schedule();
         }
     }
@@ -52,7 +53,7 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
     public boolean isReady() {
 
         boolean ready = !turret.isFlywheelBusy() && isLockedIn();
-
+        setTurretReadyFlag(ready);
         return ready;
     }
 
