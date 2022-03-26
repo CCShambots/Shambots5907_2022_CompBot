@@ -4,8 +4,11 @@ import java.util.Map;
 
 
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
@@ -30,25 +33,39 @@ public class FourBallRoute extends BaseRoute{
             setupAuto(paths.get(FourBall1)),
             new ParallelCommandGroup(
                 new InstantCommand(() -> {
-                    turret.setSpinnerTarget(-65);
+                    turret.setSpinnerTarget(-190);
                     turret.setSearchDirection(Direction.Clockwise);
                 }),
-                new SpinUpFlywheelCommand(turret, FLYWHEEL_HIGH_RPM + 250),
-                new IntakeCommand(intake, conveyor, turret, drivetrain),
+                new IntakeCommand(intake, conveyor),   
+                new SpinUpFlywheelCommand(turret, FLYWHEEL_HIGH_RPM + 350),
+
                 new SequentialCommandGroup(
                     new TrajectoryCommand(drivetrain, paths.get(FourBall1)),
-                    new InstantCommand(() -> intake.setShouldEnd(true))
+
+                    new ParallelRaceGroup(
+                        new FunctionalCommand(() -> {}, () -> {}, (b) -> {}, () -> intake.isRunning(IntakeCommand.class)),
+                        new SequentialCommandGroup(
+                            new WaitCommand(1),
+                            new InstantCommand(() -> intake.setShouldEnd(true))
+                        )
+                    )
                 )
             ),
             new AutonomousTargetCommand(turret),
             new ShootCommand(conveyor),
             new ParallelCommandGroup(
-                new InstantCommand(() -> turret.setSpinnerTarget(65)),
-                new IntakeCommand(intake, conveyor, turret, drivetrain),
+                new InstantCommand(() -> turret.setSpinnerTarget(-180)),
+                new IntakeCommand(intake, conveyor),
                 new SequentialCommandGroup(
                     new TrajectoryCommand(drivetrain, paths.get(FourBall2)),
-                    new WaitCommand(1.5),
-                    new InstantCommand(() -> intake.setShouldEnd(true))
+
+                    new ParallelRaceGroup(
+                        new FunctionalCommand(() -> {}, () -> {}, (b) -> {}, () -> intake.isRunning(IntakeCommand.class)),
+                        new SequentialCommandGroup(
+                            new WaitCommand(2),
+                            new InstantCommand(() -> intake.setShouldEnd(true))
+                        )
+                    )
                 )
             ),
             new TrajectoryCommand(drivetrain, paths.get(FourBall3)),
