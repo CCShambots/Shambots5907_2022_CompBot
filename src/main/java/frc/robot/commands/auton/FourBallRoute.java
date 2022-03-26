@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.drivetrain.TrajectoryCommand;
 import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.turret.ShootCommand;
 import frc.robot.commands.turret.SpinUpFlywheelCommand;
 import frc.robot.commands.turret.limelight.AutonomousTargetCommand;
+import frc.robot.commands.turret.shooting.ShootCommand;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.auton.AllRobotSubsystems;
 import frc.robot.util.auton.AutoRoutes.Trajectories;
@@ -41,7 +41,7 @@ public class FourBallRoute extends BaseRoute{
                 )
             ),
             new AutonomousTargetCommand(turret),
-            new ShootCommand(conveyor),
+            new ShootCommand(conveyor, turret),
             new ParallelCommandGroup(
                 new InstantCommand(() -> turret.setSpinnerTarget(65)),
                 new IntakeCommand(intake, conveyor, turret, drivetrain),
@@ -53,7 +53,7 @@ public class FourBallRoute extends BaseRoute{
             ),
             new TrajectoryCommand(drivetrain, paths.get(FourBall3)),
             new AutonomousTargetCommand(turret),
-            new ShootCommand(conveyor),
+            new ShootCommand(conveyor, turret),
             new InstantCommand(() -> {
                 turret.setFlywheelTarget(0);
                 turret.setSpinnerTarget(0);

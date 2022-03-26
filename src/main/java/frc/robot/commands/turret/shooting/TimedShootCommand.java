@@ -1,4 +1,4 @@
-package frc.robot.commands.turret;
+package frc.robot.commands.turret.shooting;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -7,7 +7,7 @@ import frc.robot.subsystems.Conveyor;
 /**
  * This command moves the conveyor until the set number of balls have exited the robot 
  */
-public class ShootCommand extends CommandBase{
+public class TimedShootCommand extends CommandBase{
 
     private Conveyor conveyor;
     private Amount amount;
@@ -18,7 +18,7 @@ public class ShootCommand extends CommandBase{
     private double totalTime = 1.7; //The total time (in seconds) the shooting command will run
     private Timer timer;
 
-    public ShootCommand(Conveyor conveyor) {
+    public TimedShootCommand(Conveyor conveyor) {
         this.conveyor = conveyor;
 
     }
