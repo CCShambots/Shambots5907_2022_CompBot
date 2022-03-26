@@ -23,7 +23,7 @@ public class Climber extends PrioritizedSubsystem {
     private ClimbingModule rightModule = new ClimbingModule(RIGHT_CLIMBER_ID, 
         new PIDandFFConstants(RIGHT_P, RIGHT_I, RIGHT_D, RIGHT_KS, RIGHT_KV, MAX_VEL, MAX_ACCEL), "Right");
 
-    private Solenoid brake = new Solenoid(Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.REVPH, BRAKE);
+    private Solenoid brake = new Solenoid(Drivetrain.COMPRESSOR_ID, PneumaticsModuleType.CTREPCM, BRAKE);
 
     public Climber(){
         leftModule.lead(rightModule); //Setup the right module to follow the left module
