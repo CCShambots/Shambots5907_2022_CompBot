@@ -378,9 +378,6 @@ public class RobotContainer {
     turret.setSpinnerNeutralMode(NeutralMode.Brake);
     drivetrain.setControlLoopType(ControlMode.TeleOp);
     turret.resetSpinnerPID();
-
-    //TODO: Remove
-    drivetrain.setDefending(true);
   }
 
   public void setDisabled() {

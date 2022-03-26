@@ -6,6 +6,9 @@ import java.util.List;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.Color;
 import frc.robot.subsystems.Conveyor;
@@ -78,24 +81,30 @@ public class BallTracker implements Sendable{
             if(conveyor.getDirection() == Direction.Intake) {
                 //Create a new ball in the conveyor if the stage 1 sensor has just turned on
                 if(currStage1 && currStage1 != prevStage1) {
-                    BallColor color = colorSensor.getColor() != Constants.allianceColor ? BallColor.Opposing : BallColor.Ours;
-                    if(colorSensor.getColor() == Color.NoBallDetected || colorSensor.getColor() == Color.SensorNotDetected) setError(true);
-                    System.out.println("Creating new ball of color " + color.name());
-                    balls.add(new Ball(color));
+
+                    new SequentialCommandGroup(
+                        new WaitCommand(0.25),
+                        new InstantCommand(() -> {
+                            BallColor color = colorSensor.getColor() == Constants.allianceColor ? BallColor.Ours : BallColor.Opposing;
+                            if(colorSensor.getColor() == Color.NoBallDetected || colorSensor.getColor() == Color.SensorNotDetected) setError(true);
+                            balls.add(new Ball(color));
+                        })
+                    ).schedule();
                 }
 
                 //Advance the ball if the stage 1 sensor just got deactivated
-                if(!currStage1 && currStage1 != prevStage1) {
+                if(currStage2 && currStage2 != prevStage2) {
                     safeAdvanceBall(BallPosition.Between1And2);
                 }
 
                 //If the second stage sensor was just activated, advance that ball to being in the second stage
-                if(currStage2 && currStage2 != prevStage2) {
+                if(!currStage1 && currStage1 != prevStage1) {
                     safeAdvanceBall(BallPosition.Stage2);
                 }
 
                 //If the second stage sensor was just deactivated, move it to past between stage 2 and 3
                 if(!currStage2 && currStage2 != prevStage2) {
+                    System.out.println("Trying to advance ball to between 2 and 3");
                     safeAdvanceBall(BallPosition.Between2And3);
                 }
 
@@ -123,12 +132,12 @@ public class BallTracker implements Sendable{
 
 
                 //If the second stage sensor deactivated, regress the ball once
-                if(!currStage2 && currStage2 != prevStage2) {
+                if(currStage1 && currStage1 != prevStage1) {
                     safeRegressBall(BallPosition.Between1And2);
                 }
 
                 //If the first stage sensor activates, regress, the first or second ball's position (depending on how many are in the bot)
-                if(currStage1 && currStage1 != prevStage1) {
+                if(!currStage2 && currStage2 != prevStage2) {
                     safeRegressBall(BallPosition.Stage1);
                 }
                                 
@@ -158,7 +167,7 @@ public class BallTracker implements Sendable{
 
     private void safeRegressBall(BallPosition pos) {
         //Find whichever ball is in the next position (i.e. where the ball is coming from)
-        System.out.println("Searching for ball at position " + pos.next().name());
+        System.out.println("Searching for ball at position " + pos.next().name() );
         Ball ball = findBall(pos.next());
         if(ball == null || !ball.isPrevPosition(pos)) {
             setError(true);
@@ -170,9 +179,10 @@ public class BallTracker implements Sendable{
     }
 
     private void safeAdvanceBall(BallPosition pos) {
-        System.out.println("Searching for ball at position " + pos.previous().name());
+        System.out.println("Searching for ball at position " + pos.previous().name() + " in an effort to advance ball to " + pos.name());
         Ball ball = findBall(pos.previous());
         if(ball == null || !ball.isNextPosition(pos)) {
+            System.out.println("Failed to find ball at position " + pos.previous().name());
             setError(true);
             return;
         }
@@ -185,6 +195,14 @@ public class BallTracker implements Sendable{
     private Ball findBall(BallPosition pos) {
 
         boolean failure = false;
+
+        for(int i = 0; i<2; i++) {
+            if(balls.size() > i) {
+                System.out.println("Ball #" + (i+1) + "at pos " + balls.get(i).getPosition() + " with color " + balls.get(i).getColor() );
+            } else {
+                System.out.println("Ball #" + (i+1) + emptyBall);
+            }
+        }
 
         if(balls.size() >= 1) {
             if(balls.get(0).getPosition().equals(pos)) {
@@ -199,7 +217,7 @@ public class BallTracker implements Sendable{
         }
 
         if(failure) {
-            System.out.println("Tracker error");
+            // System.out.println("Tracker error");
             setError(true);
             return new Ball(BallColor.Ours);
         } else return null; //This should never get called but makes the compiler happy
