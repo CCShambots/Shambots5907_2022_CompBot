@@ -205,12 +205,24 @@ public class RobotContainer {
 
       //Allow for very slow, manual movement of the turret in the event of a crash
       new JoystickButton(operatorController, 13)
-        .whenPressed(new InstantCommand(() -> turret.setManualPower(MANUAL_SPEED)))
-        .whenReleased(new InstantCommand(() -> turret.setManualPower(0)));
+        .whenPressed(new InstantCommand(() -> {
+          turret.setKnowsLocation(false);
+          turret.setManualPower(MANUAL_SPEED);
+        }))
+        .whenReleased(new InstantCommand(() -> {
+          turret.setManualPower(0);
+          turret.setKnowsLocation(true);
+        }));
 
-      new JoystickButton(operatorController, 14)
-        .whenPressed(new InstantCommand(() -> turret.setManualPower(-MANUAL_SPEED)))
-        .whenReleased(new InstantCommand(() -> turret.setManualPower(0)));
+        new JoystickButton(operatorController, 13)
+          .whenPressed(new InstantCommand(() -> {
+            turret.setKnowsLocation(false);
+            turret.setManualPower(-MANUAL_SPEED);
+          }))
+          .whenReleased(new InstantCommand(() -> {
+            turret.setManualPower(0);
+            turret.setKnowsLocation(true);
+          }));
 
 
     //Climber controls
@@ -343,6 +355,7 @@ public class RobotContainer {
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
     turret.setSpinnerNeutralMode(NeutralMode.Brake);
     drivetrain.setControlLoopType(ControlMode.TeleOp);
+    turret.resetSpinnerPID();
   }
 
   public void setDisabled() {
