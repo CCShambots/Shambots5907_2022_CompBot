@@ -22,6 +22,7 @@ public class Ball implements Sendable{
     void setPosition(BallPosition pos) {position = pos;}
     BallPosition getPosition() {return position;}
     BallColor getColor() {return color;}
+    void setColor(BallColor color) {this.color = color;}
     
     /**
      * @param pos The position that we're trying to move the ball to

@@ -117,8 +117,6 @@ public class IntakeCommand extends CommandBase{
                 } else {
                     ejectingOutBottom = true;
                     conveyor.exhaustStage1();
-                    intake.stop();
-                    intake.raiseIntake();
                 }
             } else if(ejectingOutBottom && conveyor.getBall2Pos() == BallPosition.NotInBot){
                 ejectionTimer.start();

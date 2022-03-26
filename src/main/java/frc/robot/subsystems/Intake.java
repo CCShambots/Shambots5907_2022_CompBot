@@ -112,6 +112,7 @@ public class Intake extends PrioritizedSubsystem {
   @Override
   public void periodic() {  
     SmartDashboard.putBoolean("Intake should end", getShouldEnd());
+    SmartDashboard.putNumber("Intake speed percentage", roller1.get());
   }
 
   public static enum IntakeState {
