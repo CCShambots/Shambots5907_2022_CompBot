@@ -280,6 +280,8 @@ public class Turret extends PrioritizedSubsystem{
         knowsLocation = value;
         if(value == true) setSpinnerConstraints(getOriginalSpinnerConstraints());
         else setSpinnerConstraints(getSlowSpinnerConstraints());
+
+        resetSpinnerPID();
     }
 
     public double getSpinnerVelocity() {
