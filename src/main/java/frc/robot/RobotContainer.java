@@ -110,8 +110,6 @@ public class RobotContainer {
     autoChooser.addOption("Meter", AutoPaths.Meter);
     autoChooser.addOption("Four Ball", AutoPaths.FourBall);
 
-    //TODO: Lights for if the turret is allowed to shoot or not
-
     //Register priority comnmads
     try {
       registerCommand(LowGoalShootCommand.class, 1);
@@ -163,9 +161,7 @@ public class RobotContainer {
           () -> conveyor.getNumberOfBalls() > 0));
 
       //Hard eject command (in the event of a tracker error)
-      //TODO: Make this work
-      new JoystickButton(operatorController, 3)
-        .whenPressed(new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5)));
+      driveTab.add("Hard eject balls", new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5)));
       
 
     //Turret Controls
@@ -292,7 +288,7 @@ public class RobotContainer {
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
     
-    //TODO: REmove this at some point
+    //TODO: Remove this at some point
     turret.setKnowsLocation(true);
   }
 
