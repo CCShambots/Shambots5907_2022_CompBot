@@ -41,7 +41,7 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   private PigeonIMU pigeonIMU = new PigeonIMU(PIGEON_GYRO);
 
-  private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.REVPH);
+  private Compressor compressor = new Compressor(COMPRESSOR_ID, PneumaticsModuleType.CTREPCM);
   private PowerDistribution pdh = new PowerDistribution(PDH_ID, ModuleType.kRev);
   
 
