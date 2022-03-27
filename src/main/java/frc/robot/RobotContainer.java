@@ -41,7 +41,6 @@ import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PriorityCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
@@ -59,7 +58,7 @@ import static frc.robot.util.priorityFramework.PriorityRegistry.*;
 
 public class RobotContainer {
   ShuffleboardTab driveTab = Shuffleboard.getTab("Drive Team");
-  ShuffleboardTab configurationTab = Shuffleboard.getTab("Configuration");
+  ShuffleboardTab manualClimberTab = Shuffleboard.getTab("Manual Climbing Tab");
 
   Field2d field = new Field2d();
   
@@ -68,7 +67,7 @@ public class RobotContainer {
   private final Conveyor conveyor = new Conveyor();
   private final Turret turret = new Turret(driveTab);
   private final Climber climber = new Climber();
-  public static final Lights lights = new Lights();
+  private final Lights lights = new Lights();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -82,11 +81,16 @@ public class RobotContainer {
 
   public RobotContainer() {
     //Put telemetry for choosing autonomous routes, displayign the field, and displaying the status of the robot
-    driveTab.add(autoChooser);
-    driveTab.addString("Robot Status", () -> getRobotStatus());
+    driveTab.add("Select Autonomous Route", autoChooser).withSize(2, 2).withPosition(9, 2);
+    driveTab.addString("Robot Status", () -> getRobotStatus()).withSize(2, 1).withPosition(11, 4);
     driveTab.add(field);
-    driveTab.addString("Alliance", () -> Constants.allianceColor.name());
-    driveTab.add("Toggle Alliance Color", new InstantCommand(this::toggleAllianceColor));
+    driveTab.addString("Alliance", () -> Constants.allianceColor.name()).withSize(2, 1).withPosition(2, 2);
+    driveTab.add("Toggle Alliance Color", new InstantCommand(this::toggleAllianceColor)).withSize(2, 1).withPosition(0, 2);
+    driveTab.add("Toggle Defending", new InstantCommand(drivetrain::toggleDefending)).withSize(2, 1).withPosition(0, 4);
+    driveTab.addBoolean("Automatic Rejection Enabled", () -> !drivetrain.isDefending()).withSize(2, 1).withPosition(2, 4);
+    driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry())).withSize(2, 1).withPosition(0, 0);
+    driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry()).withSize(2, 1).withPosition(2, 0);
+    driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation()).withSize(3, 3).withPosition(5, 0);
 
     //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", 
@@ -108,7 +112,7 @@ public class RobotContainer {
     autoChooser.addOption("Back up Left", AutoPaths.BackUpLeft);
     autoChooser.addOption("Back up Mid", AutoPaths.BackUpMid);
     autoChooser.addOption("Back up Right", AutoPaths.BackUpRight);
-    autoChooser.addOption("Meter", AutoPaths.Meter);
+    // autoChooser.addOption("Meter", AutoPaths.Meter);
     autoChooser.addOption("Four Ball", AutoPaths.FourBall);
 
     //Register priority comnmads
@@ -163,7 +167,7 @@ public class RobotContainer {
           () -> conveyor.getNumberOfBalls() > 0));
 
       //Hard eject command (in the event of a tracker error)
-      driveTab.add("Hard eject balls", new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5)));
+      driveTab.add("Hard eject balls", new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5))).withSize(3, 2).withPosition(5, 3);
       
 
     //Turret Controls
@@ -240,23 +244,16 @@ public class RobotContainer {
     new JoystickButton(operatorController, 3)
       .whenPressed(new PriorityCommand(new ClimbLevelCommand(climber, drivetrain, turret, () -> operatorController.getRawButton(3))));
     
-    // new JoystickButton(operatorController, 5)
-    //   .whenPressed(new (climber, ClimberState.FullExtension, drivetrain));
 
-    configurationTab.add("Raise Right Climber", climber.moveMotor(0.25, MotorSide.Right));
-    configurationTab.add("Lower Right Climber", climber.moveMotor(-0.25, MotorSide.Right));
-    configurationTab.add("Raise Left Climber", climber.moveMotor(0.25, MotorSide.Left));
-    configurationTab.add("Lower Left Climber", climber.moveMotor(-0.25, MotorSide.Left));
-    configurationTab.add("Raise Both Climbers", climber.moveMotors(0.25));
-    configurationTab.add("Lower Both Climbers", climber.moveMotors(-0.25));
-    configurationTab.add("Extend Climber solenoids", new InstantCommand(() -> climber.setSolenoids(Value.kForward)));
-    configurationTab.add("Retract Climber solenoigs", new InstantCommand(() -> climber.setSolenoids(Value.kReverse)));
-
-    driveTab.add("DISABLE TURRET TRACKING", new InstantCommand(() -> turret.setKnowsLocation(false)));
-    driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation());
-    
-    driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry()));
-    driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry());
+    manualClimberTab.add("Raise Right Climber", climber.moveMotor(0.25, MotorSide.Right)).withSize(2, 1).withPosition(7, 1);
+    manualClimberTab.add("Lower Right Climber", climber.moveMotor(-0.25, MotorSide.Right)).withSize(2, 1).withPosition(7, 0);
+    manualClimberTab.add("Raise Left Climber", climber.moveMotor(0.25, MotorSide.Left)).withSize(2, 1).withPosition(3, 1);
+    manualClimberTab.add("Lower Left Climber", climber.moveMotor(-0.25, MotorSide.Left)).withSize(2, 1).withPosition(3, 0);
+    manualClimberTab.add("Raise Both Climbers", climber.moveMotors(0.25)).withSize(2, 1).withPosition(5, 1);
+    manualClimberTab.add("Lower Both Climbers", climber.moveMotors(-0.25)).withSize(2, 1).withPosition(5, 0);
+    manualClimberTab.add("Extend Climber solenoids", new InstantCommand(() -> climber.setSolenoids(Value.kForward))).withSize(2, 1).withPosition(4, 2);
+    manualClimberTab.add("Retract Climber solenoids", new InstantCommand(() -> climber.setSolenoids(Value.kReverse))).withSize(2, 1).withPosition(6, 2);
+  
 
     //Soft stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
@@ -286,23 +283,6 @@ public class RobotContainer {
     SmartDashboard.putData("subsystems/Climber", climber);
   }
 
-  
-  /**
-   * Function that evaluates if the robot is in a state where it is able to shoot
-   * Requirements:
-   *  - the limelight is tracking
-   *  - the intake does not have another command running
-   *  - the limelight is locked in (i.e. right on target)
-   *  - the flywheel is at the right speed
-   * @return
-   */
-  public boolean isShootingAllowed() {
-    if(limeLightTeleopCommand == null) return false;
-    if(intake.getCurrentCommand() != null) return false;
-
-    return limeLightTeleopCommand.isReady();
-  }
-
   public void doDrivetrainSetup() {
     //Set the default command for easy driving
     drivetrain.setDefaultCommand(new DrivingCommand(drivetrain, () -> driverController.getRawAxis(DRIVER_LEFT_JOYSTICK_X_AXIS), 
@@ -323,12 +303,12 @@ public class RobotContainer {
     turret.setSpinnerTarget(turret.getSpinnerAngle());
     turret.setFlywheelTarget(0);
     
-    //TODO: Remove this at some point
-    turret.setKnowsLocation(true);
+    // turret.setKnowsLocation(true);
   }
 
   public void getAllianceColorFromFMS() {
     boolean isRed = NetworkTableInstance.getDefault().getTable("FMSInfo").getEntry("IsRedAlliance").getBoolean(true);
+    System.out.println("Is red: " + isRed);
     Constants.allianceColor = isRed ? Color.Red : Color.Blue;
   }
 
@@ -365,14 +345,14 @@ public class RobotContainer {
 
   public void raiseIntake() {intake.raiseIntake();}
 
-  // public void resetClimber() {climber.resetClimber();}
+  public void resetClimber() {climber.resetClimber();}
 
   public void resetSubsystems() {
     drivetrain.resetPriority();
     intake.resetPriority();
     conveyor.resetPriority();
     turret.resetPriority();
-    // climber.resetPriority();
+    climber.resetPriority();
   }
 
   private String getRobotStatus() {return Constants.robotStatus.name();}
@@ -398,9 +378,11 @@ public class RobotContainer {
   public void setTeleop() {
     Constants.robotStatus = RobotStatus.TELEOP;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
-    turret.setSpinnerNeutralMode(NeutralMode.Brake);
     drivetrain.setControlLoopType(ControlMode.TeleOp);
+    drivetrain.setDefending(false);
+    turret.setSpinnerNeutralMode(NeutralMode.Brake);
     turret.resetSpinnerPID();
+
   }
 
   public void setDisabled() {

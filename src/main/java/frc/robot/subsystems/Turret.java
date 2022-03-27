@@ -102,7 +102,7 @@ public class Turret extends PrioritizedSubsystem{
     }
     
     private void initShuffleboard(ShuffleboardTab driveTab) {
-        driveTab.add("Fake gyro", fakeGyro);
+        driveTab.add("Turret Angle", fakeGyro).withSize(2, 2).withPosition(9, 0);
     }
 
     /* Flywheel methods */

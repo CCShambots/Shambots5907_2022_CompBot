@@ -67,7 +67,6 @@ public class Drivetrain extends PrioritizedSubsystem {
 
   private NetworkTableEntry smoothingSlider;
   private NetworkTableEntry speedSlider;
-  private NetworkTableEntry breakModeToggle;
 
   /**
    * Initializes the drivetrain object and adds each motor to the motors list for setup.
@@ -87,16 +86,16 @@ public class Drivetrain extends PrioritizedSubsystem {
 
     smoothingSlider = driveTab.add("Smoothing", smoothing)
       .withWidget(BuiltInWidgets.kNumberSlider)
-      .withProperties(Map.of("min", 2, "max", 4.5))
+      .withProperties(Map.of("min", 4, "max", 8))
+      .withSize(2, 1)
+      .withPosition(11, 1)
       .getEntry();
 
     speedSlider = driveTab.add("Speed", maxSpeed)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(Map.of("min", 1,"max", 4))
-      .getEntry();
-
-    breakModeToggle = driveTab.add("BreakMode", false)
-      .withWidget(BuiltInWidgets.kToggleButton)
+      .withSize(2, 1)
+      .withPosition(11, 0)
       .getEntry();
 
     setDriveTrainVariables();
@@ -108,13 +107,6 @@ public class Drivetrain extends PrioritizedSubsystem {
   public void setDriveTrainVariables(){
     smoothing = smoothingSlider.getDouble(5);
     maxSpeed = speedSlider.getDouble(3);
-
-    if(breakModeToggle.getBoolean(false)) {
-      setNeutralMotorBehavior(NeutralMode.Coast);
-    }   
-    else {
-      setNeutralMotorBehavior(NeutralMode.Brake);
-    }
   }
 
   

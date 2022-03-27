@@ -1,11 +1,11 @@
 {
   "MainWindow": {
     "GLOBAL": {
-      "height": "1000",
+      "height": "1009",
       "maximized": "1",
       "style": "0",
       "userScale": "2",
-      "width": "958",
+      "width": "1920",
       "xpos": "0",
       "ypos": "29"
     }
@@ -24,17 +24,17 @@
     "###DIO": {
       "Collapsed": "0",
       "Pos": "392,471",
-      "Size": "195,242"
+      "Size": "162,215"
     },
     "###FMS": {
       "Collapsed": "0",
       "Pos": "13,515",
-      "Size": "210,214"
+      "Size": "175,184"
     },
     "###Joysticks": {
       "Collapsed": "0",
       "Pos": "772,100",
-      "Size": "976,279"
+      "Size": "796,90"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
@@ -69,17 +69,17 @@
     "###Solenoids": {
       "Collapsed": "0",
       "Pos": "907,558",
-      "Size": "201,268"
+      "Size": "169,238"
     },
     "###System Joysticks": {
       "Collapsed": "0",
       "Pos": "16,207",
-      "Size": "232,254"
+      "Size": "192,218"
     },
     "###Timing": {
       "Collapsed": "0",
       "Pos": "8,44",
-      "Size": "162,142"
+      "Size": "135,127"
     },
     "Debug##Default": {
       "Collapsed": "0",
