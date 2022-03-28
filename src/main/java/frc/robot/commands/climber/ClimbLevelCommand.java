@@ -28,7 +28,7 @@ public class ClimbLevelCommand extends SequentialCommandGroup{
             new ParallelCommandGroup(
                 new MoveClimberCommand(c, d, ClimberState.FullExtension, ControlLoopType.NoLoad, true), //Fully extend the climber
                 new ConditionalCommand(
-                    new InstantCommand(() -> {firstTime = false;}),
+                    new ExtendClimberSolenoidsCommand(c),
                     new SequentialCommandGroup(
                         c.waitForMovementCommand(EXTEND_SOLENOIDS_THRESHOLD),
                         new ExtendClimberSolenoidsCommand(c),
@@ -38,8 +38,14 @@ public class ClimbLevelCommand extends SequentialCommandGroup{
                     () -> firstTime
                 )
             ),
-            new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {}, continueSupplier, c), //Wait for the supplier to be true
-            new ExtendClimberSolenoidsCommand(c), //Extend the soleonids to 
+            new ConditionalCommand(
+                new SequentialCommandGroup(
+                    new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {}, continueSupplier, c), //Wait for the supplier to be true
+                    new ExtendClimberSolenoidsCommand(c) //Extend the soleonids to 
+                ),
+                new InstantCommand(() -> {firstTime = false;}),
+                () -> !firstTime
+            ),
             new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {}, continueSupplier, c),
             new MoveClimberCommand(c, d, ClimberState.Lowered, ControlLoopType.Load, false),
             new RetractClimberSolenoidsCommand(c)
