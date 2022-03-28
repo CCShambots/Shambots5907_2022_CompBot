@@ -27,7 +27,7 @@ public class MoveClimberCommand extends CommandBase{
     @Override
     public void initialize() {
         climber.unBrake();
-        climber.setClimberState(state, type);
+        climber.setClimberState(state, type, true);
         if (climber.isUp()){drivetrain.setSpeed(TeleopSpeeds.Slow);}
         else {drivetrain.setSpeed(TeleopSpeeds.Normal);}
     }

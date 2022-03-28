@@ -72,7 +72,7 @@ public class ClimbingModule implements Sendable{
      * Update the target of the climbing module
      * @param state The location the climber should move to
      */
-    public void setModuleState(ClimberState state, ControlLoopType type) {
+    public void setModuleState(ClimberState state, ControlLoopType type, boolean overrideForceStop) {
         climberState = state;
         if(climberState == ClimberState.FullExtension) climberTarget = inchesToCounts(MID_HEIGHT);
         if(climberState == ClimberState.Low) climberTarget = inchesToCounts(LOW_HEIGHT);
@@ -84,8 +84,9 @@ public class ClimbingModule implements Sendable{
         activePID = type == ControlLoopType.NoLoad ? noLoadPID : loadPID;
         activeFF = type == ControlLoopType.NoLoad ? noLoadFF : loadFF;
         
+        if(braked && overrideForceStop) setBraked(false);
 
-        if(follower != null) follower.setModuleState(state, type);
+        if(follower != null) follower.setModuleState(state, type, overrideForceStop);
     }
 
     /**

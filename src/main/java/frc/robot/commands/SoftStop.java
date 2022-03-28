@@ -22,7 +22,7 @@ public class SoftStop extends CommandBase{
         this.turret = turret;
         this.climber = climber;
     
-        addRequirements(intake, conveyor, turret); //climber);
+        addRequirements(intake, conveyor, turret, climber);
     }
 
     @Override
@@ -36,12 +36,15 @@ public class SoftStop extends CommandBase{
         conveyor.setEjecting(false);
         climber.setForceStopped(true);
 
-        SequentialCommandGroup g = new SequentialCommandGroup(
-            new WaitCommand(0.5),
-            new InstantCommand(() -> climber.setForceStopped(false))
-        );
-        g.addRequirements(climber);
-        g.schedule();
+        // SequentialCommandGroup g = new SequentialCommandGroup(
+            // new WaitCommand(0.5),
+            // new InstantCommand(() -> {
+                // climber.setForceStopped(false);
+
+            // })
+        // );
+        // g.addRequirements(climber);
+        // g.schedule();
     }
 
     @Override

@@ -265,7 +265,7 @@ public class RobotContainer {
 
     //Soft stop that cancels all subsystem commands and should stop motors from moving.
     new JoystickButton(operatorController, 8)
-      .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, null)));
+      .whenPressed(new PriorityCommand(new SoftStop(intake, conveyor, turret, climber)));
   }
 
   public void telemetry() {

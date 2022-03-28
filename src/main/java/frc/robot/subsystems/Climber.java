@@ -49,7 +49,7 @@ public class Climber extends PrioritizedSubsystem {
     public void brake(){setSolenoids(true);}
     public void unBrake(){setSolenoids(false);}
 
-    public void setClimberState(ClimberState state, ControlLoopType type) {leftModule.setModuleState(state, type);}
+    public void setClimberState(ClimberState state, ControlLoopType type, boolean overrideForceStop) {leftModule.setModuleState(state, type, overrideForceStop);}
     public boolean isUp() {return leftModule.getClimberState() != ClimberState.Lowered;} 
     public boolean isBusy() { return leftModule.isBusy() || rightModule.isBusy();}
     public boolean isForceStopped() {return leftModule.isForceStopped() || rightModule.isForceStopped();}
