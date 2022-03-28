@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.turret.MoveSpinnerCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -24,6 +25,7 @@ public class ClimbLevelCommand extends SequentialCommandGroup{
         addRequirements(c, t);
 
         addCommands(
+            new InstantCommand(() -> d.setUseOdometry(false)),
             new MoveSpinnerCommand(t, 0), //Move the turret out of the way
             new ParallelCommandGroup(
                 new MoveClimberCommand(c, d, ClimberState.FullExtension, ControlLoopType.NoLoad, true), //Fully extend the climber

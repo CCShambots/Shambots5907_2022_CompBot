@@ -20,8 +20,8 @@ public class Climber extends PrioritizedSubsystem {
     //Important thing to remember when reading this: 
     //The right module follows the left module, meaning that any command sent through the left module also does that on the right module.
 
-    private PIDandFFConstants noLoadConstants = new PIDandFFConstants(NO_LOAD_P, NO_LOAD_I, NO_LOAD_D, NO_LOAD_KS, NO_LOAD_KV, MAX_VEL, MAX_ACCEL);
-    private PIDandFFConstants loadConstants = new PIDandFFConstants(LOAD_P, LOAD_I, LOAD_D, LOAD_KS, LOAD_KV, MAX_VEL, MAX_ACCEL);
+    private PIDandFFConstants noLoadConstants = new PIDandFFConstants(NO_LOAD_P, NO_LOAD_I, NO_LOAD_D, NO_LOAD_KS, NO_LOAD_KV, NO_LOAD_MAX_VEL, NO_LOAD_MAX_ACCEL);
+    private PIDandFFConstants loadConstants = new PIDandFFConstants(LOAD_P, LOAD_I, LOAD_D, LOAD_KS, LOAD_KV, LOAD_MAX_VEL, LOAD_MAX_ACCEL);
 
     private ClimbingModule leftModule = new ClimbingModule(LEFT_CLIMBER_ID, noLoadConstants, loadConstants, "Left");
     private ClimbingModule rightModule = new ClimbingModule(RIGHT_CLIMBER_ID, noLoadConstants, loadConstants, "Right");
@@ -126,7 +126,7 @@ public class Climber extends PrioritizedSubsystem {
      * @return the command to run
      */
     public FunctionalCommand waitForMovementCommand(double threshhold) {
-        return new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {}, () -> getLeftPosition() > threshhold && getRightPosition() > threshhold);
+        return new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {}, () -> getLeftPosition() > leftModule.inchesToCounts(threshhold) && getRightPosition() > leftModule.inchesToCounts(threshhold));
     }
 
 

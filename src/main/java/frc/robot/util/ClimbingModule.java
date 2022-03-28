@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Climber.ControlLoopType;
 
@@ -81,7 +82,7 @@ public class ClimbingModule implements Sendable{
         loadPID.reset(motor.getSelectedSensorPosition());
 
         activePID = type == ControlLoopType.NoLoad ? noLoadPID : loadPID;
-        activeFF = type == ControlLoopType.Load ? noLoadFF : loadFF;
+        activeFF = type == ControlLoopType.NoLoad ? noLoadFF : loadFF;
         
 
         if(follower != null) follower.setModuleState(state, type);
@@ -92,7 +93,7 @@ public class ClimbingModule implements Sendable{
      * @param inches the number of inches the climber should extend
      * @return encoder ticks 
      */
-    private double inchesToCounts(double inches) {
+    public double inchesToCounts(double inches) {
         //Gear ratio details
         //Falcon shaft (8t) to gear 1 (54t)
         //Gear 1 (18t) to gear 2 (54t)
@@ -131,7 +132,7 @@ public class ClimbingModule implements Sendable{
      * @return true if the climber is still outside of the acceptable error from the target (i.e. it's still moving.)
      */
     public boolean isBusy() {
-        return Math.abs(motor.getSelectedSensorPosition() - climberTarget) > 15000;
+        return Math.abs(motor.getSelectedSensorPosition() - climberTarget) > 5000;
     }
 
     /**
@@ -139,19 +140,21 @@ public class ClimbingModule implements Sendable{
      */
     public void periodic() {
 
-        pidOutput = activeFF.calculate(motor.getSelectedSensorPosition(), climberTarget);
-        ffOutput = activePID.calculate(noLoadPID.getSetpoint().velocity);
+        pidOutput = activePID.calculate(motor.getSelectedSensorPosition(), climberTarget);
+        ffOutput = activeFF.calculate(activePID.getSetpoint().velocity);
         double combinedOutput = pidOutput + ffOutput;
 
         //If any of these conditions are true, the motor should not be moving at all
-        //TODO: Uncomment
-        // if(!(motor.getSelectedSensorPosition() < 0 && combinedOutput < 0 && !braked) && !manualMode) motor.setVoltage(combinedOutput);
+        if(!(motor.getSelectedSensorPosition() < 0 && combinedOutput < 0 && !braked) && !manualMode) motor.setVoltage(combinedOutput);
 
         if((motor.getSelectedSensorPosition() <= 0 && combinedOutput < 0 && !manualMode) || braked) {
             motor.setVoltage(0);
         }
         
         if(follower != null) follower.periodic(); //Run the follower's control loop as well (if there is a follower set)
+
+        SmartDashboard.putData("Active PID", activePID);
+        SmartDashboard.putNumber("Active KV", activeFF.kv);
     }
 
     /**
@@ -207,7 +210,7 @@ public class ClimbingModule implements Sendable{
         builder.addBooleanProperty("Braked", () -> braked, null);
         builder.addDoubleProperty("Module target", () -> climberTarget, null);
         builder.addDoubleProperty("Measured position", () -> getPosition(), null);
-        builder.addDoubleProperty("Target velocity", () -> noLoadPID.getSetpoint().velocity, null);
+        builder.addDoubleProperty("Target velocity", () -> activePID.getSetpoint().velocity, null);
         builder.addDoubleProperty("Measured velocity", () -> getVelocity(), null);
         builder.addDoubleProperty("PID Output", () -> pidOutput, null);
         builder.addDoubleProperty("FF Output", () -> ffOutput, null);

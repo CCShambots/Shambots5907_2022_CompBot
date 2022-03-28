@@ -181,28 +181,32 @@ public final class Constants {
         public static final int CLIMBER_PORT_1 = 6; //Pneumatics port
         public static final int CLIMBER_PORT_2 = 5; //Pneumatics port
 
-        public static final double NO_LOAD_P = 0.0001;
+        public static final double NO_LOAD_P = 0.0003;
         public static final double NO_LOAD_I = 0;
         public static final double NO_LOAD_D = 0;
         public static final double NO_LOAD_KS = 1;
-        public static final double NO_LOAD_KV = .000035;
+        public static final double NO_LOAD_KV = .000045;
 
-        public static final double LOAD_P = 0.0001;
+        public static final double NO_LOAD_MAX_VEL = 100 * 2048; //Encoder counts per second
+        public static final double NO_LOAD_MAX_ACCEL = 200 * 2048; //Encoder counts per second per second
+
+        // public static final double LOAD_P = 0.000;
+        public static final double LOAD_P = 0.0003;
         public static final double LOAD_I = 0;
         public static final double LOAD_D = 0;
-        public static final double LOAD_KS = 1;
-        public static final double LOAD_KV = .000035;
+        public static final double LOAD_KS = 2.5;
+        public static final double LOAD_KV = .005;
 
-        public static final double MAX_VEL = 200 * 2048; //Encoder counts per second
-        public static final double MAX_ACCEL = 250 * 2048; //Encoder counts per second per second
+        public static final double LOAD_MAX_VEL = 100 * 2048; //Encoder counts per second
+        public static final double LOAD_MAX_ACCEL = 200 * 2048; //Encoder counts per second per second
 
-        public static final double MID_HEIGHT = 28; //The height (in inches) that the climber will move to for the mid level climb
+        public static final double MID_HEIGHT = 30; //The height (in inches) that the climber will move to for the mid level climb
         public static final double LOW_HEIGHT = 12; //Same as above (in inches) but for low goal
-        public static final double LOWERED_HEIGHT = -40; //The fully lowered position of the climber (also in inches)
+        public static final double LOWERED_HEIGHT = 0; //The fully lowered position of the climber (also in inches)
 
         //The number of inches before the solenoid should retract again when freeing the climber from the bar 
-        public static final double EXTEND_SOLENOIDS_THRESHOLD = 10; 
-        public static final double RETRACT_SOLENOIDS_THRESHOLD = 20; 
+        public static final double EXTEND_SOLENOIDS_THRESHOLD = 2; 
+        public static final double RETRACT_SOLENOIDS_THRESHOLD = 15; 
     }
 
     public static class Lights {

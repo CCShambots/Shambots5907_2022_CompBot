@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Color;
 import frc.robot.commands.SoftStop;
 import frc.robot.commands.climber.ClimbLevelCommand;
+import frc.robot.commands.climber.MoveClimberCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.HardEjectCommand;
 import frc.robot.commands.intake.IndexedEjectionCommand;
@@ -30,6 +31,8 @@ import frc.robot.commands.turret.LowGoalShootCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Climber.ClimberState;
+import frc.robot.subsystems.Climber.ControlLoopType;
 import frc.robot.subsystems.Climber.MotorSide;
 import frc.robot.subsystems.Turret.ControlLoop;
 import frc.robot.subsystems.Turret.Direction;
@@ -41,6 +44,7 @@ import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PriorityCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
@@ -120,9 +124,9 @@ public class RobotContainer {
       registerCommand(LowGoalShootCommand.class, 1);
       registerCommand(IntakeCommand.class, 2);
       registerCommand(TeleopTrackingCommand.class, 2);
-      registerCommand(ClimbLevelCommand.class, 4);
       registerCommand(IndexedEjectionCommand.class, 3);
       registerCommand(HardEjectCommand.class, 4);
+      registerCommand(ClimbLevelCommand.class, 4);
       registerCommand(SoftStop.class, 5);
     } catch (NotACommandException e) {
       e.printStackTrace();
@@ -145,7 +149,7 @@ public class RobotContainer {
 
       //TODO: What button should this be on?
       //Reverse the bot controls
-      new JoystickButton(driverController, Button.kA.value)
+      new JoystickButton(driverController, Button.kX.value)
         .whenPressed(new InstantCommand(drivetrain::toggleReversed));
 
 
@@ -196,23 +200,29 @@ public class RobotContainer {
       // new JoystickButton(driverController, Button.kB.value)
       //   .whenPressed(new InstantCommand(() -> turret.setSpinnerTarget(90)));
 
+      // new JoystickButton(driverController, Button.kA.value)
+      //   .whenPressed(new InstantCommand(() -> {
+      //     turret.setFlywheelControlLoop(ControlLoop.HighSpeed);
+      //     turret.setFlywheelTarget(FLYWHEEL_HIGH_RPM);
+      //   }))
+      //   .whenReleased(new InstantCommand(() -> {
+      //     turret.setFlywheelTarget(0);
+      //   }));
+
+      // new JoystickButton(driverController, Button.kB.value)
+      // .whenPressed(new InstantCommand(() -> {
+      //   turret.setFlywheelControlLoop(ControlLoop.LowSpeed);
+      //   turret.setFlywheelTarget(FLYWHEEL_LOW_RPM);
+      // }))
+      // .whenReleased(new InstantCommand(() -> {
+      //   turret.setFlywheelTarget(0);
+      // }));
+
       new JoystickButton(driverController, Button.kA.value)
-        .whenPressed(new InstantCommand(() -> {
-          turret.setFlywheelControlLoop(ControlLoop.HighSpeed);
-          turret.setFlywheelTarget(FLYWHEEL_HIGH_RPM);
-        }))
-        .whenReleased(new InstantCommand(() -> {
-          turret.setFlywheelTarget(0);
-        }));
+        .whenPressed(new MoveClimberCommand(climber, drivetrain, ClimberState.FullExtension, ControlLoopType.NoLoad, true));
 
       new JoystickButton(driverController, Button.kB.value)
-      .whenPressed(new InstantCommand(() -> {
-        turret.setFlywheelControlLoop(ControlLoop.LowSpeed);
-        turret.setFlywheelTarget(FLYWHEEL_LOW_RPM);
-      }))
-      .whenReleased(new InstantCommand(() -> {
-        turret.setFlywheelTarget(0);
-      }));
+        .whenPressed(new MoveClimberCommand(climber, drivetrain, ClimberState.Lowered, ControlLoopType.Load, true));
         
       //Spin up the flywheel and shoot into the low goal
       new JoystickButton(operatorController, 12)
