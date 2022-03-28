@@ -58,6 +58,7 @@ public class Turret extends PrioritizedSubsystem{
     // Spinner controls
 
     private boolean knowsLocation = false;
+    private boolean prevKnowsLocation = false;
     private Constraints originalSpinnerConstraints = new TrapezoidProfile.Constraints(SPINNER_MAX_VEL, SPINNER_MAX_ACCEL);
     private Constraints slowSpinnerConstraints = new TrapezoidProfile.Constraints(SEARCH_VEL, SPINNER_MAX_ACCEL);
 
@@ -277,11 +278,19 @@ public class Turret extends PrioritizedSubsystem{
 
     public boolean knowsLocation() {return knowsLocation;}
     public void setKnowsLocation(boolean value) {
+        prevKnowsLocation = knowsLocation;
         knowsLocation = value;
         if(value == true) setSpinnerConstraints(getOriginalSpinnerConstraints());
         else setSpinnerConstraints(getSlowSpinnerConstraints());
 
         resetSpinnerPID();
+    }
+
+    /**
+     * Sets the value of the turret knowing it's location to what it was before it was last set (used in teleop)
+     */
+    public void revertKnowsLocation() {
+        knowsLocation = prevKnowsLocation;
     }
 
     public double getSpinnerVelocity() {

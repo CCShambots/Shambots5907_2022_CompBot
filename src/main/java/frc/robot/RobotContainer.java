@@ -34,7 +34,6 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Climber.ControlLoopType;
 import frc.robot.subsystems.Climber.MotorSide;
-import frc.robot.subsystems.Turret.ControlLoop;
 import frc.robot.subsystems.Turret.Direction;
 import frc.robot.util.TankDriveModule.ControlMode;
 import frc.robot.util.auton.AutoRoutes;
@@ -44,7 +43,6 @@ import frc.robot.util.priorityFramework.NotACommandException;
 import frc.robot.util.priorityFramework.PriorityCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
@@ -236,7 +234,7 @@ public class RobotContainer {
         }))
         .whenReleased(new InstantCommand(() -> {
           turret.setManualPower(0);
-          turret.setKnowsLocation(true);
+          turret.revertKnowsLocation();
         }));
 
         new JoystickButton(operatorController, 13)
@@ -246,7 +244,7 @@ public class RobotContainer {
           }))
           .whenReleased(new InstantCommand(() -> {
             turret.setManualPower(0);
-            turret.setKnowsLocation(true);
+            turret.revertKnowsLocation();
           }));
 
 

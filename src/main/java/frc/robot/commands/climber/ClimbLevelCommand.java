@@ -43,7 +43,8 @@ public class ClimbLevelCommand extends SequentialCommandGroup{
             new ConditionalCommand(
                 new SequentialCommandGroup(
                     new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {}, continueSupplier, c), //Wait for the supplier to be true
-                    new ExtendClimberSolenoidsCommand(c) //Extend the soleonids to 
+                    new ExtendClimberSolenoidsCommand(c), //Extend the soleonids to reach the next bar
+                    new WaitCommand(1) //TODO: Get this to the actual right time
                 ),
                 new InstantCommand(() -> {firstTime = false;}),
                 () -> !firstTime
