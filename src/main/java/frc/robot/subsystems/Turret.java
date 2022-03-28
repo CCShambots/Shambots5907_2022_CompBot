@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.BangBangController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -41,12 +40,12 @@ public class Turret extends PrioritizedSubsystem{
 
 
     // Flywheel controls
-    private PIDController highSpeedPID = new PIDController(HIGH_SPEED_P, HIGH_SPEED_I, HIGH_SPEED_D);
+    // private PIDController highSpeedPID = new PIDController(HIGH_SPEED_P, HIGH_SPEED_I, HIGH_SPEED_D);
     private SimpleMotorFeedforward highSpeedFF = new SimpleMotorFeedforward(HIGH_SPEED_S, HIGH_SPEED_V);
-    private PIDController lowSpeedPID = new PIDController(LOW_SPEED_P, LOW_SPEED_I, LOW_SPEED_D);
+    // private PIDController lowSpeedPID = new PIDController(LOW_SPEED_P, LOW_SPEED_I, LOW_SPEED_D);
     private SimpleMotorFeedforward lowSpeedFF = new SimpleMotorFeedforward(LOW_SPEED_S, LOW_SPEED_V);
 
-    private PIDController activePID = highSpeedPID;
+    // private PIDController activePID = highSpeedPID;
     private SimpleMotorFeedforward activeFF = highSpeedFF;
 
     private BangBangController bangbang = new BangBangController(FLYWHEEL_ALLOWED_ERROR);
@@ -220,13 +219,13 @@ public class Turret extends PrioritizedSubsystem{
 
     public void setFlywheelControlLoop(ControlLoop type) {
         if(type == ControlLoop.HighSpeed) {
-            activePID = highSpeedPID;
+            // activePID = highSpeedPID;
             activeFF = highSpeedFF;
         } else {
-            activePID = lowSpeedPID;
+            // activePID = lowSpeedPID;
             activeFF = lowSpeedFF;
         }
-        activePID.reset();
+        // activePID.reset();
     }
 
     /**
@@ -366,7 +365,7 @@ public class Turret extends PrioritizedSubsystem{
 
         
         //Flywheel telemetry
-        SmartDashboard.putData("Bottom Flywheel PID", highSpeedPID);
+        // SmartDashboard.putData("Bottom Flywheel PID", highSpeedPID);
         SmartDashboard.putNumber("Bottom Flywheel PID Output", flywheelPIDOutput);
         SmartDashboard.putNumber("Top Flywheel FF Output", flywheelFFOutput);
         SmartDashboard.putNumber("Bottom Flywheel FF Output", flywheelFFOutput);
