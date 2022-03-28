@@ -34,7 +34,7 @@ public class SoftStop extends CommandBase{
         turret.setSpinnerTarget(turret.getSpinnerAngle());
 
         conveyor.setEjecting(false);
-        climber.setForceStopped(true);
+        climber.brake();
 
         SequentialCommandGroup g = new SequentialCommandGroup(
             new WaitCommand(0.5),
