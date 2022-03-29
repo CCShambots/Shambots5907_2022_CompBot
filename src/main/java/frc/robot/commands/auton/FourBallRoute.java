@@ -53,21 +53,27 @@ public class FourBallRoute extends BaseRoute{
             new AutonomousTargetCommand(turret),
             new ShootCommand(conveyor, turret),
             new ParallelCommandGroup(
-                new InstantCommand(() -> turret.setSpinnerTarget(-180)),
                 new IntakeCommand(intake, conveyor, turret, drivetrain),
                 new SequentialCommandGroup(
-                    new TrajectoryCommand(drivetrain, paths.get(FourBall2)),
-
-                    new ParallelRaceGroup(
-                        new FunctionalCommand(() -> {}, () -> {}, (b) -> {}, () -> intake.isRunning(IntakeCommand.class)),
+                    new ParallelCommandGroup(
+                        new InstantCommand(() -> turret.setSpinnerTarget(-180)),
                         new SequentialCommandGroup(
-                            new WaitCommand(2),
-                            new InstantCommand(() -> intake.setShouldEnd(true))
+                            new TrajectoryCommand(drivetrain, paths.get(FourBall2)),
+                            new WaitCommand(1)
+                        )
+                    ),
+                    new ParallelCommandGroup(
+                        new TrajectoryCommand(drivetrain, paths.get(FourBall3)),
+                        new ParallelRaceGroup(
+                                new FunctionalCommand(() -> {}, () -> {}, (b) -> {}, () -> intake.isRunning(IntakeCommand.class)),
+                                new SequentialCommandGroup(
+                                    new WaitCommand(2),
+                                    new InstantCommand(() -> intake.setShouldEnd(true))
+                                )
                         )
                     )
                 )
             ),
-            new TrajectoryCommand(drivetrain, paths.get(FourBall3)),
             new AutonomousTargetCommand(turret),
             new ShootCommand(conveyor, turret),
             new InstantCommand(() -> {

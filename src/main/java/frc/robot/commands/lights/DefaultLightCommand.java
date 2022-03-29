@@ -1,6 +1,8 @@
 package frc.robot.commands.lights;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.commands.turret.limelight.BasicTrackingCommand;
+import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -33,7 +35,7 @@ public class DefaultLightCommand extends CommandBase{
         if(conveyor.isTrackerError()) {
             lights.setAnimation(ERROR_ANIMATION);
         }else {
-            if(turret.getIsReadyToShoot()) {
+            if(turret.getIsReadyToShoot() && turret.isRunning(TeleopTrackingCommand.class)) {
                 lights.setAnimation(LOCKED_IN_ANIMATION);
             } else {
                 if(conveyor.getNumberOfBalls() == 2) {

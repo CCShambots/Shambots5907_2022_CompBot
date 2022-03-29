@@ -40,7 +40,7 @@ public class ShootCommand extends CommandBase {
         }
         
         if(state == State.Ejecting) {
-            if(conveyor.getBall1Pos() == BallPosition.Stage3 && turret.isFlywheelBusy()) {
+            if(conveyor.getBall1Pos() == BallPosition.Between2And3 && turret.isFlywheelBusy()) {
                 conveyor.stopStage2();
                 state = State.Holding;
             }

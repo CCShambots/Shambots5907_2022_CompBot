@@ -5,6 +5,7 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -17,6 +18,7 @@ import frc.robot.Constants.Color;
 import frc.robot.commands.SoftStop;
 import frc.robot.commands.climber.ClimbLevelCommand;
 import frc.robot.commands.climber.MoveClimberCommand;
+import frc.robot.commands.climber.RetractClimberSolenoidsCommand;
 import frc.robot.commands.drivetrain.DrivingCommand;
 import frc.robot.commands.intake.HardEjectCommand;
 import frc.robot.commands.intake.IndexedEjectionCommand;
@@ -390,7 +392,7 @@ public class RobotContainer {
     drivetrain.setDefending(false);
     turret.setSpinnerNeutralMode(NeutralMode.Brake);
     turret.resetSpinnerPID();
-
+    new RetractClimberSolenoidsCommand(climber).schedule();
   }
 
   public void setDisabled() {

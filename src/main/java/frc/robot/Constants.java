@@ -214,7 +214,7 @@ public final class Constants {
 
         public static final AdvancedAnimation DEFAULT_ANIMAION = new AdvancedAnimation(new LightState(0, 0, 255, .66, .33), new LightState(255, 255, 255, .66, .33));
         public static final SolidAnimation EMPTY_ANIMATION = new SolidAnimation(new RGB(0,0,0));
-        public static final BlinkingAnimation ONE_BALL_ANIMATION = new BlinkingAnimation(new RGB(0, 0, 255), new RGB(255, 255, 255), 3);
+        public static final BlinkingAnimation ONE_BALL_ANIMATION = new BlinkingAnimation(new RGB(0, 0, 255), new RGB(0, 0, 0), 3);
         public static final SolidAnimation TWO_BALL_ANIMATION = new SolidAnimation(new RGB(0, 0, 255));
         public static final SolidAnimation LOCKED_IN_ANIMATION = new SolidAnimation(new RGB(0, 255, 0));
         public static final BlinkingAnimation ERROR_ANIMATION = new BlinkingAnimation(new RGB(255, 0, 0), new RGB(0, 0, 0), 4);
@@ -223,7 +223,7 @@ public final class Constants {
     public static class Controller {
         //Driver Controller
         public static final int DRIVER_CONTROLLER_PORT = 0;
-        public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y
+        public static final int DRIVER_LEFT_JOYSTICK_Y_AXIS = 1; //Left stick y 
         public static final int DRIVER_LEFT_JOYSTICK_X_AXIS = 0; //Left stick x
         public static final int DRIVER_RIGHT_JOYSTICK_Y_AXIS = 5; //Right stick y
 
