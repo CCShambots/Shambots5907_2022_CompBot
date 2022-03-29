@@ -35,16 +35,6 @@ public class SoftStop extends CommandBase{
 
         conveyor.setEjecting(false);
         climber.brake();
-
-        // SequentialCommandGroup g = new SequentialCommandGroup(
-            // new WaitCommand(0.5),
-            // new InstantCommand(() -> {
-                // climber.setForceStopped(false);
-
-            // })
-        // );
-        // g.addRequirements(climber);
-        // g.schedule();
     }
 
     @Override
