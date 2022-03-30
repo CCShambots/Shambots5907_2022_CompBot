@@ -137,7 +137,7 @@ public final class Constants {
 
         //TODO: Tune this value to attainable error
         public static final double FLYWHEEL_ALLOWED_ERROR = 50; //The allowed error for the flywheel setpoint (in RPM)
-        public static final double FLYWHEEL_HIGH_RPM = 3800; //The normal target rpm the turret will target
+        public static final double FLYWHEEL_HIGH_RPM = 3850; //The normal target rpm the turret will target
         public static final double FLYWHEEL_LOW_RPM = 1800; //The normal target rpm the turret will target
 
         //Spinner control
@@ -211,6 +211,7 @@ public final class Constants {
 
     public static class Lights {
         public static final int CONTROLLER_ID = 51;
+        public static final int UNDERGLOW_ID = 52;
 
         public static final AdvancedAnimation DEFAULT_ANIMAION = new AdvancedAnimation(new LightState(0, 0, 255, .66, .33), new LightState(255, 255, 255, .66, .33));
         public static final SolidAnimation EMPTY_ANIMATION = new SolidAnimation(new RGB(0,0,0));

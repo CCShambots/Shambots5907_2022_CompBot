@@ -10,9 +10,11 @@ import static frc.robot.Constants.Lights.*;
 
 public class Lights extends SubsystemBase{
     CanifierString string = new CanifierString(Constants.Lights.CONTROLLER_ID);
+    CanifierString undercarriage = new CanifierString(Constants.Lights.UNDERGLOW_ID);
     
     public Lights() {
         setAnimation(DEFAULT_ANIMAION);
+        undercarriage.setAnimation(DEFAULT_ANIMAION);
     }
 
     public void setAnimation(LEDAnimation animation) {
@@ -22,6 +24,7 @@ public class Lights extends SubsystemBase{
     @Override
     public void periodic() {
         string.periodic();
+        undercarriage.periodic();
 
         SmartDashboard.putData("Lights", string);
     }
