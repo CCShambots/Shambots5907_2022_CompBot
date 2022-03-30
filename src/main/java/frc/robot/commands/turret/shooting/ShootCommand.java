@@ -33,7 +33,8 @@ public class ShootCommand extends CommandBase {
 
     @Override
     public void execute() {
-
+        System.out.println("Number of balls " + conveyor.getNumberOfBalls());
+        System.out.println("Ball 1 pos " + conveyor.getBall1Pos());
         if(conveyor.getNumberOfBalls() == 0) {
             finished = true;
             return;

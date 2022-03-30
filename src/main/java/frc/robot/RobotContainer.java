@@ -5,7 +5,6 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -88,13 +87,13 @@ public class RobotContainer {
     driveTab.add("Select Autonomous Route", autoChooser).withSize(2, 2).withPosition(9, 2);
     driveTab.addString("Robot Status", () -> getRobotStatus()).withSize(2, 1).withPosition(11, 4);
     driveTab.add(field);
-    driveTab.addString("Alliance", () -> Constants.allianceColor.name()).withSize(2, 1).withPosition(2, 2);
-    driveTab.add("Toggle Alliance Color", new InstantCommand(this::toggleAllianceColor)).withSize(2, 1).withPosition(0, 2);
-    driveTab.add("Toggle Defending", new InstantCommand(drivetrain::toggleDefending)).withSize(2, 1).withPosition(0, 4);
-    driveTab.addBoolean("Automatic Rejection Enabled", () -> !drivetrain.isDefending()).withSize(2, 1).withPosition(2, 4);
+    driveTab.addString("Alliance", () -> Constants.allianceColor.name()).withSize(2, 1).withPosition(2, 1);
+    driveTab.add("Toggle Alliance Color", new InstantCommand(this::toggleAllianceColor)).withSize(2, 1).withPosition(0, 1);
+    driveTab.add("Toggle Defending", new InstantCommand(drivetrain::toggleDefending)).withSize(2, 1).withPosition(0, 2);
+    driveTab.addBoolean("Automatic Rejection Enabled", () -> !drivetrain.isDefending()).withSize(2, 1).withPosition(2, 2);
     driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry())).withSize(2, 1).withPosition(0, 0);
     driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry()).withSize(2, 1).withPosition(2, 0);
-    driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation()).withSize(3, 3).withPosition(5, 0);
+    driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation()).withSize(2, 2).withPosition(5, 0);
 
     //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", 
@@ -109,7 +108,7 @@ public class RobotContainer {
 
     //Set up the sendable chooser for selecting different autonomous routes
     autoChooser.setDefaultOption("CSGO Left", AutoPaths.CSGO1);
-    autoChooser.addOption("CSGO Mid", AutoPaths.CSGO2);
+    // autoChooser.addOption("CSGO Mid", AutoPaths.CSGO2);
 
     //DO NOT UNCOMMENT!!!!!!!!
     // autoChooser.addOption("CSGO Right", AutoPaths.CSGO3);
@@ -171,14 +170,14 @@ public class RobotContainer {
           () -> conveyor.getNumberOfBalls() > 0));
 
       //Hard eject command (in the event of a tracker error)
-      driveTab.add("Hard eject balls", new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5))).withSize(3, 2).withPosition(5, 3);
+      driveTab.add("Hard eject balls", new PriorityCommand(new HardEjectCommand(conveyor, intake, 1.5))).withSize(2, 2).withPosition(5, 2);
       
 
     //Turret Controls
     
       //Begin or cancel tracking the central target with the target
       new JoystickButton(operatorController, 7)
-        .whenPressed(new PriorityCommand(new TeleopTrackingCommand(turret, conveyor), () -> conveyor.getNumberOfBalls() > 0))
+        .whenPressed(new PriorityCommand(new TeleopTrackingCommand(turret, conveyor), () -> conveyor.getNumberOfBalls() > 0 && turret.knowsLocation()))
         .whenReleased(new InstantCommand(() -> turret.setShouldEndTargeting(true)));
       
       //Only let the turret shoot  if the conveyor doesn't have a command
@@ -239,7 +238,7 @@ public class RobotContainer {
           turret.revertKnowsLocation();
         }));
 
-        new JoystickButton(operatorController, 13)
+        new JoystickButton(operatorController, 14)
           .whenPressed(new InstantCommand(() -> {
             turret.setKnowsLocation(false);
             turret.setManualPower(-MANUAL_SPEED);

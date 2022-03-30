@@ -170,6 +170,8 @@ public abstract class BasicTrackingCommand extends CommandBase{
 
         timer.stop();
 
+        setTurretReadyFlag(false);
+
         additionalCodeInEnd();
     }
 

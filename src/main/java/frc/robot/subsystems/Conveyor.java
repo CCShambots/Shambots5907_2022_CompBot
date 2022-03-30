@@ -112,7 +112,7 @@ public class Conveyor extends PrioritizedSubsystem{
     public void periodic() {
         tracker.periodic();
 
-        running = !(conveyorStage1.getMotorOutputPercent() == 0 && conveyorStage1.getMotorOutputPercent() == 0);
+        running = !(conveyorStage1.getMotorOutputPercent() == 0 && conveyorStage2.getMotorOutputPercent() == 0);
         
         if(!running) direction = Direction.Stopped;
         else if(conveyorStage1.getMotorOutputPercent() > 0 || conveyorStage2.getMotorOutputPercent() > 0) direction = Direction.Intake;

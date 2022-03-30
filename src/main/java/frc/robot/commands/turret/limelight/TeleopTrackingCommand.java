@@ -44,6 +44,8 @@ public class TeleopTrackingCommand extends BasicTrackingCommand{
             shootCommand = new ShootCommand(conveyor, turret);
             shootCommand.schedule();
         }
+
+        isReady();
     }
 
     /**

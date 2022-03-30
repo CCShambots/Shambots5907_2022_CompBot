@@ -35,7 +35,7 @@ public class DefaultLightCommand extends CommandBase{
         if(conveyor.isTrackerError()) {
             lights.setAnimation(ERROR_ANIMATION);
         }else {
-            if(turret.getIsReadyToShoot() && turret.isRunning(TeleopTrackingCommand.class)) {
+            if(turret.getIsReadyToShoot()) {
                 lights.setAnimation(LOCKED_IN_ANIMATION);
             } else {
                 if(conveyor.getNumberOfBalls() == 2) {

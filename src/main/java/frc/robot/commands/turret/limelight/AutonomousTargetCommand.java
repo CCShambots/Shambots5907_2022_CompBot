@@ -21,6 +21,7 @@ public class AutonomousTargetCommand extends BasicTrackingCommand{
     public void additionalCodeInExecute() {}
 
     @Override
-    public void additionalCodeInEnd() {}
+    public void additionalCodeInEnd() {
+    }
     
 }
