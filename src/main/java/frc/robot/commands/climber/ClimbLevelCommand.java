@@ -27,9 +27,9 @@ public class ClimbLevelCommand extends SequentialCommandGroup{
         addCommands(
             new InstantCommand(() -> d.setUseOdometry(false)),
             new ConditionalCommand(
-                new MoveSpinnerCommand(t, -20).withTimeout(3), //Move the turret out of the way
+                new MoveSpinnerCommand(t, 90).withTimeout(3), //Move the turret out of the way
                 new InstantCommand(),
-                () -> t.knowsLocation()
+                () -> t.knowsLocation() && firstTime
             ),
             new ParallelCommandGroup(
                 new MoveClimberCommand(c, d, ClimberState.FullExtension, ControlLoopType.NoLoad, true), //Fully extend the climber

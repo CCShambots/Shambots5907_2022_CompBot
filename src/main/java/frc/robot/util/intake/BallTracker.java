@@ -85,9 +85,10 @@ public class BallTracker implements Sendable{
                     new SequentialCommandGroup(
                         new WaitCommand(0.25),
                         new InstantCommand(() -> {
-                            System.out.println("Current color read " + colorSensor.getColor());
-                            BallColor color = colorSensor.getColor() == Constants.allianceColor || colorSensor.getColor() == Color.SensorNotDetected || colorSensor.getColor() == Color.NoBallDetected  ? BallColor.Ours : BallColor.Opposing;
-                            if(colorSensor.getColor() == Color.NoBallDetected || colorSensor.getColor() == Color.SensorNotDetected) setError(true);
+                            // System.out.println("Current color read " + colorSensor.getColor());
+                            // BallColor color = colorSensor.getColor() == Constants.allianceColor || colorSensor.getColor() == Color.SensorNotDetected || colorSensor.getColor() == Color.NoBallDetected  ? BallColor.Ours : BallColor.Opposing;
+                            BallColor color = BallColor.Ours;
+                            // if(colorSensor.getColor() == Color.NoBallDetected || colorSensor.getColor() == Color.SensorNotDetected) setError(true);
                             balls.add(new Ball(color));
                         })
                     ).schedule();
