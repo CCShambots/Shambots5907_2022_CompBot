@@ -230,7 +230,7 @@ public class RobotContainer {
       //Allow for very slow, manual movement of the turret in the event of a crash
       new JoystickButton(operatorController, 13)
         .whenPressed(new InstantCommand(() -> {
-          turret.setKnowsLocation(false);
+          turret.setKnowsLocation(true);
           turret.setManualPower(MANUAL_SPEED);
         }))
         .whenReleased(new InstantCommand(() -> {
@@ -385,6 +385,7 @@ public class RobotContainer {
   }
 
   public void setTeleop() {
+    turret.setKnowsLocation(true);
     Constants.robotStatus = RobotStatus.TELEOP;
     drivetrain.setNeutralMotorBehavior(NeutralMode.Brake);
     drivetrain.setControlLoopType(ControlMode.TeleOp);
@@ -392,6 +393,7 @@ public class RobotContainer {
     turret.setSpinnerNeutralMode(NeutralMode.Brake);
     turret.resetSpinnerPID();
     new RetractClimberSolenoidsCommand(climber).schedule();
+
   }
 
   public void setDisabled() {
