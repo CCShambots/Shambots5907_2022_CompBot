@@ -1336,6 +1336,11 @@
                   "_type": "Text View",
                   "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[6,5]/Value",
                   "_title": "DoubleSolenoid[6,5]/Value"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[12]",
+                  "_title": "PIDController[12]"
                 }
               ]
             }
@@ -2119,19 +2124,7 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "titleType": 0,
-        "tiles": {
-          "5,0": {
-            "size": [
-              4,
-              4
-            ],
-            "content": {
-              "_type": "Network Table Tree",
-              "_source0": "network_table:///SmartDashboard/Lights",
-              "_title": "SmartDashboard/Lights"
-            }
-          }
-        }
+        "tiles": {}
       }
     }
   ],
