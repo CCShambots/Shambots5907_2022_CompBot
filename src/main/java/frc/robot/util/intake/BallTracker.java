@@ -89,6 +89,7 @@ public class BallTracker implements Sendable{
                             BallColor color = colorSensor.getColor() == Constants.allianceColor || colorSensor.getColor() == Color.SensorNotDetected || colorSensor.getColor() == Color.NoBallDetected  ? BallColor.Ours : BallColor.Opposing;
                             // BallColor color = BallColor.Ours;
                             if(colorSensor.getColor() == Color.NoBallDetected || colorSensor.getColor() == Color.SensorNotDetected) setError(true);
+                            System.out.println("Color: " + color);
                             balls.add(new Ball(color));
                         })
                     ).schedule();
@@ -106,7 +107,6 @@ public class BallTracker implements Sendable{
 
                 //If the second stage sensor was just deactivated, move it to past between stage 2 and 3
                 if(!currStage2 && currStage2 != prevStage2) {
-                    System.out.println("Trying to advance ball to between 2 and 3");
                     safeAdvanceBall(BallPosition.Between2And3);
                 }
 
@@ -169,7 +169,6 @@ public class BallTracker implements Sendable{
 
     private void safeRegressBall(BallPosition pos) {
         //Find whichever ball is in the next position (i.e. where the ball is coming from)
-        System.out.println("Searching for ball at position " + pos.next().name() );
         Ball ball = findBall(pos.next());
         if(ball == null || !ball.isPrevPosition(pos)) {
             setError(true);
@@ -181,10 +180,8 @@ public class BallTracker implements Sendable{
     }
 
     private void safeAdvanceBall(BallPosition pos) {
-        System.out.println("Searching for ball at position " + pos.previous().name() + " in an effort to advance ball to " + pos.name());
         Ball ball = findBall(pos.previous());
         if(ball == null || !ball.isNextPosition(pos)) {
-            System.out.println("Failed to find ball at position " + pos.previous().name());
             setError(true);
             return;
         }
@@ -200,19 +197,19 @@ public class BallTracker implements Sendable{
 
         for(int i = 0; i<2; i++) {
             if(balls.size() > i) {
-                System.out.println("Ball #" + (i+1) + "at pos " + balls.get(i).getPosition() + " with color " + balls.get(i).getColor() );
+                // System.out.println("Ball #" + (i+1) + "at pos " + balls.get(i).getPosition() + " with color " + balls.get(i).getColor() );
             } else {
-                System.out.println("Ball #" + (i+1) + emptyBall);
+                // System.out.println("Ball #" + (i+1) + emptyBall);
             }
         }
 
         if(balls.size() >= 1) {
             if(balls.get(0).getPosition().equals(pos)) {
-                System.out.println("Returning ball at index 0");
+                // System.out.println("Returning ball at index 0");
                 return balls.get(0);
             } else if(balls.size() >= 2) {
                 if(balls.get(1).getPosition().equals(pos)){
-                    System.out.println("Returning ball index 1");
+                    // System.out.println("Returning ball index 1");
                     return balls.get(1);
                 } else failure = true;
             }else failure = true;
