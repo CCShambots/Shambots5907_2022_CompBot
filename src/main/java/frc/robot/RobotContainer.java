@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import frc.robot.util.statemachineframework.ExampleSubsystem;
 
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
@@ -71,6 +72,8 @@ public class RobotContainer {
   private final Turret turret = new Turret(driveTab);
   private final Climber climber = new Climber();
   private final Lights lights = new Lights();
+
+  private final ExampleSubsystem example = new ExampleSubsystem();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
