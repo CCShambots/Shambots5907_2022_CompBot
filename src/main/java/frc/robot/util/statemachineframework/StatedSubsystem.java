@@ -345,4 +345,22 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
      * I.e. A subsystem for managing LEDs, to which data can be sent even while the robot is disabled
      */
     public void setEnabled(boolean enabled) {this.enabled = enabled;}
+
+    @Override
+    public final void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+
+        builder.setSmartDashboardType("Stated subsystem");
+
+        builder.addStringProperty("Name", () -> getName(), null);
+        builder.addStringProperty("Current State", () -> getCurrentState().name() != null ? getCurrentState().name() : "null", null);
+        builder.addStringProperty("Desired State", () -> getDesiredState().name() != null ? getDesiredState().name() : "null", null);
+        builder.addStringProperty("Current Parent State", () -> getParentState().name() != null ? getParentState().name() : "null", null);
+          builder.addStringProperty("Current Flag State", () -> getFlagState().name() != null ? getFlagState().name() : "null", null);
+        builder.addBooleanProperty("Transitioning", () -> isTransitioning(), null);
+
+        additionalSendableData(builder);
+    }
+
+    public abstract void additionalSendableData(SendableBuilder builder);
 }
