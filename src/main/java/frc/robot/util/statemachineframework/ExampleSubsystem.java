@@ -1,5 +1,6 @@
 package frc.robot.util.statemachineframework;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import static frc.robot.util.statemachineframework.ExampleSubsystem.ExampleState.*;
@@ -24,6 +25,12 @@ public class ExampleSubsystem extends StatedSubsystem<ExampleSubsystem.ExampleSt
     @Override
     public void update() {
 
+    }
+
+    @Override
+    public void additionalSendableData(SendableBuilder builder) {
+        // TODO Auto-generated method stub
+        
     }
 }
 

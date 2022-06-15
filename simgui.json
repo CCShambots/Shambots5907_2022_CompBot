@@ -90,6 +90,7 @@
       "/Shuffleboard/Manual Climbing Tab/Raise Right Climber": "Command",
       "/Shuffleboard/Manual Climbing Tab/Retract Climber solenoids": "Command",
       "/SmartDashboard/Bottom Flywheel PID": "PIDController",
+      "/SmartDashboard/ExampleSubsystem": "Subsystem",
       "/SmartDashboard/Fake gyro": "Gyro",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Intake command": "Command",
@@ -102,7 +103,9 @@
       "/SmartDashboard/subsystems/Conveyor": "Subsystem",
       "/SmartDashboard/subsystems/Drivetrain": "Subsystem",
       "/SmartDashboard/subsystems/Intake": "Subsystem",
-      "/SmartDashboard/subsystems/Turret": "Subsystem"
+      "/SmartDashboard/subsystems/Turret": "Subsystem",
+      "/SmartDashboard/subsystems/example": "Subsystem",
+      "/SmartDashboard/subsystems/example2": "Subsystem"
     },
     "windows": {
       "/SmartDashboard/field": {
@@ -123,7 +126,13 @@
       "open": true
     },
     "SmartDashboard": {
-      "open": true
+      "open": true,
+      "subsystems": {
+        "example": {
+          "open": true
+        },
+        "open": true
+      }
     }
   }
 }

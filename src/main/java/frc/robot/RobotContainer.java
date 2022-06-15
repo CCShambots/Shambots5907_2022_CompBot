@@ -74,6 +74,7 @@ public class RobotContainer {
   private final Lights lights = new Lights();
 
   private final ExampleSubsystem example = new ExampleSubsystem();
+  private final ExampleSubsystem example2 = new ExampleSubsystem();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
@@ -97,6 +98,9 @@ public class RobotContainer {
     driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry())).withSize(2, 1).withPosition(0, 0);
     driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry()).withSize(2, 1).withPosition(2, 0);
     driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation()).withSize(2, 2).withPosition(5, 0);
+
+    SmartDashboard.putData("subsystems/example", example);
+    SmartDashboard.putData("subsystems/example2", example2);
 
     //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", 
