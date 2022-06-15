@@ -1,5 +1,6 @@
 package frc.robot.util.statemachineframework;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,7 +9,7 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
-public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
+public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
 
     private final List<Transition<E>> transitions = new ArrayList<>();
     private final Map<E, List<FlagState<E>>> flagStates;
@@ -17,7 +18,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
     private E entryState;
 
     private E currentState;
-    private E flagState = null;
+    private E flagState;
     private E desiredState;
 
     private Transition<E> currentTransition;
@@ -66,7 +67,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
     protected void addDetermination(E undeterminedState, E entryState, Command command) {
         if(this.undeterminedState != null) {
             outputErrorMessage("You've already defined an undetermined state for this subsystem",
-                    "(Subsystem name: " + this.getClass().getName() + ")");
+                    "(Subsystem name: " + getName() + ")");
             return;
         }
 
@@ -109,7 +110,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
     public void setContinuousCommand(E state, Command command) {
         if(!isValidCommand(command)) {
             outputErrorMessage("YOU TRIED TO DEFINE AN INVALID CONTINUOUS COMMAND",
-                    "SUBSYSTEM NAME: " + this.getClass().getName(),
+                    "SUBSYSTEM NAME: " + getName(),
                     "STATE: " + state.name());
             return;
         }
@@ -151,7 +152,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
         for(Transition<E> t : transitions) {
             if(!proposedTransition.isValidTransition(t)) {
                 outputErrorMessage("YOU TRIED TO DEFINE AN INVALID TRANSITION",
-                        "SUBSYSTEM NAME: " + this.getClass().getName(),
+                        "SUBSYSTEM NAME: " + getName(),
                         "EXISTING TRANSITION CONFLICT: " + t,
                         "TRANSITION TRYING TO BE ADDED: " + proposedTransition,
                         "NOTE: THIS TRANSITION WILL NOT WORK UNTIL THE ERROR IS CORRECTED");
@@ -163,9 +164,9 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
     }
 
     @Override
-    public void periodic() {
-        //States can only be managed whilst the subsystem is enabled
+    public final void periodic() {
 
+        //States can only be managed whilst the subsystem is enabled
         if(enabled) {
 
             //If a command needs to be scheduled, and the previous command that was canceled is no longer scheduled, schedule the transition command
@@ -175,7 +176,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
                 currentCommand.schedule();
             }
 
-            //If a transition has finished, schedule a continuous command if one exists
+            //If a transition has finished, do the following
             if(transitioning && !currentCommand.isScheduled()) {
                 transitioning = false;
                 currentState = desiredState;
@@ -186,19 +187,30 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
                 }
             }
 
-            //Check for flag states and update them
+            //Check for flag states and activate exactly one of them
+            //There is only one flag position potentially active at a time
+            //Also negate the existing flag state if its condition is no longer true
+
             for(FlagState<E> f : flagStates.get(currentState)) {
                 if(f.getCondition().getAsBoolean()) {
                     flagState = f.getState();
+                } else if(f.getState() == flagState) {
+                    flagState = null;
                 }
             }
         }
+
+        update();
     }
 
+    /**
+     * Method that acts as a replacement for periodic()
+     */
     public abstract void update();
 
     /**
      * Ask for the subsystem to move to a different state
+     * If a flag state is provided, the robot will start transitioning to its parent state
      * @param state The state to which the subsystem should go
      */
     public void requestTransition(E state) {
@@ -210,7 +222,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
 
         if(!getEndStates().contains(state)) {
             outputErrorMessage("YOU TRIED TO REQUEST A STATE THAT DOESN'T EXIST",
-                    "SUBSYSTEM NAME: " + this.getClass().getName(),
+                    "SUBSYSTEM NAME: " + getName(),
                     "TRANSITION CONFLICT: " + state.name());
             return;
         }
@@ -317,10 +329,13 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
      */
     public E getCurrentState() {return flagState != null ? flagState : currentState;}
 
+    /**
+     * @return the state the robot is trying to enter
+     */
     public E getDesiredState() {return desiredState;}
 
     /**
-     * @param state
+     * @param state the state to check
      * @return Whether the subsystem is either in the given state or child flag state
      */
     public boolean isInState(E state) {return currentState == state || flagState == state;}
@@ -329,12 +344,27 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase{
     public E getFlagState() {return flagState;}
 
     /**
+     * @return A prettily formatted name for the subsytem (just the class name)
+     */
+    public String getName() {
+        String fullName = this.getClass().getName();
+
+        return fullName.substring(fullName.lastIndexOf(".") + 1);
+    }
+
+    /**
+     * A command that waits indefinitely for a state to arrive and cancels whatever transition is ongoing if interrupted
      * @return Command from the factory
      */
     public Command waitForState(E state) {
-        return new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {if(interrupted) cancelTransition();}, () -> getCurrentState() == state);
+        return new FunctionalCommand(() -> {}, () -> {}, (interrupted) -> {if(interrupted) cancelTransition();}, () -> isInState(state));
     }
 
+    /**
+     * A command that actively requests a state transition
+     * @param state
+     * @return
+     */
     public Command goToState(E state) {
         return new FunctionalCommand(() -> {requestTransition(state);}, () -> {}, (interrupted) -> {if(interrupted) cancelTransition();}, () -> getCurrentState() == state);
     }
