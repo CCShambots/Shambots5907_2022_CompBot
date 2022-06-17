@@ -116,7 +116,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
             outputErrorMessage("PARENTS STATES CANNOT BE MADE FLAG STATES",
                     "You attempted to register a flag state that has already been marked a parent state",
                     "Parent state: " + parentState.name(),
-                    "Flag state: " + flagState.name());
+                    "Flag state: " + flagState.name() + " (already a parent state)");
 
             return;
         }
@@ -136,6 +136,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
     public void setContinuousCommand(E state, Command command) {
         if(!isValidCommand(command)) {
             outputErrorMessage("YOU TRIED TO DEFINE AN INVALID CONTINUOUS COMMAND",
+                    "Commands may have no requirements or must require only this subsystem",
                     "SUBSYSTEM NAME: " + getName(),
                     "STATE: " + state.name());
             return;
@@ -149,6 +150,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
         }
 
         if(!continualCommands.containsKey(state)) continualCommands.put(state, command);
+        else outputErrorMessage("YOU CANNOT DEFINE MULTIPLE CONTINUOUS COMMANDS FOR THE SAME STATE", "State: " + state.name(), "Command: " + command);
     }
 
     /**
@@ -169,10 +171,19 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
      */
     private boolean checkIfValidTransition(Transition proposedTransition) {
         //The transition is invalid if it leads from or to the undetermined state
-        if(this.undeterminedState == proposedTransition.getStartState() || this.undeterminedState == proposedTransition.getEndState()) return false;
+        if(this.undeterminedState == proposedTransition.getStartState() || this.undeterminedState == proposedTransition.getEndState()) {
+            outputErrorMessage("TRANSITIONS CANNOT GO TO OR FROM THE UNDETERMINED STATE", "Transition information: " + proposedTransition);
+
+            return false;
+        }
 
         //The transition is invalid if the command itself is invalid (has incorrect subsystem requirements)
-        if(!isValidCommand(proposedTransition.getCommand())) return false;
+        if(!isValidCommand(proposedTransition.getCommand())) {
+            outputErrorMessage("COMMANDS CANNOT REQUIRE INVALID SUBSYSTEMS", "Commands must have no requirements or only require this subsystem", 
+                "transition information: " + proposedTransition);
+
+            return false;
+        }
 
         //The transition is invalid if either one of its states have been marked as flag states
         Set<E> statesMarkedAsFlag = getStatesMarkedAsFlag();
@@ -203,7 +214,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
         if(enabled) {
 
             //If a command needs to be scheduled, and the previous command that was canceled is no longer scheduled, schedule the transition command
-            if(needToScheduleTransitionCommand && !currentCommand.isScheduled()) {
+            if(needToScheduleTransitionCommand) {
                 needToScheduleTransitionCommand = false;
                 currentCommand = currentTransition.getCommand();
                 currentCommand.schedule();
@@ -223,12 +234,13 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
             //Check for flag states and activate exactly one of them
             //There is only one flag position potentially active at a time
             //Also negate the existing flag state if its condition is no longer true
-
-            for(FlagState<E> f : flagStates.get(currentState)) {
-                if(f.getCondition().getAsBoolean()) {
-                    flagState = f.getState();
-                } else if(f.getState() == flagState) {
-                    flagState = null;
+            if(flagStates.get(currentState) != null) {
+                for(FlagState<E> f : flagStates.get(currentState)) {
+                    if(f.getCondition().getAsBoolean()) {
+                        flagState = f.getState();
+                    } else if(f.getState() == flagState) {
+                        flagState = null;
+                    }
                 }
             }
         }
@@ -309,7 +321,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
      * Cancel any transition currently running
      */
     public final boolean cancelTransition() {
-        if(transitioning) {
+        if(transitioning && currentCommand != null) {
             currentCommand.cancel();
             currentState = currentTransition.getInterruptionState();
             return true;

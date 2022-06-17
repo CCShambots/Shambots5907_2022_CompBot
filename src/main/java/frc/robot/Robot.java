@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.resetDrivetrainPID();
     m_robotContainer.getAllianceColorFromFMS();
 
-    SubsystemManager.getInstance().prepSubsystems();
+    SubsystemManager.getInstance().prepSubsystems().schedule();
   }
 
   @Override

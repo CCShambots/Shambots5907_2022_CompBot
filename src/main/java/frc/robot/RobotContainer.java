@@ -54,6 +54,7 @@ import java.util.Map;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.robot.util.statemachineframework.SubsystemManager;
 import frc.robot.util.statemachineframework.Turret;
+import frc.robot.util.statemachineframework.Turret.TurretState;
 
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
@@ -297,6 +298,20 @@ public class RobotContainer {
     SmartDashboard.putData("subsystems/Conveyor", conveyor);
     SmartDashboard.putData("subsystems/Turret", turret);
     SmartDashboard.putData("subsystems/Climber", climber);
+
+
+    /**
+     * State machine stuff
+     */
+
+    new JoystickButton(stateMachineJoystick, 1)
+      .whenPressed(testTurret.goToState(TurretState.Active));
+
+    new JoystickButton(stateMachineJoystick, 2)
+      .whenPressed(testTurret.goToState(TurretState.Idle));
+
+    new JoystickButton(stateMachineJoystick, 3)
+      .whenPressed(testTurret.goToState(TurretState.Odometry));
   }
 
   public void doDrivetrainSetup() {
