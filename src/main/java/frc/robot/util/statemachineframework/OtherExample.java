@@ -23,5 +23,11 @@ public class OtherExample extends StatedSubsystem<OtherExample.State>{
         // TODO Auto-generated method stub
         return "other example";
     }
+
+    @Override
+    public void additionalSendableData(SendableBuilder builder) {
+        // TODO Auto-generated method stub
+        
+    }
     
 }
