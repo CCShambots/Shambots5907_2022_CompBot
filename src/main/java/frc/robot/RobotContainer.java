@@ -31,7 +31,6 @@ import frc.robot.subsystems.Lights;
 import frc.robot.commands.turret.LowGoalShootCommand;
 import frc.robot.commands.turret.OdometryTurretTracking;
 import frc.robot.commands.turret.limelight.TeleopTrackingCommand;
-import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climber.ClimberState;
 import frc.robot.subsystems.Climber.ControlLoopType;
 import frc.robot.subsystems.Climber.MotorSide;
@@ -53,7 +52,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import frc.robot.util.statemachineframework.ExampleSubsystem;
+import frc.robot.util.statemachineframework.SubsystemManager;
+import frc.robot.util.statemachineframework.Turret;
 
 import static frc.robot.Constants.Controller.*;
 import static frc.robot.subsystems.Drivetrain.*;
@@ -69,17 +69,18 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain(driveTab);
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
-  private final Turret turret = new Turret(driveTab);
+  private final frc.robot.subsystems.Turret turret = new frc.robot.subsystems.Turret(driveTab);
   private final Climber climber = new Climber();
   private final Lights lights = new Lights();
 
-  private final ExampleSubsystem example = new ExampleSubsystem();
-  private final ExampleSubsystem example2 = new ExampleSubsystem();
+  private final Turret testTurret = new Turret();
 
   TeleopTrackingCommand limeLightTeleopCommand = null;
 
   private final Joystick driverController = new Joystick(DRIVER_CONTROLLER_PORT);//makes new Driver Controller Object
   private final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_PORT);
+
+  private final Joystick stateMachineJoystick = new Joystick(2);
 
   private AutoRoutes autoRoutes;
   Map<Object, Command> commands = new HashMap<>(); //The commands that will be chosen from in the sendable chooser
@@ -98,9 +99,6 @@ public class RobotContainer {
     driveTab.add("Toggle Odomdetry tracking", new InstantCommand(() -> drivetrain.toggleUseOdometry())).withSize(2, 1).withPosition(0, 0);
     driveTab.addBoolean("Odometry targeting active?", () -> drivetrain.shouldUseOdometry()).withSize(2, 1).withPosition(2, 0);
     driveTab.addBoolean("TURRET CAN TRACK", () -> turret.knowsLocation()).withSize(2, 2).withPosition(5, 0);
-
-    SmartDashboard.putData("subsystems/example", example);
-    SmartDashboard.putData("subsystems/example2", example2);
 
     //Load the different trajectories from their JSON files
     Map<String, Trajectory> paths = loadPaths(List.of( "CSGO1", "CSGO2", "CSGO31", "CSGO32", 
@@ -139,6 +137,8 @@ public class RobotContainer {
     }
 
     configureButtonBindings();
+
+    SubsystemManager.getInstance().registerSubsystem(testTurret);
   }
 
   private void configureButtonBindings() {
