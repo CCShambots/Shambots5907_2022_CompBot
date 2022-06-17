@@ -20,7 +20,7 @@ public class SubsystemManager {
     }
 
     public void registerSubsystem(StatedSubsystem subsystem) {
-        SmartDashboard.putData("/subsystems/" + subsystem.getName(), subsystem);
+        SmartDashboard.putData(subsystem.getName(), subsystem);
         subsystems.add(subsystem);
     }
 
