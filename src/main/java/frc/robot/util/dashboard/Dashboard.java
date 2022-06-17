@@ -2,7 +2,6 @@ package frc.robot.util.dashboard;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.Sendable;
 import frc.robot.Robot;
 
 public class Dashboard {
@@ -24,7 +23,7 @@ public class Dashboard {
     }
 
     public enum Tab {
-        Auto, Teleop, Test, Debug
+        Auto, Teleop, Test, Debug, Pathing
     }
 
 
