@@ -1,5 +1,6 @@
 package frc.robot.util.statemachineframework;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -40,7 +41,13 @@ public class Turret extends StatedSubsystem<Turret.TurretState> {
 
     @Override
     public String getName() {
-        return "ExampleTurret";
+        return "example";
+    }
+
+    @Override
+    public void additionalSendableData(SendableBuilder builder) {
+        // TODO Auto-generated method stub
+        
     }
 }
 

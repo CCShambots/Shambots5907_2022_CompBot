@@ -89,6 +89,8 @@
       "/Shuffleboard/Manual Climbing Tab/Raise Left Climber": "Command",
       "/Shuffleboard/Manual Climbing Tab/Raise Right Climber": "Command",
       "/Shuffleboard/Manual Climbing Tab/Retract Climber solenoids": "Command",
+      "/SmartDashboard//subsystems/ExampleTurret": "Subsystem",
+      "/SmartDashboard//subsystems/example": "Subsystem",
       "/SmartDashboard/Bottom Flywheel PID": "PIDController",
       "/SmartDashboard/ExampleSubsystem": "Subsystem",
       "/SmartDashboard/Fake gyro": "Gyro",
@@ -128,6 +130,9 @@
     "SmartDashboard": {
       "open": true,
       "subsystems": {
+        "ExampleTurret": {
+          "open": true
+        },
         "example": {
           "open": true
         },
