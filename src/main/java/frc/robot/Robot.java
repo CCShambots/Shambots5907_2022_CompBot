@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.util.statemachineframework.SubsystemManager;
+import frc.robot.util.Shambots5907_SMF.SubsystemManager;
 
 public class Robot extends TimedRobot {
 
@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.resetDrivetrainPID();
     m_robotContainer.getAllianceColorFromFMS();
 
-    SubsystemManager.getInstance().prepSubsystems().schedule();
+    SubsystemManager.getInstance().prepSubsystems();
   }
 
   @Override

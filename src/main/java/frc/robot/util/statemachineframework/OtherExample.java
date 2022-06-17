@@ -1,6 +1,7 @@
 package frc.robot.util.statemachineframework;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import frc.robot.util.Shambots5907_SMF.StatedSubsystem;
 
 public class OtherExample extends StatedSubsystem<OtherExample.State>{
 
