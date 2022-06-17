@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.statemachineframework.SubsystemManager;
 
 public class Robot extends TimedRobot {
 
@@ -35,6 +36,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.setDisabled();
     m_robotContainer.disableLimelight();
     m_robotContainer.resetSubsystems();
+
+    SubsystemManager.getInstance().disableAllSubsystems();
   }
 
   @Override
@@ -49,6 +52,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.getAutoCommand().schedule();
 
     m_robotContainer.getAllianceColorFromFMS();
+
+    SubsystemManager.getInstance().prepSubsystems();
   }
 
   @Override
@@ -68,6 +73,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.resetClimber();
     m_robotContainer.resetDrivetrainPID();
     m_robotContainer.getAllianceColorFromFMS();
+
+    SubsystemManager.getInstance().prepSubsystems();
   }
 
   @Override

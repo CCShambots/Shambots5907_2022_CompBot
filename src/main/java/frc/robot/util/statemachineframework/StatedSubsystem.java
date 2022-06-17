@@ -89,14 +89,40 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
      * NOTE: If you add two of the same flag state, unexpected behavior will occur
      */
     protected void addFlagState(E parentState, E flagState, BooleanSupplier condition) {
-        if(!flagStates.containsKey(parentState)) flagStates.put(parentState, new ArrayList<>());
 
+        //If the flag state is already registered as part of transitions, it is invalid
+        if(getStartStates().contains(flagState) || getEndStates().contains(flagState) || getInterruptionStates().contains(flagState)) {
+            outputErrorMessage("FLAG STATES CANNOT BE PARTS OF TRANSITIONS",
+                    "You tried to register a flag state that is already the start, end, or interruption state or an existing transition",
+                    "Parent state: " + parentState.name(),
+                    "Flag state: " + flagState.name()
+                    );
+            return;
+
+        }
+
+        //Any state marked as a flag state cannot be a parent state
         if(getStatesMarkedAsFlag().contains(parentState)) {
             outputErrorMessage("FLAG STATES CANNOT BE USED AS PARENT STATES",
                     "You attempted to register the following:",
+                    "Parent state: " + parentState.name() + " (this is already a flag state)",
+                    "Flag state: " + flagState.name());
+            return;
+        }
+
+        //Any state already marked as a parent state cannot become a flag state
+        if(getStatesMarkedAsParent().contains(flagState)) {
+
+            outputErrorMessage("PARENTS STATES CANNOT BE MADE FLAG STATES",
+                    "You attempted to register a flag state that has already been marked a parent state",
                     "Parent state: " + parentState.name(),
                     "Flag state: " + flagState.name());
+
+            return;
         }
+
+        //Register the parent state as a new parent state if it does not yet have flag states
+        if(!flagStates.containsKey(parentState)) flagStates.put(parentState, new ArrayList<>());
 
         flagStates.get(parentState).add(new FlagState<>(flagState, condition));
     }
@@ -113,6 +139,13 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
                     "SUBSYSTEM NAME: " + getName(),
                     "STATE: " + state.name());
             return;
+        }
+
+        //The continuous command is invalid if the indicated state is a flag state
+        Set<E> statesMarkedAsFlag = getStatesMarkedAsFlag();
+        if(statesMarkedAsFlag.contains(state)) {
+            outputErrorMessage("CONTINUOUS COMMANDS CANNOT RUN FOR STATES MARKED AS TRANSITION STATES",
+                    "COMMAND TRYING TO BE ADDED: " + state.name());
         }
 
         if(!continualCommands.containsKey(state)) continualCommands.put(state, command);
@@ -213,7 +246,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
      * If a flag state is provided, the robot will start transitioning to its parent state
      * @param state The state to which the subsystem should go
      */
-    public void requestTransition(E state) {
+    public boolean requestTransition(E state) {
 
         //Since this sate has been marked as a flag state, we find its parent state and request to transition to that
         if(getStatesMarkedAsFlag().contains(state)) {
@@ -224,7 +257,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
             outputErrorMessage("YOU TRIED TO REQUEST A STATE THAT DOESN'T EXIST",
                     "SUBSYSTEM NAME: " + getName(),
                     "TRANSITION CONFLICT: " + state.name());
-            return;
+            return false;
         }
 
         Transition<E> t = findTransition(currentState, state, transitions);
@@ -246,7 +279,9 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
             currentTransition = t;
             needToScheduleTransitionCommand = true;
             transitioning = true;
-        }
+        } else return false;
+
+        return true;
     }
 
     /**
@@ -261,7 +296,7 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
         return null;
     }
 
-    public E findParentState(E state) {
+    private E findParentState(E state) {
         for(Map.Entry<E, List<FlagState<E>>> entry: flagStates.entrySet()) {
             if(entry.getValue().stream().map(FlagState::getState).collect(Collectors.toList()).contains(state)) return entry.getKey();
         }
@@ -270,21 +305,19 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
         return null;
     }
 
-    public void requestDetermination() {
-        requestTransition(entryState);
-    }
-
     /**
      * Cancel any transition currently running
      */
-    public void cancelTransition() {
+    public final boolean cancelTransition() {
         if(transitioning) {
             currentCommand.cancel();
             currentState = currentTransition.getInterruptionState();
+            return true;
         }
+        return false;
     }
 
-    public void outputErrorMessage(String message, String... args) {
+    private void outputErrorMessage(String message, String... args) {
         System.out.println("-----" + message + "!!!!-----");
         for(String a : args) {
             System.out.println(a);
@@ -298,6 +331,10 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
 
     private List<E> getEndStates() {
         return transitions.stream().map(Transition::getEndState).collect(Collectors.toList());
+    }
+
+    private List<E> getInterruptionStates() {
+        return transitions.stream().map(Transition::getInterruptionState).collect(Collectors.toList());
     }
 
     private List<Command> getCommands() {
@@ -318,39 +355,43 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
         return states;
     }
 
+    private Set<E> getStatesMarkedAsParent() {
+        return flagStates.keySet();
+    }
+
     /**
      * Determine whether the subsystem is actively running a command to transition between states
      * @return transitioning
      */
-    public boolean isTransitioning() {return transitioning;}
+    public final boolean isTransitioning() {return transitioning;}
 
     /**
      * @return Either the current state, or the current flag state (if there is a flag state)
      */
-    public E getCurrentState() {return flagState != null ? flagState : currentState;}
+    public final E getCurrentState() {return flagState != null ? flagState : currentState;}
 
     /**
      * @return the state the robot is trying to enter
      */
     public E getDesiredState() {return desiredState;}
 
+    public boolean isUndetermined() {return currentState == undeterminedState;}
+
+    public E getEntryState() { return entryState;}
+
     /**
      * @param state the state to check
      * @return Whether the subsystem is either in the given state or child flag state
      */
-    public boolean isInState(E state) {return currentState == state || flagState == state;}
+    public final boolean isInState(E state) {return currentState == state || flagState == state;}
 
-    public E getParentState() {return currentState;}
-    public E getFlagState() {return flagState;}
+    public final E getParentState() {return currentState;}
+    public final E getFlagState() {return flagState;}
 
     /**
-     * @return A prettily formatted name for the subsytem (just the class name)
+     * @return The name by which you'd like the subsystem to be represented
      */
-    public String getName() {
-        String fullName = this.getClass().getName();
-
-        return fullName.substring(fullName.lastIndexOf(".") + 1);
-    }
+    public abstract String getName();
 
     /**
      * A command that waits indefinitely for a state to arrive and cancels whatever transition is ongoing if interrupted
@@ -375,4 +416,8 @@ public abstract class StatedSubsystem<E extends Enum<E>> extends SubsystemBase {
      * I.e. A subsystem for managing LEDs, to which data can be sent even while the robot is disabled
      */
     public void setEnabled(boolean enabled) {this.enabled = enabled;}
+
+    public void enable() {setEnabled(true);}
+    public void disable() {setEnabled(false);}
+
 }
